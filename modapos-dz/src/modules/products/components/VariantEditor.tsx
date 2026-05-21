@@ -1,0 +1,204 @@
+import { useFieldArray, type Control, type UseFormRegister, type FieldErrors } from "react-hook-form";
+import { Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+import type { ProductFormData } from "@/types";
+
+// Common size presets for clothing stores
+const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "46"];
+// Common color presets
+const COLOR_PRESETS = [
+  { label: "Noir", color: "#1a1a1a" },
+  { label: "Blanc", color: "#f5f5f5" },
+  { label: "Gris", color: "#9ca3af" },
+  { label: "Bleu", color: "#3b82f6" },
+  { label: "Rouge", color: "#ef4444" },
+  { label: "Vert", color: "#22c55e" },
+  { label: "Beige", color: "#d4b896" },
+  { label: "Marron", color: "#92400e" },
+  { label: "Rose", color: "#ec4899" },
+  { label: "Jaune", color: "#eab308" },
+];
+
+interface VariantEditorProps {
+  control: Control<ProductFormData>;
+  register: UseFormRegister<ProductFormData>;
+  errors: FieldErrors<ProductFormData>;
+}
+
+export function VariantEditor({ control, register, errors }: VariantEditorProps) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variants",
+  });
+
+  const addVariant = () => {
+    append({ size: "", color: "", stock: 0, barcode: "" });
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Section header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+            Variantes
+          </h3>
+          <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+            Taille, couleur, stock et code-barres pour chaque variante
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={addVariant}
+          className="gap-1.5"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Ajouter
+        </Button>
+      </div>
+
+      {/* Quick-pick sizes */}
+      <div className="flex flex-wrap gap-1.5">
+        <span className="text-xs text-[var(--color-text-muted)] self-center mr-1">
+          Raccourcis tailles:
+        </span>
+        {SIZE_PRESETS.map((size) => (
+          <button
+            key={size}
+            type="button"
+            onClick={() => append({ size, color: "", stock: 0, barcode: "" })}
+            className="px-2 py-0.5 text-xs rounded-[var(--radius-sm)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent-subtle)] transition-colors"
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+
+      {/* Variants table */}
+      {fields.length > 0 ? (
+        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
+          {/* Table header */}
+          <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 bg-[var(--color-bg-overlay)] border-b border-[var(--color-border)]">
+            {["Taille", "Couleur", "Stock", "Code-barres", ""].map((h) => (
+              <span key={h} className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
+                {h}
+              </span>
+            ))}
+          </div>
+
+          {/* Rows */}
+          <div className="divide-y divide-[var(--color-border)]">
+            {fields.map((field, idx) => (
+              <div
+                key={field.id}
+                className={cn(
+                  "grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 items-center",
+                  "bg-[var(--color-bg-surface)] hover:bg-[var(--color-bg-elevated)] transition-colors"
+                )}
+              >
+                {/* Size */}
+                <input
+                  {...register(`variants.${idx}.size`, { required: true })}
+                  placeholder="ex: M, XL, 42"
+                  list="size-datalist"
+                  className={cn(
+                    "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
+                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-accent)]",
+                    errors.variants?.[idx]?.size && "border-[var(--color-danger)]"
+                  )}
+                />
+
+                {/* Color with presets */}
+                <div className="relative flex items-center gap-1.5">
+                  <input
+                    {...register(`variants.${idx}.color`, { required: true })}
+                    placeholder="ex: Noir, Bleu"
+                    list="color-datalist"
+                    className={cn(
+                      "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
+                      "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+                      "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
+                      "focus:outline-none focus:border-[var(--color-accent)]",
+                      errors.variants?.[idx]?.color && "border-[var(--color-danger)]"
+                    )}
+                  />
+                </div>
+
+                {/* Stock */}
+                <input
+                  {...register(`variants.${idx}.stock`, {
+                    required: true,
+                    valueAsNumber: true,
+                    min: 0,
+                  })}
+                  type="number"
+                  min={0}
+                  placeholder="0"
+                  className={cn(
+                    "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm text-center",
+                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-accent)]",
+                    errors.variants?.[idx]?.stock && "border-[var(--color-danger)]"
+                  )}
+                />
+
+                {/* Barcode */}
+                <input
+                  {...register(`variants.${idx}.barcode`)}
+                  placeholder="Code-barres (optionnel)"
+                  className={cn(
+                    "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm font-mono",
+                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-accent)]"
+                  )}
+                />
+
+                {/* Remove */}
+                <button
+                  type="button"
+                  onClick={() => remove(idx)}
+                  className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-8 rounded-[var(--radius-lg)] border-2 border-dashed border-[var(--color-border)]">
+          <p className="text-sm text-[var(--color-text-muted)]">
+            Aucune variante. Cliquez sur{" "}
+            <button
+              type="button"
+              onClick={addVariant}
+              className="text-[var(--color-accent)] hover:underline"
+            >
+              Ajouter
+            </button>{" "}
+            pour créer une variante.
+          </p>
+        </div>
+      )}
+
+      {/* Datalists for autocomplete */}
+      <datalist id="size-datalist">
+        {SIZE_PRESETS.map((s) => (
+          <option key={s} value={s} />
+        ))}
+      </datalist>
+      <datalist id="color-datalist">
+        {COLOR_PRESETS.map((c) => (
+          <option key={c.label} value={c.label} />
+        ))}
+      </datalist>
+    </div>
+  );
+}

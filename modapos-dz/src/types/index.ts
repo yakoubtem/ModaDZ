@@ -22,6 +22,7 @@ export interface ProductVariant {
   size: string;
   color: string;
   stock: number;
+  barcode?: string;
   product?: Product;
 }
 
@@ -34,6 +35,7 @@ export interface Product {
   categoryId?: number;
   category?: Category;
   variants: ProductVariant[];
+  imagePath?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -112,6 +114,38 @@ export interface RecentSale {
 export interface RevenueDataPoint {
   date: string;
   revenue: number;
+}
+
+// ─── Products Module ─────────────────────────────────────
+export interface PaginatedProducts {
+  products: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ProductStats {
+  totalProducts: number;
+  totalVariants: number;
+  lowStockVariants: number;
+}
+
+export interface ProductFormData {
+  name: string;
+  sku: string;
+  price: string;
+  description?: string;
+  categoryId?: string;
+  imagePath?: string;
+  variants: VariantFormRow[];
+}
+
+export interface VariantFormRow {
+  id?: number;
+  size: string;
+  color: string;
+  stock: number;
+  barcode?: string;
 }
 
 // ─── Auth ─────────────────────────────────────────────────

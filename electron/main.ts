@@ -1,5 +1,13 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  shell,
+  protocol,
+  net,
+} from "electron";
 import path from "path";
+import { pathToFileURL } from "url";
 import { registerProductHandlers } from "./handlers/products";
 import { registerCategoryHandlers } from "./handlers/categories";
 import { registerSaleHandlers } from "./handlers/sales";
@@ -10,6 +18,15 @@ import { registerDashboardHandlers } from "./handlers/dashboard";
 
 const isDev = process.env.NODE_ENV === "development";
 
+// MUST be called before app.whenReady()
+// Registers media:// as a privileged scheme so the renderer can use it
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "media",
+    privileges: { secure: true, standard: true, bypassCSP: true, stream: true },
+  },
+]);
+
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
@@ -18,10 +35,10 @@ function createWindow() {
     height: 900,
     minWidth: 1100,
     minHeight: 700,
-    backgroundColor: "#0f1117",
+    backgroundColor: "#0c0e14",
     titleBarStyle: "hidden",
     titleBarOverlay: {
-      color: "#0f1117",
+      color: "#0c0e14",
       symbolColor: "#94a3b8",
       height: 40,
     },
@@ -34,7 +51,6 @@ function createWindow() {
     show: false,
   });
 
-  // Load renderer
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
     mainWindow.webContents.openDevTools();
@@ -54,7 +70,6 @@ function createWindow() {
   });
 }
 
-// Register all IPC handlers
 function registerHandlers() {
   registerProductHandlers(ipcMain);
   registerCategoryHandlers(ipcMain);
@@ -66,6 +81,17 @@ function registerHandlers() {
 }
 
 app.whenReady().then(() => {
+  // Serve files from app.getPath('userData') via media:// protocol
+  // e.g. media://images/photo.jpg → {userData}/images/photo.jpg
+  protocol.handle("media", (request) => {
+    const rawPath = request.url.slice("media://".length);
+    const filePath = path.join(
+      app.getPath("userData"),
+      decodeURIComponent(rawPath)
+    );
+    return net.fetch(pathToFileURL(filePath).href);
+  });
+
   createWindow();
   registerHandlers();
 
