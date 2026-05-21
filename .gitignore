@@ -1,5 +1,37 @@
-node_modules
-# Keep environment variables out of version control
-.env
+# Dependencies
+node_modules/
+modapos-dz/node_modules/
 
-/generated/prisma
+# Build outputs
+dist-electron/
+modapos-dz/dist/
+release/
+generated/
+
+# Database
+prisma/store.db
+prisma/store.db-journal
+prisma/store.db-shm
+prisma/store.db-wal
+
+# Environment
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Electron
+dist/
+out/

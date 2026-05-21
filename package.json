@@ -1,0 +1,48 @@
+{
+  "name": "modadz",
+  "version": "1.0.0",
+  "description": "Modern POS & Inventory Management for Algerian clothing stores",
+  "main": "dist-electron/main.js",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k \"npm run vite:dev\" \"npm run electron:dev\"",
+    "vite:dev": "cd modapos-dz && npm run dev",
+    "electron:dev": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
+    "build:renderer": "cd modapos-dz && npm run build",
+    "build:electron": "tsc -p electron/tsconfig.json",
+    "build": "npm run build:renderer && npm run build:electron && electron-builder",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "prisma": "^6.0.0",
+    "typescript": "~5.6.0",
+    "wait-on": "^8.0.0"
+  },
+  "build": {
+    "appId": "com.modadz.pos",
+    "productName": "ModaDZ",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "modapos-dz/dist/**/*",
+      "prisma/**/*",
+      "generated/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "modapos-dz/public/icon.ico"
+    }
+  }
+}

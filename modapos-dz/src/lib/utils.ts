@@ -1,0 +1,82 @@
+// ─── Currency Formatter (DZD) ─────────────────────────────
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("fr-DZ", {
+    style: "currency",
+    currency: "DZD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+// ─── Date Formatters ──────────────────────────────────────
+export function formatDate(dateStr: string): string {
+  return new Intl.DateTimeFormat("fr-DZ", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(dateStr));
+}
+
+export function formatDateTime(dateStr: string): string {
+  return new Intl.DateTimeFormat("fr-DZ", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(dateStr));
+}
+
+export function formatRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return "À l'instant";
+  if (minutes < 60) return `Il y a ${minutes}min`;
+  if (hours < 24) return `Il y a ${hours}h`;
+  if (days < 7) return `Il y a ${days}j`;
+  return formatDate(dateStr);
+}
+
+// ─── Class Name Helper ────────────────────────────────────
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
+
+// ─── String Utilities ─────────────────────────────────────
+export function truncate(str: string, length = 30): string {
+  return str.length > length ? str.slice(0, length) + "…" : str;
+}
+
+export function initials(name: string): string {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+// ─── Number Utilities ─────────────────────────────────────
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function pct(value: number, total: number): number {
+  if (total === 0) return 0;
+  return Math.round((value / total) * 100);
+}
+
+// ─── SKU Generator ────────────────────────────────────────
+export function generateSku(productName: string): string {
+  const prefix = productName
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 3)
+    .padEnd(3, "X");
+  const suffix = Math.floor(Math.random() * 90000 + 10000);
+  return `${prefix}-${suffix}`;
+}
