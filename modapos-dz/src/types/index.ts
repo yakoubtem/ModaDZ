@@ -6,6 +6,7 @@ export type SaleStatus = "completed" | "refunded" | "pending";
 export interface User {
   id: number;
   name: string;
+  username?: string;
   role: UserRole;
   createdAt: string;
 }
@@ -244,7 +245,8 @@ declare global {
     };
   }
 }
-// ─── Dashboard ────────────────────────────────────────────
+
+// ─── Dashboard ────────────────────────────────────────────
 export interface DashboardStats {
   todayRevenue: number;
   todaySalesCount: number;

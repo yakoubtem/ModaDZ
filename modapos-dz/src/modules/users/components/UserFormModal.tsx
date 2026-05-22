@@ -14,7 +14,8 @@ interface Props {
 export function UserFormModal({ user, onClose, onSave }: Props) {
   const [formData, setFormData] = useState({
     name: "",
-    pin: "",
+    username: "",
+    password: "",
     role: "cashier"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +24,8 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
     if (user) {
       setFormData({
         name: user.name,
-        pin: "", // Don't show existing pin
+        username: user.username || "",
+        password: "", // Don't show existing password
         role: user.role
       });
     }
@@ -32,16 +34,18 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name) return alert("Le nom est requis.");
-    if (!user && !formData.pin) return alert("Le code PIN est requis pour un nouvel utilisateur.");
+    if (!formData.username) return alert("Le nom d'utilisateur est requis.");
+    if (!user && !formData.password) return alert("Le mot de passe est requis pour un nouvel utilisateur.");
     
     setIsSubmitting(true);
     
-    // Only send pin if it's new or being changed
+    // Only send password if it's new or being changed
     const submitData: any = { 
       name: formData.name, 
+      username: formData.username,
       role: formData.role 
     };
-    if (formData.pin) submitData.pin = formData.pin;
+    if (formData.password) submitData.password = formData.password;
     
     await onSave(submitData);
     setIsSubmitting(false);
@@ -61,6 +65,13 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
           required
         />
         
+        <Input
+          label="Nom d'utilisateur"
+          value={formData.username}
+          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          required
+        />
+        
         <Select
           label="Rôle"
           value={formData.role}
@@ -72,10 +83,10 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
         />
 
         <Input
-          label={user ? "Nouveau code PIN (laisser vide pour ne pas changer)" : "Code PIN (4-6 chiffres)"}
+          label={user ? "Nouveau mot de passe (laisser vide pour ne pas changer)" : "Mot de passe"}
           type="password"
-          value={formData.pin}
-          onChange={(e) => setFormData({ ...formData, pin: e.target.value })}
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           required={!user}
         />
 
