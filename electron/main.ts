@@ -15,6 +15,8 @@ import { registerCustomerHandlers } from "./handlers/customers";
 import { registerInventoryHandlers } from "./handlers/inventory";
 import { registerUserHandlers } from "./handlers/users";
 import { registerDashboardHandlers } from "./handlers/dashboard";
+import { registerSettingsHandlers } from "./handlers/settings";
+import { registerBackupHandlers } from "./handlers/backups";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -78,6 +80,8 @@ function registerHandlers() {
   registerInventoryHandlers(ipcMain);
   registerUserHandlers(ipcMain);
   registerDashboardHandlers(ipcMain);
+  registerSettingsHandlers(ipcMain);
+  registerBackupHandlers(ipcMain);
 }
 
 app.whenReady().then(() => {

@@ -98,3 +98,17 @@ model SaleItem {
   unitPrice Float
   discount  Float          @default(0)
 }
+// --- Settings ----------------------------------------------
+model Setting {
+  key   String @id
+  value String
+}
+
+// --- Backups -----------------------------------------------
+model Backup {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  size      Int
+  type      String   @default("manual") // manual | auto
+  createdAt DateTime @default(now())
+}

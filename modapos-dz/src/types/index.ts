@@ -299,3 +299,19 @@ export interface DashboardSummary {
 }
 
 
+
+// ─── Settings & Users ─────────────────────────────────────
+export interface AppSettings {
+  storeName: string;
+  storePhone: string;
+  storeAddress: string;
+  receiptFooter: string;
+}
+
+export interface BackupItem {
+  id: number;
+  filename: string;
+  size: number;
+  type: string;
+  createdAt: string;
+}

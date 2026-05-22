@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
+    "adm-zip": "^0.5.17",
     "dotenv": "^16.0.0",
     "recharts": "^3.8.1"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^33.0.0",
