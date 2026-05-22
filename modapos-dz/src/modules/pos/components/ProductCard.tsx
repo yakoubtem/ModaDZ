@@ -1,0 +1,122 @@
+import { Package, AlertTriangle, Plus } from "lucide-react";
+import type { Product } from "@/types";
+import { formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/cartStore";
+import { toast } from "sonner";
+
+interface ProductCardProps {
+  product: Product;
+  onVariantNeeded: (product: Product) => void;
+}
+
+export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
+  const addItem = useCartStore((s) => s.addItem);
+
+  const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
+  const isOutOfStock = totalStock === 0;
+  const isLowStock = !isOutOfStock && totalStock <= 10;
+
+  const handleClick = () => {
+    if (isOutOfStock) return;
+
+    const activeVariants = product.variants.filter((v) => v.stock > 0);
+
+    // Single in-stock variant → add directly without picker
+    if (activeVariants.length === 1) {
+      const v = activeVariants[0];
+      addItem({
+        variantId: v.id,
+        productId: product.id,
+        productName: product.name,
+        sku: product.sku,
+        size: v.size,
+        color: v.color,
+        imagePath: product.imagePath,
+        unitPrice: product.price,
+        maxStock: v.stock,
+      });
+      toast.success(`${product.name} ajouté`, { duration: 1200 });
+      return;
+    }
+
+    // Multiple variants → open picker
+    onVariantNeeded(product);
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={isOutOfStock}
+      className={cn(
+        "group relative flex flex-col text-left",
+        "rounded-[var(--radius-lg)] border bg-[var(--color-bg-surface)]",
+        "transition-all duration-150 overflow-hidden",
+        isOutOfStock
+          ? "border-[var(--color-border)] opacity-50 cursor-not-allowed"
+          : "border-[var(--color-border)] hover:border-[var(--color-accent)]/60 hover:bg-[var(--color-bg-elevated)] hover:shadow-lg hover:shadow-black/20 active:scale-[0.98] cursor-pointer"
+      )}
+    >
+      {/* Product Image */}
+      <div className="aspect-square w-full bg-[var(--color-bg-overlay)] relative overflow-hidden">
+        {product.imagePath ? (
+          <img
+            src={`media://${product.imagePath}`}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Package className="w-10 h-10 text-[var(--color-text-muted)]" />
+          </div>
+        )}
+
+        {/* Out of stock overlay */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <span className="text-xs font-bold text-white/70 uppercase tracking-widest">
+              Épuisé
+            </span>
+          </div>
+        )}
+
+        {/* Low stock badge */}
+        {isLowStock && (
+          <div className="absolute top-2 left-2 flex items-center gap-1 bg-[var(--color-warning)] text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            <AlertTriangle className="w-2.5 h-2.5" />
+            {totalStock}
+          </div>
+        )}
+
+        {/* Add overlay on hover */}
+        {!isOutOfStock && (
+          <div className="absolute inset-0 bg-[var(--color-accent)]/0 group-hover:bg-[var(--color-accent)]/10 transition-colors flex items-center justify-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--color-accent)] rounded-full p-2 shadow-lg">
+              <Plus className="w-4 h-4 text-white" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="p-2.5 flex flex-col gap-0.5">
+        <p className="text-xs font-semibold text-[var(--color-text-primary)] leading-tight line-clamp-2">
+          {product.name}
+        </p>
+        {product.category && (
+          <p className="text-[10px] text-[var(--color-text-muted)]">
+            {product.category.name}
+          </p>
+        )}
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-sm font-bold text-[var(--color-accent)] tabular-nums">
+            {formatCurrency(product.price)}
+          </span>
+          <span className="text-[10px] text-[var(--color-text-muted)]">
+            {product.variants.length} var.
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-type KeyCombo = string; // e.g. "ctrl+k", "escape", "F2"
+type KeyCombo = string; // e.g. "ctrl+k", "Escape", "F9"
 
 interface ShortcutMap {
   [key: KeyCombo]: (e: KeyboardEvent) => void;
@@ -8,7 +8,9 @@ interface ShortcutMap {
 
 /**
  * Registers keyboard shortcuts and cleans them up on unmount.
- * Key combos: "ctrl+k", "shift+enter", "escape", "F2", etc.
+ * Each handler receives the full KeyboardEvent and is responsible
+ * for calling e.preventDefault() if needed.
+ * Keys: "F1", "F9", "Escape", "ctrl+k", "shift+enter", etc.
  */
 export function useKeyboard(shortcuts: ShortcutMap) {
   useEffect(() => {
@@ -17,14 +19,12 @@ export function useKeyboard(shortcuts: ShortcutMap) {
       if (e.ctrlKey) parts.push("ctrl");
       if (e.shiftKey) parts.push("shift");
       if (e.altKey) parts.push("alt");
-      parts.push(e.key.toLowerCase());
+      parts.push(e.key);
 
       const combo = parts.join("+");
-      const cb = shortcuts[combo] ?? shortcuts[e.key] ?? shortcuts[e.key.toLowerCase()];
-      if (cb) {
-        e.preventDefault();
-        cb(e);
-      }
+      // Match exact key (case-sensitive for F-keys like "F1", "F9")
+      const cb = shortcuts[combo] ?? shortcuts[e.key];
+      if (cb) cb(e);
     };
 
     window.addEventListener("keydown", handler);

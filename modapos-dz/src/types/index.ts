@@ -72,6 +72,7 @@ export interface Sale {
   discount: number;
   tax: number;
   status: SaleStatus;
+  paymentMethod: "cash" | "card" | "transfer";
   notes?: string;
   createdAt: string;
   items: SaleItem[];
@@ -85,10 +86,29 @@ export interface CartItem {
   sku: string;
   size: string;
   color: string;
+  imagePath?: string;
   unitPrice: number;
   quantity: number;
-  discount: number;
+  discount: number; // per-item DZD discount
   maxStock: number;
+}
+
+export type PaymentMethod = "cash" | "card" | "transfer";
+
+export interface POSCheckoutPayload {
+  userId: number;
+  customerId?: number;
+  items: Array<{
+    variantId: number;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+  }>;
+  total: number;
+  discount: number; // cart-level discount in DZD
+  tax: number;
+  paymentMethod: PaymentMethod;
+  notes?: string;
 }
 
 // ─── Dashboard ────────────────────────────────────────────
