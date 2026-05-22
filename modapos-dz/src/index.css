@@ -1,7 +1,7 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-/* ─── Tailwind v4 Design Tokens ──────────────────────────── */
+/* â”€â”€â”€ Tailwind v4 Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @theme {
   /* Colors */
   --color-bg-base:       #0c0e14;
@@ -18,7 +18,7 @@
   --color-text-muted:    #555b7a;
   --color-text-disabled: #3a3f5c;
 
-  /* Accent — Indigo/Violet */
+  /* Accent â€” Indigo/Violet */
   --color-accent:        #6366f1;
   --color-accent-hover:  #4f52d8;
   --color-accent-subtle: #1e1f3a;
@@ -58,7 +58,7 @@
   --shadow-glow: 0 0 20px 0 rgb(99 102 241 / 0.2);
 }
 
-/* ─── Base Reset ─────────────────────────────────────────── */
+/* â”€â”€â”€ Base Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -81,7 +81,7 @@ body {
   line-height: 1.5;
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────── */
+/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -92,20 +92,20 @@ body {
   background: var(--color-text-muted);
 }
 
-/* ─── Selection ──────────────────────────────────────────── */
+/* â”€â”€â”€ Selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::selection {
   background: var(--color-accent);
   color: white;
 }
 
-/* ─── Focus Ring ─────────────────────────────────────────── */
+/* â”€â”€â”€ Focus Ring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
 
-/* ─── Animations ─────────────────────────────────────────── */
+/* â”€â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -131,7 +131,7 @@ body {
 .animate-slide-left { animation: slideInLeft 0.2s ease-out; }
 .animate-scale-in   { animation: scaleIn 0.15s ease-out; }
 
-/* ─── Skeleton Shimmer ───────────────────────────────────── */
+/* â”€â”€â”€ Skeleton Shimmer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -144,10 +144,149 @@ body {
   border-radius: var(--radius-sm);
 }
 
-/* ─── Drag Region (Electron custom titlebar) ─────────────── */
+/* â”€â”€â”€ Drag Region (Electron custom titlebar) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .drag-region {
   -webkit-app-region: drag;
 }
 .no-drag {
   -webkit-app-region: no-drag;
 }
+
+/* ─── Print Styles ───────────────────────────────────────── */
+
+/* ═══ Print Styles — Thermal Printer Optimized ═══════════════════════════════ */
+
+/* ── 80mm default (set via handlePrint before window.print()) ── */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 3mm 4mm;
+  }
+
+  /* Hide every element in body except the receipt */
+  body > * {
+    display: none !important;
+  }
+
+  /* Portals and toasts hidden */
+  [data-sonner-toaster],
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  /* Receipt root — the only visible thing */
+  #receipt-print-root {
+    display: block !important;
+    width: 100% !important;
+    font-size: 11px !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    line-height: 1.5 !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  /* Force black-on-white for all receipt children */
+  #receipt-print-root * {
+    color: #000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border-color: #777 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Lucide SVG icons — hidden, we use text labels on paper */
+  #receipt-print-root svg {
+    display: none !important;
+  }
+
+  /* Item names wrap on narrow thermal paper */
+  #receipt-print-root .receipt-item-name {
+    word-break: break-word !important;
+    white-space: normal !important;
+    max-width: 60% !important;
+  }
+
+  /* Bold total row */
+  #receipt-print-root .font-bold {
+    font-weight: 700 !important;
+  }
+
+  /* Hide buttons row (Print + Close buttons) that follows the receipt */
+  #receipt-print-root ~ * {
+    display: none !important;
+  }
+
+  /* Success banner — irrelevant on paper */
+  [class*="success-subtle"] {
+    display: none !important;
+  }
+}
+
+/* ── 58mm narrow thermal — applied when body has data-print-width="58mm" ── */
+@media print {
+  body[data-print-width="58mm"] #receipt-print-root {
+    font-size: 9px !important;
+  }
+
+  body[data-print-width="58mm"] #receipt-print-root .text-base,
+  body[data-print-width="58mm"] #receipt-print-root .text-sm {
+    font-size: 9px !important;
+  }
+
+  body[data-print-width="58mm"] #receipt-print-root .text-xl,
+  body[data-print-width="58mm"] #receipt-print-root .text-lg {
+    font-size: 11px !important;
+  }
+}
+
+/* ═══ Desktop UX Utilities ════════════════════════════════════════════════════ */
+
+/* Keyboard shortcut badge */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.4;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Enhanced input focus glow */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+}
+
+/* Smooth transition for interactive elements */
+button, a, input, select, textarea {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Spin slow animation for receipts */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+/* Slide in from right (for side panels) */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-right { animation: slideInRight 0.2s ease-out; }

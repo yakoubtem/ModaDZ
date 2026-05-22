@@ -5,15 +5,16 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { Sale } from "@/types";
-import { FileText, Eye } from "lucide-react";
+import type { SaleSummary } from "@/types";
+import { FileText, Eye, FileSearch } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 
-const columnHelper = createColumnHelper<Sale>();
+const columnHelper = createColumnHelper<SaleSummary>();
 
 interface SaleTableProps {
-  sales: Sale[];
+  sales: SaleSummary[];
   onView: (id: number) => void;
 }
 
@@ -46,7 +47,9 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const name = info.getValue();
         return name ? (
-          <span className="font-medium text-[var(--color-text-primary)]">{name}</span>
+          <span className="font-medium text-[var(--color-text-primary)]">
+            {name}
+          </span>
         ) : (
           <span className="text-[var(--color-text-muted)] italic">Passager</span>
         );
@@ -85,7 +88,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
         if (status === "refunded") {
           return <Badge variant="warning">Remboursée</Badge>;
         }
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="default">{status}</Badge>;
       },
     }),
     columnHelper.display({
@@ -113,17 +116,23 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
   });
 
   return (
-    <div className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg overflow-hidden flex flex-col">
+    <div className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden flex flex-col">
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left text-sm text-[var(--color-text-secondary)]">
-          <thead className="bg-[#1e2330] border-b border-[var(--color-border)] text-[var(--color-text-muted)] uppercase text-xs">
+          <thead className="bg-[var(--color-bg-overlay)] border-b border-[var(--color-border)] text-[var(--color-text-muted)] uppercase text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-5 py-4 font-semibold whitespace-nowrap">
+                  <th
+                    key={header.id}
+                    className="px-5 py-3.5 font-semibold whitespace-nowrap tracking-wide"
+                  >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </th>
                 ))}
               </tr>
@@ -132,19 +141,27 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
           <tbody className="divide-y divide-[var(--color-border)]">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-5 py-8 text-center text-[var(--color-text-muted)]">
-                  Aucune vente trouvée
+                <td colSpan={columns.length}>
+                  <EmptyState
+                    variant="search"
+                    icon={FileSearch}
+                    title="Aucune vente trouvée"
+                    description="Aucune vente ne correspond à vos critères de recherche."
+                  />
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-[#1e2330]/50 transition-colors"
+                  className="hover:bg-[var(--color-bg-overlay)]/60 transition-colors duration-100"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-5 py-3 whitespace-nowrap">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </td>
                   ))}
                 </tr>

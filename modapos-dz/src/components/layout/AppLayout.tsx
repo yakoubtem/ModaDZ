@@ -17,7 +17,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   );
 }
 
-// ─── Page Header ───────────────────────────────────────────
+// ── Page Header ──────────────────────────────────────────────────────────────
 interface PageHeaderProps {
   title: string;
   description?: string;
@@ -26,13 +26,13 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-4 px-8 py-6 border-b border-[var(--color-border)] shrink-0">
-      <div>
-        <h1 className="text-xl font-semibold text-[var(--color-text-primary)]">
+    <div className="flex items-center justify-between gap-4 px-8 py-5 border-b border-[var(--color-border)] shrink-0 bg-[var(--color-bg-base)]">
+      <div className="min-w-0">
+        <h1 className="text-xl font-bold text-[var(--color-text-primary)] leading-tight">
           {title}
         </h1>
         {description && (
-          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)] leading-relaxed">
             {description}
           </p>
         )}
@@ -44,10 +44,18 @@ export function PageHeader({ title, description, actions }: PageHeaderProps) {
   );
 }
 
-// ─── Page Content Wrapper ──────────────────────────────────
-export function PageContent({ children, className }: { children: ReactNode; className?: string }) {
+// ── Page Content Wrapper ─────────────────────────────────────────────────────
+export function PageContent({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={`flex-1 overflow-y-auto px-8 py-6 ${className ?? ""}`}>
+    <div
+      className={`flex-1 overflow-y-auto px-8 py-6 ${className ?? ""}`}
+    >
       {children}
     </div>
   );
