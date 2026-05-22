@@ -1,8 +1,8 @@
-// ─── Enums ────────────────────────────────────────────────
+﻿// â”€â”€â”€ Enums â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export type UserRole = "admin" | "cashier";
 export type SaleStatus = "completed" | "refunded" | "pending";
 
-// ─── Domain Types ─────────────────────────────────────────
+// â”€â”€â”€ Domain Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface User {
   id: number;
   name: string;
@@ -80,7 +80,7 @@ export interface Sale {
   items: SaleItem[];
 }
 
-// ─── POS Cart Types ────────────────────────────────────────
+// â”€â”€â”€ POS Cart Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface CartItem {
   variantId: number;
   productId: number;
@@ -114,7 +114,7 @@ export interface POSCheckoutPayload {
   notes?: string;
 }
 
-// ─── Customer Module ─────────────────────────────────────
+// â”€â”€â”€ Customer Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface CustomerStats {
   totalOrders: number;
   totalSpent: number;
@@ -142,7 +142,7 @@ export interface PaginatedCustomers {
   pageSize: number;
 }
 
-// ─── Sales History Module ─────────────────────────────────
+// â”€â”€â”€ Sales History Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface SaleSummary {
   id: number;
   receiptNumber?: string;
@@ -172,7 +172,7 @@ export interface SalesFilters {
   to: string;
 }
 
-// ─── Dashboard ────────────────────────────────────────────
+// â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface DashboardStats {
   todayRevenue: number;
   todaySalesCount: number;
@@ -197,7 +197,7 @@ export interface RevenueDataPoint {
   revenue: number;
 }
 
-// ─── Products Module ─────────────────────────────────────
+// â”€â”€â”€ Products Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface PaginatedProducts {
   products: Product[];
   total: number;
@@ -229,12 +229,12 @@ export interface VariantFormRow {
   barcode?: string;
 }
 
-// ─── Auth ─────────────────────────────────────────────────
+// â”€â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface AuthSession {
   user: User;
 }
 
-// ─── IPC ──────────────────────────────────────────────────
+// â”€â”€â”€ IPC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 declare global {
   interface Window {
     api: {
@@ -244,3 +244,58 @@ declare global {
     };
   }
 }
+// ─── Dashboard ────────────────────────────────────────────
+export interface DashboardStats {
+  todayRevenue: number;
+  todaySalesCount: number;
+  monthRevenue: number;
+  monthSalesCount: number;
+  totalProducts: number;
+  totalCustomers: number;
+}
+
+export interface RecentSale {
+  id: number;
+  total: number;
+  createdAt: string;
+  customer?: { name: string } | null;
+  items: { quantity: number }[];
+}
+
+export interface RevenueDataPoint {
+  date: string;
+  revenue: number;
+}
+
+export interface PaymentDataPoint {
+  name: string;
+  value: number;
+}
+
+export interface TopProduct {
+  id: number;
+  name: string;
+  size?: string;
+  color?: string;
+  quantitySold: number;
+  revenueGenerated: number;
+}
+
+export interface LowStockVariant {
+  id: number;
+  stock: number;
+  size: string;
+  color: string;
+  product: { name: string };
+}
+
+export interface DashboardSummary {
+  kpis: DashboardStats;
+  lowStockVariants: LowStockVariant[];
+  recentSales: RecentSale[];
+  revenueChart: RevenueDataPoint[];
+  paymentMethods: PaymentDataPoint[];
+  topProducts: TopProduct[];
+}
+
+
