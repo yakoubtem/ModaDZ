@@ -71,8 +71,10 @@ export interface Sale {
   total: number;
   discount: number;
   tax: number;
+  amountPaid: number;
   status: SaleStatus;
   paymentMethod: "cash" | "card" | "transfer";
+  receiptNumber?: string;
   notes?: string;
   createdAt: string;
   items: SaleItem[];
@@ -108,7 +110,66 @@ export interface POSCheckoutPayload {
   discount: number; // cart-level discount in DZD
   tax: number;
   paymentMethod: PaymentMethod;
+  amountPaid?: number; // stored for debt tracking
   notes?: string;
+}
+
+// ─── Customer Module ─────────────────────────────────────
+export interface CustomerStats {
+  totalOrders: number;
+  totalSpent: number;
+  totalAmountPaid: number;
+  debt: number;
+  lastPurchaseDate?: string;
+}
+
+export interface CustomerWithStats extends Customer {
+  totalOrders: number;
+  totalSpent: number;
+  debt: number;
+  lastPurchaseDate?: string;
+}
+
+export interface CustomerDetail extends Customer {
+  sales: Sale[];
+  stats: CustomerStats;
+}
+
+export interface PaginatedCustomers {
+  customers: CustomerWithStats[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+// ─── Sales History Module ─────────────────────────────────
+export interface SaleSummary {
+  id: number;
+  receiptNumber?: string;
+  user?: Pick<User, "id" | "name">;
+  customer?: Pick<Customer, "id" | "name" | "phone"> | null;
+  total: number;
+  discount: number;
+  amountPaid: number;
+  status: SaleStatus;
+  paymentMethod: "cash" | "card" | "transfer";
+  items: { id: number; quantity: number }[];
+  createdAt: string;
+}
+
+export interface PaginatedSales {
+  sales: SaleSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface SalesFilters {
+  search: string;
+  paymentMethod: string;
+  status: string;
+  from: string;
+  to: string;
 }
 
 // ─── Dashboard ────────────────────────────────────────────

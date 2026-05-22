@@ -17,25 +17,29 @@ interface ReceiptPreviewProps {
   sale: Sale;
   amountPaid: number;
   onClose: () => void;
+  closeLabel?: string;
+  hideSuccessBanner?: boolean;
 }
 
-export function ReceiptPreview({ sale, amountPaid, onClose }: ReceiptPreviewProps) {
+export function ReceiptPreview({ sale, amountPaid, onClose, closeLabel = "Nouvelle vente", hideSuccessBanner = false }: ReceiptPreviewProps) {
   const change = amountPaid > 0 ? Math.max(0, amountPaid - sale.total) : 0;
 
   return (
     <div className="flex flex-col gap-4">
       {/* Success banner */}
-      <div className="flex items-center gap-3 p-4 rounded-[var(--radius-lg)] bg-[var(--color-success-subtle)] border border-[var(--color-success)]/30">
-        <CheckCircle2 className="w-6 h-6 text-[var(--color-success)] shrink-0" />
-        <div>
-          <p className="text-sm font-semibold text-[var(--color-success)]">
-            Vente enregistrée avec succès !
-          </p>
-          <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-            Vente #{sale.id} · {formatDate(sale.createdAt)}
-          </p>
+      {!hideSuccessBanner && (
+        <div className="flex items-center gap-3 p-4 rounded-[var(--radius-lg)] bg-[var(--color-success-subtle)] border border-[var(--color-success)]/30">
+          <CheckCircle2 className="w-6 h-6 text-[var(--color-success)] shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-[var(--color-success)]">
+              Vente enregistrée avec succès !
+            </p>
+            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+              Vente #{sale.id} · {formatDate(sale.createdAt)}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Receipt body */}
       <div
@@ -174,7 +178,7 @@ export function ReceiptPreview({ sale, amountPaid, onClose }: ReceiptPreviewProp
           className="flex-1"
           onClick={onClose}
         >
-          Nouvelle vente
+          {closeLabel}
         </Button>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { ReceiptPreview } from "./ReceiptPreview";
+import { CustomerFormModal } from "@/modules/customers/components/CustomerFormModal";
 import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useIPC } from "@/hooks/useIPC";
@@ -49,6 +50,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [customerResults, setCustomerResults] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const [isCustomerFormOpen, setIsCustomerFormOpen] = useState(false);
   const customerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Completed sale (shown in receipt phase)
@@ -151,19 +153,32 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setCustomerResults([]);
   };
 
+  const handleQuickCustomerCreate = async (data: { name: string; phone?: string; email?: string; notes?: string }) => {
+    try {
+      const newCustomer = await api<Customer>("customers:create", data);
+      selectCustomer(newCustomer);
+      toast.success("Client créé avec succès");
+      return true;
+    } catch {
+      toast.error("Erreur lors de la création du client");
+      return false;
+    }
+  };
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={phase === "form" ? "Finaliser la vente" : "Reçu de vente"}
-      description={
-        phase === "form"
-          ? `${items.length} article${items.length > 1 ? "s" : ""} · Total: ${formatCurrency(total)}`
-          : undefined
-      }
-      size="md"
-      footer={
-        phase === "form" ? (
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={phase === "form" ? "Finaliser la vente" : "Reçu de vente"}
+        description={
+          phase === "form"
+            ? `${items.length} article${items.length > 1 ? "s" : ""} · Total: ${formatCurrency(total)}`
+            : undefined
+        }
+        size="md"
+        footer={
+          phase === "form" ? (
           <>
             <Button variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Annuler
@@ -266,25 +281,46 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 </button>
               )}
               {/* Dropdown */}
-              {showCustomerDropdown && customerResults.length > 0 && (
-                <div className="absolute z-50 top-full mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-lg overflow-hidden">
-                  {customerResults.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => selectCustomer(c)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-[var(--color-bg-overlay)] transition-colors"
+              {showCustomerDropdown && (
+                <div className="absolute z-50 top-full mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-lg overflow-hidden flex flex-col">
+                  {customerResults.length > 0 ? (
+                    <div className="max-h-48 overflow-y-auto">
+                      {customerResults.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => selectCustomer(c)}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-[var(--color-bg-overlay)] transition-colors"
+                        >
+                          <UserCircle className="w-4 h-4 text-[var(--color-text-muted)] shrink-0" />
+                          <span className="text-[var(--color-text-primary)]">
+                            {c.name}
+                          </span>
+                          {c.phone && (
+                            <span className="text-[var(--color-text-muted)] text-xs ml-auto">
+                              {c.phone}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="px-3 py-2 text-sm text-[var(--color-text-muted)] text-center italic">
+                      Aucun client trouvé.
+                    </div>
+                  )}
+                  <div className="p-1 border-t border-[var(--color-border)] bg-[var(--color-bg-overlay)]">
+                    <Button 
+                      variant="primary" 
+                      onClick={() => {
+                        setShowCustomerDropdown(false);
+                        setIsCustomerFormOpen(true);
+                      }}
+                      className="w-full text-xs"
+                      size="sm"
                     >
-                      <UserCircle className="w-4 h-4 text-[var(--color-text-muted)] shrink-0" />
-                      <span className="text-[var(--color-text-primary)]">
-                        {c.name}
-                      </span>
-                      {c.phone && (
-                        <span className="text-[var(--color-text-muted)] text-xs ml-auto">
-                          {c.phone}
-                        </span>
-                      )}
-                    </button>
-                  ))}
+                      + Nouveau client
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -370,6 +406,19 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           />
         )
       )}
-    </Modal>
+      </Modal>
+
+      <CustomerFormModal
+        isOpen={isCustomerFormOpen}
+        onClose={() => setIsCustomerFormOpen(false)}
+        onSubmit={async (data) => {
+          const success = await handleQuickCustomerCreate(data);
+          if (success) {
+            setIsCustomerFormOpen(false);
+          }
+          return success;
+        }}
+      />
+    </>
   );
 }

@@ -1,6 +1,17 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 
+// ─── Receipt number generator ─────────────────────────────
+function generateReceiptNumber(saleId: number): string {
+  const now = new Date();
+  const ymd =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0");
+  return `REC-${ymd}-${String(saleId).padStart(5, "0")}`;
+}
+
+// ─── IPC payload types ────────────────────────────────────
 interface SaleItemInput {
   variantId: number;
   quantity: number;
@@ -16,51 +27,71 @@ interface POSCheckoutPayload {
   discount: number;
   tax: number;
   paymentMethod: "cash" | "card" | "transfer";
+  amountPaid?: number;
   notes?: string;
 }
 
+interface SalesGetAllParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;       // matches receiptNumber or customer name
+  paymentMethod?: string;
+  status?: string;
+  from?: string;
+  to?: string;
+  customerId?: number;
+}
+
 export function registerSaleHandlers(ipcMain: IpcMain) {
-  // ─── Get All Sales (with filters) ────────────────────────
-  ipcMain.handle(
-    "sales:getAll",
-    async (_e, filters?: { from?: string; to?: string; status?: string }) => {
-      return prisma.sale.findMany({
-        where: {
-          ...(filters?.status && { status: filters.status }),
-          ...(filters?.from || filters?.to
-            ? {
-                createdAt: {
-                  ...(filters.from && { gte: new Date(filters.from) }),
-                  ...(filters.to && { lte: new Date(filters.to) }),
-                },
-              }
-            : {}),
+  // ─── Paginated list with filters ──────────────────────────
+  ipcMain.handle("sales:getAll", async (_e, params?: SalesGetAllParams) => {
+    const page = params?.page ?? 1;
+    const pageSize = params?.pageSize ?? 20;
+    const skip = (page - 1) * pageSize;
+
+    const where = {
+      ...(params?.status && { status: params.status }),
+      ...(params?.paymentMethod && { paymentMethod: params.paymentMethod }),
+      ...(params?.customerId && { customerId: params.customerId }),
+      ...(params?.search && {
+        OR: [
+          { receiptNumber: { contains: params.search } },
+          { customer: { name: { contains: params.search } } },
+        ],
+      }),
+      ...((params?.from || params?.to) && {
+        createdAt: {
+          ...(params.from && { gte: new Date(params.from) }),
+          ...(params.to && { lte: new Date(params.to) }),
         },
+      }),
+    };
+
+    const [sales, total] = await Promise.all([
+      prisma.sale.findMany({
+        where,
         include: {
           user: { select: { id: true, name: true } },
           customer: { select: { id: true, name: true, phone: true } },
-          items: {
-            include: {
-              variant: {
-                include: {
-                  product: { select: { id: true, name: true, sku: true } },
-                },
-              },
-            },
-          },
+          items: { select: { id: true, quantity: true } },
         },
         orderBy: { createdAt: "desc" },
-      });
-    }
-  );
+        skip,
+        take: pageSize,
+      }),
+      prisma.sale.count({ where }),
+    ]);
 
-  // ─── Get Single Sale ──────────────────────────────────────
+    return { sales, total, page, pageSize };
+  });
+
+  // ─── Get single sale (full detail for modal / reprint) ───
   ipcMain.handle("sales:getById", async (_e, id: number) => {
     return prisma.sale.findUnique({
       where: { id },
       include: {
         user: { select: { id: true, name: true } },
-        customer: true,
+        customer: { select: { id: true, name: true, phone: true } },
         items: {
           include: {
             variant: {
@@ -74,85 +105,89 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
     });
   });
 
-  // ─── POS Checkout (with stock validation) ─────────────────
-  // This is the primary sale creation channel for the POS module.
-  // Uses a Prisma transaction to:
-  //   1. Validate all stock levels (throws if insufficient)
-  //   2. Decrement stock atomically
-  //   3. Create Sale + SaleItems in one DB write
-  ipcMain.handle(
-    "pos:checkout",
-    async (_e, data: POSCheckoutPayload) => {
-      return prisma.$transaction(async (tx) => {
-        // ── 1. Validate stock for every item ──
-        for (const item of data.items) {
-          const variant = await tx.productVariant.findUnique({
-            where: { id: item.variantId },
-            include: {
-              product: { select: { name: true } },
-            },
-          });
+  // ─── POS Checkout ─────────────────────────────────────────
+  // Transaction order:
+  //   1. Validate all stock (throws on first failure)
+  //   2. Decrement stock
+  //   3. Create Sale + SaleItems
+  //   4. Patch receiptNumber onto the new record
+  ipcMain.handle("pos:checkout", async (_e, data: POSCheckoutPayload) => {
+    return prisma.$transaction(async (tx) => {
+      // ── 1. Stock validation ──
+      for (const item of data.items) {
+        const variant = await tx.productVariant.findUnique({
+          where: { id: item.variantId },
+          include: { product: { select: { name: true } } },
+        });
 
-          if (!variant) {
-            throw new Error(`Variante introuvable (ID: ${item.variantId})`);
-          }
-
-          if (variant.stock < item.quantity) {
-            throw new Error(
-              `Stock insuffisant — ${variant.product.name} ` +
-                `(${variant.size}/${variant.color}): ` +
-                `${variant.stock} disponible, ${item.quantity} demandé`
-            );
-          }
+        if (!variant) {
+          throw new Error(`Variante introuvable (ID: ${item.variantId})`);
         }
-
-        // ── 2. Decrement stock atomically ──
-        for (const item of data.items) {
-          await tx.productVariant.update({
-            where: { id: item.variantId },
-            data: { stock: { decrement: item.quantity } },
-          });
+        if (variant.stock < item.quantity) {
+          throw new Error(
+            `Stock insuffisant — ${variant.product.name} ` +
+              `(${variant.size}/${variant.color}): ` +
+              `${variant.stock} disponible, ${item.quantity} demandé`
+          );
         }
+      }
 
-        // ── 3. Create the sale record ──
-        return tx.sale.create({
-          data: {
-            userId: data.userId,
-            customerId: data.customerId ?? null,
-            total: data.total,
-            discount: data.discount,
-            tax: data.tax,
-            status: "completed",
-            paymentMethod: data.paymentMethod,
-            notes: data.notes ?? null,
-            items: {
-              create: data.items.map((item) => ({
-                variantId: item.variantId,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                discount: item.discount,
-              })),
-            },
+      // ── 2. Decrement stock ──
+      for (const item of data.items) {
+        await tx.productVariant.update({
+          where: { id: item.variantId },
+          data: { stock: { decrement: item.quantity } },
+        });
+      }
+
+      // ── 3. Create sale ──
+      const amountPaid = data.amountPaid ?? data.total;
+      const sale = await tx.sale.create({
+        data: {
+          userId: data.userId,
+          customerId: data.customerId ?? null,
+          total: data.total,
+          discount: data.discount,
+          tax: data.tax,
+          status: "completed",
+          paymentMethod: data.paymentMethod,
+          amountPaid,
+          notes: data.notes ?? null,
+          items: {
+            create: data.items.map((item) => ({
+              variantId: item.variantId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              discount: item.discount,
+            })),
           },
-          include: {
-            items: {
-              include: {
-                variant: {
-                  include: {
-                    product: { select: { name: true, sku: true } },
-                  },
+        },
+        select: { id: true },
+      });
+
+      // ── 4. Patch receiptNumber (needs the new ID) ──
+      const receiptNumber = generateReceiptNumber(sale.id);
+      return tx.sale.update({
+        where: { id: sale.id },
+        data: { receiptNumber },
+        include: {
+          items: {
+            include: {
+              variant: {
+                include: {
+                  product: { select: { name: true, sku: true } },
                 },
               },
             },
-            customer: { select: { id: true, name: true, phone: true } },
-            user: { select: { id: true, name: true } },
           },
-        });
+          customer: { select: { id: true, name: true, phone: true } },
+          user: { select: { id: true, name: true } },
+        },
       });
-    }
-  );
+    });
+  });
 
-  // ─── Refund ────────────────────────────────────────────────
+  // ─── Refund ──────────────────────────────────────────────
   ipcMain.handle("sales:refund", async (_e, id: number) => {
     return prisma.$transaction(async (tx) => {
       const sale = await tx.sale.findUnique({
@@ -160,8 +195,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         include: { items: true },
       });
       if (!sale) throw new Error("Vente introuvable");
-      if (sale.status === "refunded")
-        throw new Error("Vente déjà remboursée");
+      if (sale.status === "refunded") throw new Error("Vente déjà remboursée");
 
       for (const item of sale.items) {
         await tx.productVariant.update({
@@ -177,7 +211,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
     });
   });
 
-  // ─── Recent Sales (for dashboard) ─────────────────────────
+  // ─── Recent sales (for Dashboard) ────────────────────────
   ipcMain.handle("sales:getRecent", async (_e, limit = 10) => {
     return prisma.sale.findMany({
       take: limit,

@@ -79,11 +79,13 @@ model Sale {
   total      Float
   discount   Float      @default(0)
   tax        Float      @default(0)
-  status        String     @default("completed") // completed | refunded | pending
-  paymentMethod String     @default("cash")      // cash | card | transfer
-  notes         String?
-  createdAt     DateTime   @default(now())
-  items         SaleItem[]
+  status         String     @default("completed") // completed | refunded | pending
+  paymentMethod  String     @default("cash")      // cash | card | transfer
+  receiptNumber  String?    @unique               // REC-YYYYMMDD-00001
+  amountPaid     Float      @default(0)           // for debt tracking
+  notes          String?
+  createdAt      DateTime   @default(now())
+  items          SaleItem[]
 }
 
 model SaleItem {
