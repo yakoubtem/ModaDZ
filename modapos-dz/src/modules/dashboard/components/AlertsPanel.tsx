@@ -1,7 +1,7 @@
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { RecentSale, LowStockVariant } from "@/types";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { AlertCircle, Clock } from "lucide-react";
+import { AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
 interface AlertsPanelProps {
@@ -13,43 +13,60 @@ interface AlertsPanelProps {
 export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelProps) {
   if (isLoading || !recentSales || !lowStock) {
     return (
-      <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] flex flex-col gap-4">
-        <Skeleton className="h-6 w-48" />
-        <div className="space-y-3 mt-2">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-10 w-full" />
-          ))}
-        </div>
+      <div className="flex flex-col gap-6">
+        {[1, 2].map((i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-4">
+            <Skeleton className="h-4 w-40" />
+            <div className="space-y-3">
+              {[...Array(4)].map((_, j) => (
+                <Skeleton key={j} className="h-10 w-full" />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Low Stock Alerts */}
-      <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)]">
-        <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 text-[var(--color-warning)]" />
+    <div className="flex flex-col gap-6 h-full">
+      {/* ── Low Stock Alerts ── */}
+      <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm">
+        <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-500" />
           Alertes de stock
+          {lowStock.length > 0 && (
+            <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-100">
+              {lowStock.length}
+            </span>
+          )}
         </h3>
-        <div className="space-y-3">
+
+        <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
           {lowStock.length === 0 ? (
-            <p className="text-[var(--color-text-muted)] text-sm italic py-2">
-              Tous les niveaux de stock sont optimaux.
-            </p>
+            <div className="flex items-center gap-2.5 py-4 px-3 rounded-xl bg-emerald-50/50 border border-emerald-100/50 text-emerald-800">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+              <p className="text-[13px] font-medium">Tous les stocks sont parfaits.</p>
+            </div>
           ) : (
             lowStock.map((item) => (
-              <div key={item.id} className="flex justify-between items-center bg-[var(--color-bg-overlay)] p-2.5 rounded-md border border-[var(--color-border)]">
+              <div
+                key={item.id}
+                className="flex justify-between items-center bg-amber-50/40 border border-amber-100/60 px-3.5 py-2.5 rounded-xl hover:bg-amber-50/60 transition-colors"
+              >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
                     {item.product.name}
                   </p>
-                  <p className="text-xs text-[var(--color-text-muted)]">
-                    {item.size} / {item.color}
+                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                    {item.size} · {item.color}
                   </p>
                 </div>
-                <Badge variant={item.stock === 0 ? "destructive" : "warning"} className="ml-2 shrink-0">
-                  {item.stock} en stock
+                <Badge
+                  variant={item.stock === 0 ? "danger" : "warning"}
+                  className="ml-3 shrink-0 rounded-lg"
+                >
+                  {item.stock === 0 ? "Rupture" : `${item.stock} dispo`}
                 </Badge>
               </div>
             ))
@@ -57,31 +74,35 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
         </div>
       </div>
 
-      {/* Recent Sales Feed */}
-      <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] flex-1 min-h-0">
-        <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-[var(--color-text-muted)]" />
+      {/* ── Recent Sales Feed ── */}
+      <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col flex-1 min-h-0">
+        <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide mb-4 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-[var(--color-text-muted)]" />
           Ventes récentes
         </h3>
-        <div className="space-y-4">
+
+        <div className="space-y-1.5 flex-1 overflow-y-auto pr-1 divide-y-0">
           {recentSales.length === 0 ? (
-            <p className="text-[var(--color-text-muted)] text-sm italic py-2">
+            <p className="text-[var(--color-text-muted)] text-sm py-8 text-center italic">
               Aucune vente récente.
             </p>
           ) : (
             recentSales.map((sale) => {
               const totalItems = sale.items.reduce((s, i) => s + i.quantity, 0);
               return (
-                <div key={sale.id} className="flex justify-between items-start border-b border-[var(--color-border)] pb-3 last:border-0 last:pb-0">
-                  <div>
-                    <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                <div
+                  key={sale.id}
+                  className="flex justify-between items-center py-2.5 px-3 rounded-xl hover:bg-[var(--color-bg-subtle)] transition-colors border border-transparent hover:border-neutral-100"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
                       {sale.customer ? sale.customer.name : "Client passager"}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">
+                    <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                       {formatDate(sale.createdAt)} · {totalItems} art.
                     </p>
                   </div>
-                  <span className="text-sm font-bold text-[var(--color-text-primary)] tabular-nums">
+                  <span className="text-sm font-bold text-[var(--color-text-primary)] tabular-nums shrink-0 ml-2">
                     {formatCurrency(sale.total)}
                   </span>
                 </div>

@@ -58,7 +58,7 @@ export function Modal({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-[var(--color-bg-subtle)]/60 backdrop-blur-[6px] animate-fade-fast"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -68,7 +68,7 @@ export function Modal({
         className={cn(
           "relative w-full animate-scale-in flex flex-col",
           "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
-          "rounded-[var(--radius-xl)] shadow-[var(--shadow-lg)]",
+          "rounded-[var(--radius-xl)] shadow-[var(--shadow-xl)]",
           "max-h-[calc(100dvh-2rem)]",
           sizeClasses[size]
         )}

@@ -5,7 +5,7 @@ import type { BackupItem } from "@/types";
 
 export function useBackups() {
   const { user } = useAuth();
-  const { invoke } = useIPC();
+  const invoke = useIPC();
   const [backups, setBackups] = useState<BackupItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

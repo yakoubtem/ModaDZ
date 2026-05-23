@@ -35,7 +35,7 @@ function TabFilter({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-1">
+    <div className="flex items-center gap-1 bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-1">
       {options.map((opt) => (
         <button
           key={opt.value}

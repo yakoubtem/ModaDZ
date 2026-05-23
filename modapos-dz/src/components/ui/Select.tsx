@@ -17,7 +17,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide"
+            className="text-xs font-semibold text-[var(--color-text-secondary)] tracking-wide"
           >
             {label}
           </label>
@@ -28,11 +28,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             className={cn(
               "w-full h-9 pl-3 pr-8 appearance-none",
-              "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+              "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
               "rounded-[var(--radius-md)] text-sm text-[var(--color-text-primary)]",
-              "transition-colors duration-150 cursor-pointer",
-              "focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]/30",
-              "disabled:opacity-40 disabled:cursor-not-allowed",
+              "transition-all duration-150 cursor-pointer shadow-[var(--shadow-xs)]",
+              "hover:border-[var(--color-border-strong)]",
+              "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10",
+              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[var(--color-bg-elevated)]",
               error && "border-[var(--color-danger)]",
               className
             )}

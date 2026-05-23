@@ -106,9 +106,10 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 }
                 className={cn(
                   "w-24 h-7 px-2 text-right text-sm tabular-nums",
-                  "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                  "rounded-[var(--radius-sm)] text-[var(--color-text-primary)]",
-                  "focus:outline-none focus:border-[var(--color-accent)]"
+                  "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
+                  "rounded-[var(--radius-sm)] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
+                  "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10",
+                  "hover:border-[var(--color-border-strong)]"
                 )}
               />
               <span className="text-xs text-[var(--color-text-muted)]">DZD</span>

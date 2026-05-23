@@ -5,7 +5,7 @@ import type { User } from "@/types";
 
 export function useUsers() {
   const { user: currentUser } = useAuth();
-  const { invoke } = useIPC();
+  const invoke = useIPC();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

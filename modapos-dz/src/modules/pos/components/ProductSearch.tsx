@@ -64,11 +64,12 @@ export function ProductSearch({
         autoComplete="off"
         spellCheck={false}
         className={cn(
-          "w-full h-12 pl-11 pr-24 text-sm",
-          "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+          "w-full h-11 pl-11 pr-24 text-sm font-medium",
+          "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
           "rounded-[var(--radius-lg)] text-[var(--color-text-primary)]",
-          "placeholder:text-[var(--color-text-muted)]",
-          "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20",
+          "placeholder:text-[var(--color-text-muted)] shadow-[var(--shadow-sm)]",
+          "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
+          "hover:border-[var(--color-border-strong)]",
           "transition-all duration-150"
         )}
       />

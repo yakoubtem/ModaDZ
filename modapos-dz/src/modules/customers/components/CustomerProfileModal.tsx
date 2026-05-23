@@ -38,10 +38,10 @@ function StatCard({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-3 rounded-[var(--radius-lg)] border",
+        "flex items-center gap-3 px-4 py-3 rounded-[var(--radius-lg)] border shadow-[var(--shadow-sm)]",
         highlight
           ? "border-[var(--color-danger)]/30 bg-[var(--color-danger-subtle)]"
-          : "border-[var(--color-border)] bg-[var(--color-bg-elevated)]"
+          : "border-[var(--color-border)] bg-[var(--color-bg-surface)]"
       )}
     >
       <div

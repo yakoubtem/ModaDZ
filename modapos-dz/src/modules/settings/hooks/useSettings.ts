@@ -5,7 +5,7 @@ import type { AppSettings } from "@/types";
 
 export function useSettings() {
   const { user } = useAuth();
-  const { invoke } = useIPC();
+  const invoke = useIPC();
   const [settings, setSettings] = useState<Partial<AppSettings>>({});
   const [isLoading, setIsLoading] = useState(true);
 

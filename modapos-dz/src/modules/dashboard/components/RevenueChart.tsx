@@ -19,7 +19,7 @@ interface RevenueChartProps {
 export function RevenueChart({ data, isLoading }: RevenueChartProps) {
   if (isLoading || !data) {
     return (
-      <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] h-[350px] flex flex-col gap-4">
+    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[360px] flex flex-col gap-5 shadow-[var(--shadow-sm)]">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="flex-1 w-full" />
       </div>
@@ -27,8 +27,9 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
   }
 
   return (
-    <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] h-[350px] flex flex-col">
-      <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-4">
+    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[360px] flex flex-col shadow-[var(--shadow-sm)]">
+      <h3 className="text-sm font-bold text-[var(--color-text-primary)] tracking-wide flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block" />
         Évolution du chiffre d'affaires (30 derniers jours)
       </h3>
       <div className="flex-1 min-h-0">
@@ -40,7 +41,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
                 <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} strokeOpacity={0.65} />
             <XAxis
               dataKey="date"
               tickFormatter={(val) => {
@@ -67,13 +68,16 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "var(--color-bg-elevated)",
+                backgroundColor: "#ffffff",
                 borderColor: "var(--color-border)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "10px",
                 color: "var(--color-text-primary)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                fontSize: "12px",
+                padding: "8px 12px",
               }}
               labelFormatter={(label) => formatDate(label)}
-              formatter={(value: number) => [formatCurrency(value), "Revenu"]}
+              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), "Revenu"]}
             />
             <Area
               type="monotone"

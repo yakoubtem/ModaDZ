@@ -69,7 +69,7 @@ export function POSPage() {
       {/* ── Left: Product panel ── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* POS top bar */}
-        <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)]">
+        <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-[0_1px_0_0_var(--color-border)]">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[var(--color-accent)]" />
@@ -78,12 +78,12 @@ export function POSPage() {
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded text-[10px]">
+              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] border-b-2 rounded text-[10px] text-[var(--color-text-secondary)] shadow-[var(--shadow-xs)]">
                 F1
               </kbd>
               <span>Recherche</span>
               <span className="mx-1">·</span>
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded text-[10px]">
+              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] border-b-2 rounded text-[10px] text-[var(--color-text-secondary)] shadow-[var(--shadow-xs)]">
                 F9
               </kbd>
               <span>Payer</span>

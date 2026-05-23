@@ -51,21 +51,21 @@ export function DataTable<TData>({
   return (
     <div
       className={cn(
-        "w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-        "rounded-[var(--radius-lg)] overflow-hidden flex flex-col",
+        "w-full bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
+        "rounded-[var(--radius-lg)] overflow-hidden flex flex-col shadow-[var(--shadow-sm)]",
         className
       )}
     >
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left text-sm text-[var(--color-text-secondary)]">
           {/* ── Header ── */}
-          <thead className="bg-[var(--color-bg-overlay)] border-b border-[var(--color-border)] text-[var(--color-text-muted)] uppercase text-xs">
+          <thead className="bg-[var(--color-bg-subtle)] border-b border-[var(--color-border)] text-[var(--color-text-muted)] text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-5 py-3.5 font-semibold whitespace-nowrap tracking-wide"
+                    className="px-5 py-3 font-semibold whitespace-nowrap tracking-wide uppercase text-[10px] text-[var(--color-text-muted)]"
                   >
                     {header.isPlaceholder
                       ? null
@@ -106,7 +106,7 @@ export function DataTable<TData>({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-[var(--color-bg-overlay)]/60 transition-colors duration-100"
+                  className="hover:bg-[var(--color-accent-subtle)]/40 transition-colors duration-100 group"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-5 py-3 whitespace-nowrap">

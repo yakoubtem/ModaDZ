@@ -79,9 +79,9 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
 
       {/* Variants table */}
       {fields.length > 0 ? (
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
+        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)]">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 bg-[var(--color-bg-overlay)] border-b border-[var(--color-border)]">
+          <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 bg-[var(--color-bg-subtle)] border-b border-[var(--color-border)]">
             {["Taille", "Couleur", "Stock", "Code-barres", ""].map((h) => (
               <span key={h} className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                 {h}

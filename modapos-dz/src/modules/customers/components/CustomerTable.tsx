@@ -191,12 +191,12 @@ export function CustomerTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)] overflow-hidden">
         <div className="divide-y divide-[var(--color-border)]">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex gap-4 px-4 py-4">
-              <div className="h-4 bg-[var(--color-bg-overlay)] rounded animate-pulse w-40" />
-              <div className="h-4 bg-[var(--color-bg-overlay)] rounded animate-pulse w-16 ml-auto" />
+            <div key={i} className="flex gap-4 px-5 py-4">
+              <div className="h-4 bg-[var(--color-bg-subtle)] rounded animate-pulse w-40" />
+              <div className="h-4 bg-[var(--color-bg-subtle)] rounded animate-pulse w-16 ml-auto" />
             </div>
           ))}
         </div>
@@ -206,7 +206,7 @@ export function CustomerTable({
 
   if (customers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 rounded-[var(--radius-lg)] border border-[var(--color-border)] border-dashed">
+      <div className="flex flex-col items-center justify-center py-16 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)] border-dashed">
         <p className="text-sm text-[var(--color-text-secondary)]">
           Aucun client trouvé
         </p>
@@ -216,21 +216,21 @@ export function CustomerTable({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] overflow-hidden">
         {/* Header */}
         <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((hg) => (
               <tr
                 key={hg.id}
-                className="border-b border-[var(--color-border)] bg-[var(--color-bg-overlay)]"
+                className="border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]"
               >
                 {hg.headers.map((header) => (
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     className={cn(
-                      "px-4 py-3 text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide text-left select-none",
+                      "px-5 py-3 text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide text-left select-none",
                       header.column.getCanSort() && "cursor-pointer hover:text-[var(--color-text-secondary)]"
                     )}
                   >
@@ -249,10 +249,10 @@ export function CustomerTable({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="group bg-[var(--color-bg-surface)] hover:bg-[var(--color-bg-elevated)] transition-colors"
+                className="group bg-[var(--color-bg-surface)] hover:bg-[var(--color-accent-subtle)]/40 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3">
+                  <td key={cell.id} className="px-5 py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

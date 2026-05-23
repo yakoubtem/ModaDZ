@@ -85,11 +85,11 @@ export function ProductTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--color-border)] bg-[var(--color-bg-overlay)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)] overflow-hidden">
+        <div className="px-5 py-3 border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
           <div className="grid grid-cols-[40px_2fr_1fr_1fr_1fr_1fr_80px] gap-4">
             {["", "Produit", "Catégorie", "Prix", "Stock", "Statut", ""].map((h, i) => (
-              <span key={i} className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
+              <span key={i} className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
                 {h}
               </span>
             ))}
@@ -102,11 +102,11 @@ export function ProductTable({
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 rounded-[var(--radius-lg)] border border-[var(--color-border)] border-dashed">
+      <div className="flex flex-col items-center justify-center py-20 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)]">
         <div className="w-14 h-14 rounded-full bg-[var(--color-bg-elevated)] flex items-center justify-center mb-4">
           <ImageIcon className="w-7 h-7 text-[var(--color-text-muted)]" />
         </div>
-        <p className="text-sm font-medium text-[var(--color-text-secondary)]">
+        <p className="text-sm font-medium text-[var(--color-text-primary)]">
           Aucun produit trouvé
         </p>
         <p className="text-xs text-[var(--color-text-muted)] mt-1">
@@ -119,11 +119,11 @@ export function ProductTable({
   return (
     <div className="flex flex-col gap-0">
       {/* Table */}
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)] overflow-hidden">
         {/* Header */}
-        <div className="grid grid-cols-[52px_2fr_1fr_110px_1.2fr_100px_88px] gap-4 px-4 py-3 border-b border-[var(--color-border)] bg-[var(--color-bg-overlay)]">
+        <div className="grid grid-cols-[52px_2fr_1fr_110px_1.2fr_100px_88px] gap-4 px-5 py-3 border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
           {["", "Produit", "Catégorie", "Prix", "Stock", "Statut", "Actions"].map((h, i) => (
-            <span key={i} className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
+            <span key={i} className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
               {h}
             </span>
           ))}
@@ -135,8 +135,8 @@ export function ProductTable({
             <div
               key={product.id}
               className={cn(
-                "group grid grid-cols-[52px_2fr_1fr_110px_1.2fr_100px_88px] gap-4 px-4 py-3 items-center",
-                "bg-[var(--color-bg-surface)] hover:bg-[var(--color-bg-elevated)] transition-colors duration-100"
+                "group grid grid-cols-[52px_2fr_1fr_110px_1.2fr_100px_88px] gap-4 px-5 py-3 items-center",
+                "bg-[var(--color-bg-surface)] hover:bg-[var(--color-accent-subtle)]/40 transition-colors duration-100"
               )}
             >
               {/* Image */}

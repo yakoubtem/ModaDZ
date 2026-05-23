@@ -55,7 +55,7 @@ export function UsersSettings() {
                     {user.role === "admin" ? (
                       <Badge variant="success">Administrateur</Badge>
                     ) : (
-                      <Badge variant="neutral">Caissier</Badge>
+                      <Badge variant="default">Caissier</Badge>
                     )}
                   </div>
                   <div className="text-xs text-[var(--color-text-secondary)] mt-1">
@@ -64,7 +64,7 @@ export function UsersSettings() {
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => handleEdit(user)}>Modifier</Button>
-                  <Button variant="default" size="sm" className="text-red-500 border-red-200 hover:bg-red-50" onClick={() => deleteUser(user.id)}>Supprimer</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 border-red-200 hover:bg-red-50" onClick={() => deleteUser(user.id)}>Supprimer</Button>
                 </div>
               </div>
             ))}

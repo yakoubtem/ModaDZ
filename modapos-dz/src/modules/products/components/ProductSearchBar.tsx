@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import type { Category } from "@/types";
-import { cn } from "@/lib/utils";
 
 interface ProductSearchBarProps {
   onSearch: (query: string) => void;
@@ -45,24 +45,18 @@ export function ProductSearchBar({
     <div className="flex items-center gap-3">
       {/* Search input */}
       <div className="relative flex items-center flex-1 max-w-sm">
-        <Search className="absolute left-3 w-4 h-4 text-[var(--color-text-muted)] pointer-events-none" />
-        <input
-          type="text"
+        <Input
           placeholder="Rechercher par nom ou SKU..."
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
-          className={cn(
-            "w-full h-9 pl-9 pr-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-            "rounded-[var(--radius-md)] text-sm text-[var(--color-text-primary)]",
-            "placeholder:text-[var(--color-text-muted)]",
-            "focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]/30",
-            "transition-colors duration-150"
-          )}
+          leftIcon={<Search className="w-4 h-4" />}
+          className="h-9"
         />
         {localValue && (
           <button
             onClick={handleClear}
             className="absolute right-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+            aria-label="Effacer"
           >
             <X className="w-3.5 h-3.5" />
           </button>

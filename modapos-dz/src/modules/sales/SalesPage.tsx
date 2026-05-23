@@ -51,7 +51,7 @@ export function SalesPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-between items-center bg-[var(--color-bg-elevated)] p-4 border border-[var(--color-border)] rounded-lg mt-2">
+              <div className="flex justify-between items-center bg-[var(--color-bg-surface)] p-4 border border-[var(--color-border)] rounded-lg mt-2 shadow-[var(--shadow-sm)]">
                 <p className="text-sm text-[var(--color-text-muted)]">
                   Affichage de {(page - 1) * pageSize + 1} à{" "}
                   {Math.min(page * pageSize, total)} sur {total} ventes

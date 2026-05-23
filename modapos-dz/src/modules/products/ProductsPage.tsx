@@ -23,28 +23,28 @@ function StatCard({ label, value, icon: Icon, color = "default" }: StatCardProps
   return (
     <div
       className={cn(
-        "flex items-center gap-4 px-5 py-4 rounded-[var(--radius-lg)] border",
-        "bg-[var(--color-bg-surface)]",
-        color === "warning" && "border-[var(--color-warning)]/30 bg-[var(--color-warning-subtle)]",
-        color === "danger" && "border-[var(--color-danger)]/30 bg-[var(--color-danger-subtle)]",
+        "flex items-center gap-4 px-5 py-4 rounded-[var(--radius-xl)] border shadow-[var(--shadow-sm)]",
+        "bg-[var(--color-bg-surface)] transition-shadow hover:shadow-[var(--shadow-md)]",
+        color === "warning" && "border-amber-200 bg-amber-50/50",
+        color === "danger"  && "border-red-200 bg-red-50/50",
         color === "default" && "border-[var(--color-border)]"
       )}
     >
       <div
         className={cn(
-          "w-10 h-10 rounded-[var(--radius-md)] flex items-center justify-center shrink-0",
-          color === "warning" && "bg-[var(--color-warning)]/20 text-[var(--color-warning)]",
-          color === "danger" && "bg-[var(--color-danger)]/20 text-[var(--color-danger)]",
+          "w-10 h-10 rounded-[var(--radius-lg)] flex items-center justify-center shrink-0",
+          color === "warning" && "bg-amber-100 text-amber-600",
+          color === "danger"  && "bg-red-100 text-red-600",
           color === "default" && "bg-[var(--color-accent-subtle)] text-[var(--color-accent)]"
         )}
       >
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-2xl font-bold text-[var(--color-text-primary)] tabular-nums leading-none">
+        <p className="text-2xl font-extrabold text-[var(--color-text-primary)] tabular-nums leading-none tracking-tight">
           {value}
         </p>
-        <p className="text-xs text-[var(--color-text-muted)] mt-1">{label}</p>
+        <p className="text-xs text-[var(--color-text-muted)] mt-1.5 font-medium uppercase tracking-wide">{label}</p>
       </div>
     </div>
   );

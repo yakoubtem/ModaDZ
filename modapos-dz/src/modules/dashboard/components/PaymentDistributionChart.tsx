@@ -29,7 +29,7 @@ const LABELS: Record<string, string> = {
 export function PaymentDistributionChart({ data, isLoading }: PaymentDistributionChartProps) {
   if (isLoading || !data) {
     return (
-      <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] h-[350px] flex flex-col gap-4">
+      <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[360px] flex flex-col gap-5 shadow-[var(--shadow-sm)]">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="flex-1 w-full rounded-full" />
       </div>
@@ -46,8 +46,9 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
   const hasData = formattedData.reduce((acc, d) => acc + d.value, 0) > 0;
 
   return (
-    <div className="bg-[var(--color-bg-elevated)] p-5 rounded-lg border border-[var(--color-border)] h-[350px] flex flex-col">
-      <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-4">
+    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[360px] flex flex-col shadow-[var(--shadow-sm)]">
+      <h3 className="text-sm font-bold text-[var(--color-text-primary)] tracking-wide mb-4 flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
         Répartition des paiements
       </h3>
       <div className="flex-1 min-h-0 relative">
@@ -69,14 +70,24 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "var(--color-bg-elevated)",
+                  backgroundColor: "#ffffff",
                   borderColor: "var(--color-border)",
-                  borderRadius: "var(--radius-md)",
+                  borderRadius: "10px",
                   color: "var(--color-text-primary)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  fontSize: "12px",
                 }}
-                formatter={(value: number) => [`${value} transaction(s)`, "Paiements"]}
+                formatter={(value: unknown) => {
+                  const n = typeof value === "number" ? value : Number(value ?? 0);
+                  return [`${n} transaction(s)`, "Paiements"];
+                }}
               />
-              <Legend verticalAlign="bottom" height={36} iconType="circle" />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                iconType="circle"
+                wrapperStyle={{ paddingTop: 6 }}
+              />
             </PieChart>
           </ResponsiveContainer>
         ) : (

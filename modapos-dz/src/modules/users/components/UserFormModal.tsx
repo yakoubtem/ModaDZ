@@ -76,11 +76,10 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
           label="Rôle"
           value={formData.role}
           onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-          options={[
-            { value: "cashier", label: "Caissier (Caisse uniquement)" },
-            { value: "admin", label: "Administrateur (Accès complet)" }
-          ]}
-        />
+        >
+          <option value="cashier">Caissier (Caisse uniquement)</option>
+          <option value="admin">Administrateur (Accès complet)</option>
+        </Select>
 
         <Input
           label={user ? "Nouveau mot de passe (laisser vide pour ne pas changer)" : "Mot de passe"}

@@ -1,64 +1,68 @@
-﻿@import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap");
+@import "tailwindcss";
 
-/* â”€â”€â”€ Tailwind v4 Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Tailwind v4 Design Tokens ──────────────────────────────────────────── */
 @theme {
-  /* Colors */
-  --color-bg-base:       #0c0e14;
-  --color-bg-surface:    #131620;
-  --color-bg-elevated:   #1a1d2e;
-  --color-bg-overlay:    #21253a;
-  --color-bg-subtle:     #1e2133;
+  /* ── Backgrounds (Light Mode) ──────────────────────────────────────── */
+  --color-bg-base:       #f5f7fa;   /* Page canvas — cool off-white       */
+  --color-bg-surface:    #ffffff;   /* Cards, panels — pure white         */
+  --color-bg-elevated:   #f1f4f8;   /* Input fills, subtle fills          */
+  --color-bg-overlay:    #e8ecf3;   /* Hover states, dropdown items       */
+  --color-bg-subtle:     #f8f9fc;   /* Section backgrounds                */
 
-  --color-border:        #252840;
-  --color-border-strong: #353860;
+  /* ── Borders ─────────────────────────────────────────────────────────── */
+  --color-border:        #e2e7ef;   /* Default borders                    */
+  --color-border-strong: #c8d0dc;   /* Prominent / active borders         */
 
-  --color-text-primary:  #e8eaf2;
-  --color-text-secondary:#8b91b5;
-  --color-text-muted:    #555b7a;
-  --color-text-disabled: #3a3f5c;
+  /* ── Text ─────────────────────────────────────────────────────────────── */
+  --color-text-primary:  #0d1117;   /* Headings, main content             */
+  --color-text-secondary:#4b5668;   /* Descriptions, sub-labels           */
+  --color-text-muted:    #8693a6;   /* Placeholders, hints                */
+  --color-text-disabled: #b8c4d0;   /* Disabled                          */
 
-  /* Accent â€” Indigo/Violet */
-  --color-accent:        #6366f1;
-  --color-accent-hover:  #4f52d8;
-  --color-accent-subtle: #1e1f3a;
-  --color-accent-border: #3a3d7a;
+  /* ── Primary Accent — Elegant Blue (Stripe-inspired) ─────────────────── */
+  --color-accent:        #2563eb;
+  --color-accent-hover:  #1d4ed8;
+  --color-accent-subtle: #eff6ff;
+  --color-accent-border: #bfdbfe;
 
-  /* Semantic */
-  --color-success:       #22c55e;
-  --color-success-subtle:#0d2e1a;
-  --color-warning:       #f59e0b;
-  --color-warning-subtle:#2a1f08;
-  --color-danger:        #ef4444;
-  --color-danger-subtle: #2a0e0e;
-  --color-info:          #38bdf8;
-  --color-info-subtle:   #0b1f2e;
+  /* ── Semantic Colors ──────────────────────────────────────────────────── */
+  --color-success:       #059669;
+  --color-success-subtle:#ecfdf5;
+  --color-warning:       #d97706;
+  --color-warning-subtle:#fffbeb;
+  --color-danger:        #dc2626;
+  --color-danger-subtle: #fef2f2;
+  --color-info:          #0284c7;
+  --color-info-subtle:   #f0f9ff;
 
-  /* Sidebar */
-  --color-sidebar-bg:    #0f1220;
-  --color-sidebar-hover: #1a1e35;
-  --color-sidebar-active:#1e2240;
+  /* ── Sidebar ──────────────────────────────────────────────────────────── */
+  --color-sidebar-bg:    #ffffff;
+  --color-sidebar-hover: #f1f5f9;
+  --color-sidebar-active:#eff6ff;
 
-  /* Typography */
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Radius */
-  --radius-xs:  4px;
-  --radius-sm:  6px;
-  --radius-md:  8px;
-  --radius-lg:  12px;
-  --radius-xl:  16px;
-  --radius-2xl: 20px;
+  /* ── Radius ───────────────────────────────────────────────────────────── */
+  --radius-xs:   3px;
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  20px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.4);
-  --shadow-md:  0 4px 12px 0 rgb(0 0 0 / 0.5);
-  --shadow-lg:  0 8px 24px 0 rgb(0 0 0 / 0.6);
-  --shadow-glow: 0 0 20px 0 rgb(99 102 241 / 0.2);
+  /* ── Shadows (soft, light-mode optimized) ──────────────────────────────── */
+  --shadow-xs:  0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm:  0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md:  0 4px 12px -1px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:  0 10px 30px -3px rgb(0 0 0 / 0.08), 0 4px 12px -4px rgb(0 0 0 / 0.06);
+  --shadow-xl:  0 20px 50px -6px rgb(0 0 0 / 0.10), 0 8px 20px -6px rgb(0 0 0 / 0.06);
+  --shadow-glow: 0 0 24px 0 rgb(37 99 235 / 0.14);
 }
 
-/* â”€â”€â”€ Base Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Base Reset ─────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -79,10 +83,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
   line-height: 1.5;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-strong);
@@ -92,31 +97,39 @@ body {
   background: var(--color-text-muted);
 }
 
-/* â”€â”€â”€ Selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
   background: var(--color-accent);
   color: white;
 }
 
-/* â”€â”€â”€ Focus Ring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Focus Ring ─────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
 
-/* â”€â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Animations ─────────────────────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInFast {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes slideInLeft {
   from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
@@ -124,27 +137,38 @@ body {
 }
 @keyframes pulse-ring {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.4; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in    { animation: fadeIn 0.2s ease-out; }
-.animate-slide-left { animation: slideInLeft 0.2s ease-out; }
-.animate-scale-in   { animation: scaleIn 0.15s ease-out; }
+.animate-fade-in     { animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-fade-fast   { animation: fadeInFast 0.15s ease-out; }
+.animate-slide-left  { animation: slideInLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-slide-right { animation: slideInRight 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-scale-in    { animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-slide-up    { animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-spin-slow   { animation: spin-slow 2s linear infinite; }
 
-/* â”€â”€â”€ Skeleton Shimmer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Skeleton Shimmer (light mode) ──────────────────────────────────────── */
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-bg-elevated) 25%,
-    var(--color-bg-overlay) 50%,
-    var(--color-bg-elevated) 75%
+    #f1f4f8 25%,
+    #e8ecf3 50%,
+    #f1f4f8 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.6s infinite;
+  animation: shimmer 1.5s infinite;
   border-radius: var(--radius-sm);
 }
 
-/* â”€â”€â”€ Drag Region (Electron custom titlebar) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Drag Region (Electron custom titlebar) ──────────────────────────────── */
 .drag-region {
   -webkit-app-region: drag;
 }
@@ -152,29 +176,121 @@ body {
   -webkit-app-region: no-drag;
 }
 
-/* ─── Print Styles ───────────────────────────────────────── */
+/* ─── Keyboard Shortcut Badge ─────────────────────────────────────────────── */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.4;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-xs);
+}
 
-/* ═══ Print Styles — Thermal Printer Optimized ═══════════════════════════════ */
+/* ─── Enhanced Input Focus ────────────────────────────────────────────────── */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.12);
+}
 
-/* ── 80mm default (set via handlePrint before window.print()) ── */
+/* ─── Smooth Transitions ──────────────────────────────────────────────────── */
+button, a, input, select, textarea {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Card Hover Lift ─────────────────────────────────────────────────────── */
+.card-hover {
+  transition: box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* ─── Typography Utilities ────────────────────────────────────────────────── */
+.text-display {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.text-heading-1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.text-heading-2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.text-heading-3 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.text-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.text-mono {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ─── Surface Variants ────────────────────────────────────────────────────── */
+.surface-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.surface-elevated {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ─── Divider ──────────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ─── Print Styles — Thermal Printer Optimized ─────────────────────────── */
 @media print {
   @page {
     size: 80mm auto;
     margin: 3mm 4mm;
   }
 
-  /* Hide every element in body except the receipt */
   body > * {
     display: none !important;
   }
 
-  /* Portals and toasts hidden */
   [data-sonner-toaster],
   [role="dialog"] {
     display: none !important;
   }
 
-  /* Receipt root — the only visible thing */
   #receipt-print-root {
     display: block !important;
     width: 100% !important;
@@ -185,7 +301,6 @@ body {
     background: #fff !important;
   }
 
-  /* Force black-on-white for all receipt children */
   #receipt-print-root * {
     color: #000 !important;
     background: transparent !important;
@@ -197,35 +312,30 @@ body {
     print-color-adjust: exact;
   }
 
-  /* Lucide SVG icons — hidden, we use text labels on paper */
   #receipt-print-root svg {
     display: none !important;
   }
 
-  /* Item names wrap on narrow thermal paper */
   #receipt-print-root .receipt-item-name {
     word-break: break-word !important;
     white-space: normal !important;
     max-width: 60% !important;
   }
 
-  /* Bold total row */
   #receipt-print-root .font-bold {
     font-weight: 700 !important;
   }
 
-  /* Hide buttons row (Print + Close buttons) that follows the receipt */
   #receipt-print-root ~ * {
     display: none !important;
   }
 
-  /* Success banner — irrelevant on paper */
   [class*="success-subtle"] {
     display: none !important;
   }
 }
 
-/* ── 58mm narrow thermal — applied when body has data-print-width="58mm" ── */
+/* ── 58mm narrow thermal ── */
 @media print {
   body[data-print-width="58mm"] #receipt-print-root {
     font-size: 9px !important;
@@ -241,52 +351,3 @@ body {
     font-size: 11px !important;
   }
 }
-
-/* ═══ Desktop UX Utilities ════════════════════════════════════════════════════ */
-
-/* Keyboard shortcut badge */
-.kbd {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 6px;
-  font-size: 10px;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  line-height: 1.4;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
-  color: var(--color-text-muted);
-  letter-spacing: 0.02em;
-}
-
-/* Enhanced input focus glow */
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
-  border-color: var(--color-accent) !important;
-  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
-}
-
-/* Smooth transition for interactive elements */
-button, a, input, select, textarea {
-  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
-  transition-duration: 150ms;
-  transition-timing-function: ease;
-}
-
-/* Spin slow animation for receipts */
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
-}
-.animate-spin-slow {
-  animation: spin-slow 2s linear infinite;
-}
-
-/* Slide in from right (for side panels) */
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-.animate-slide-right { animation: slideInRight 0.2s ease-out; }
