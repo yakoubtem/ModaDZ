@@ -64,13 +64,13 @@ export function ProductSearch({
         autoComplete="off"
         spellCheck={false}
         className={cn(
-          "w-full h-11 pl-11 pr-24 text-sm font-medium",
-          "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
-          "rounded-[var(--radius-lg)] text-[var(--color-text-primary)]",
+          "w-full h-12 pl-12 pr-24 text-[15px] font-medium",
+          "bg-[var(--color-bg-surface)]/80 backdrop-blur-lg border border-[var(--color-border)]",
+          "rounded-full text-[var(--color-text-primary)]",
           "placeholder:text-[var(--color-text-muted)] shadow-[var(--shadow-sm)]",
-          "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
+          "focus:outline-none focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/15 focus:shadow-md",
           "hover:border-[var(--color-border-strong)]",
-          "transition-all duration-150"
+          "transition-all duration-300 ease-out"
         )}
       />
 

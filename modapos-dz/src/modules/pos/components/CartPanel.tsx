@@ -25,9 +25,9 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
     <div className="flex flex-col h-full bg-[var(--color-bg-surface)]">
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <ShoppingCart className="w-4 h-4 text-[var(--color-accent)]" />
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+          <span className="text-[15px] font-bold text-[var(--color-text-primary)] tracking-wide">
             Panier
           </span>
           {!isEmpty && (
@@ -117,12 +117,12 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-[var(--color-border)] pt-2">
-            <div className="flex justify-between items-baseline">
-              <span className="text-base font-bold text-[var(--color-text-primary)]">
+          <div className="border-t border-[var(--color-border)] pt-3 mt-1">
+            <div className="flex justify-between items-baseline bg-[var(--color-bg-subtle)] p-3 rounded-[var(--radius-lg)] border border-[var(--color-border)]/50">
+              <span className="text-base font-extrabold text-[var(--color-text-primary)]">
                 Total
               </span>
-              <span className="text-xl font-bold text-[var(--color-accent)] tabular-nums">
+              <span className="text-2xl font-extrabold text-[var(--color-accent)] tabular-nums tracking-tight">
                 {formatCurrency(total)}
               </span>
             </div>

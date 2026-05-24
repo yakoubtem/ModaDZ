@@ -16,7 +16,7 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] space-y-3"
+            className="surface-glass p-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-[var(--shadow-md)] space-y-3"
           >
             <div className="flex justify-between items-start">
               <Skeleton className="h-4 w-28" />
@@ -74,35 +74,35 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       {cards.map((card, idx) => (
         <div
           key={idx}
           className={cn(
-            "bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)]",
-            "border border-[var(--color-border)] border-l-4 shadow-[var(--shadow-sm)]",
-            "hover:shadow-[var(--shadow-md)] transition-shadow duration-200",
-            "flex flex-col gap-3 relative overflow-hidden",
+            "bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)]",
+            "border border-[var(--color-border)] shadow-[var(--shadow-sm)]",
+            "hover:shadow-[var(--shadow-lg)] hover:-translate-y-1 transition-all duration-300 ease-out",
+            "flex flex-col gap-4 relative overflow-hidden group",
             card.accent
           )}
         >
           {/* Subtle decorative circle */}
-          <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-[var(--color-bg-subtle)] opacity-60" />
+          <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-[var(--color-bg-subtle)] opacity-50 group-hover:scale-110 transition-transform duration-500" />
 
-          <div className="flex justify-between items-start relative">
-            <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
+          <div className="flex justify-between items-start relative z-10">
+            <p className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em]">
               {card.title}
             </p>
-            <div className={cn("p-2 rounded-[var(--radius-lg)] shrink-0", card.iconBg)}>
-              <card.icon className={cn("w-4 h-4", card.iconColor)} />
+            <div className={cn("p-3 rounded-[var(--radius-xl)] shrink-0 shadow-sm transition-transform group-hover:scale-105", card.iconBg)}>
+              <card.icon className={cn("w-5 h-5", card.iconColor)} />
             </div>
           </div>
 
-          <div className="relative">
-            <p className="text-2xl font-extrabold text-[var(--color-text-primary)] tabular-nums leading-none tracking-tight">
+          <div className="relative mt-2">
+            <p className="text-[32px] font-extrabold text-[var(--color-text-primary)] tabular-nums leading-none tracking-tight">
               {card.value}
             </p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1.5 font-medium">
+            <p className="text-[14px] text-[var(--color-text-muted)] mt-2 font-medium">
               {card.subtext}
             </p>
           </div>

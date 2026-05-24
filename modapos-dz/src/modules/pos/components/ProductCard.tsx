@@ -50,15 +50,15 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
       disabled={isOutOfStock}
       className={cn(
         "group relative flex flex-col text-left",
-        "rounded-[var(--radius-lg)] border bg-[var(--color-bg-surface)]",
-        "transition-all duration-200 overflow-hidden shadow-[var(--shadow-xs)]",
+        "rounded-[var(--radius-xl)] border bg-[var(--color-bg-surface)]",
+        "transition-all duration-300 overflow-hidden shadow-[var(--shadow-xs)]",
         isOutOfStock
-          ? "border-[var(--color-border)] opacity-50 cursor-not-allowed"
-          : "border-[var(--color-border)] hover:border-[var(--color-accent)]/50 hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 cursor-pointer"
+          ? "border-[var(--color-border)] opacity-50 cursor-not-allowed grayscale-[0.5]"
+          : "border-[var(--color-border)] hover:border-[var(--color-accent)]/50 hover:shadow-[var(--shadow-md)] hover:-translate-y-1 active:scale-[0.97] active:translate-y-0 cursor-pointer"
       )}
     >
       {/* Product Image */}
-      <div className="aspect-square w-full bg-[var(--color-bg-elevated)] relative overflow-hidden">
+      <div className="aspect-square w-full bg-[var(--color-bg-subtle)] relative overflow-hidden">
         {product.imagePath ? (
           <img
             src={`media://${product.imagePath}`}
@@ -99,8 +99,8 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
       </div>
 
       {/* Product Info */}
-      <div className="p-2.5 flex flex-col gap-0.5">
-        <p className="text-xs font-semibold text-[var(--color-text-primary)] leading-tight line-clamp-2">
+      <div className="p-3.5 flex flex-col gap-1">
+        <p className="text-[13px] font-bold text-[var(--color-text-primary)] leading-tight line-clamp-2">
           {product.name}
         </p>
         {product.category && (

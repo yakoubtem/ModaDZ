@@ -26,19 +26,21 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-6 px-6 lg:px-8 py-5 lg:py-6 border-b border-[var(--color-border)] shrink-0 bg-[var(--color-bg-surface)] shadow-[0_1px_0_0_var(--color-border)]">
+    <div className="flex items-end justify-between gap-6 px-8 lg:px-12 pt-10 pb-6 shrink-0 z-10 relative">
       <div className="min-w-0">
-        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] leading-tight tracking-[-0.02em]">
+        <h1 className="text-3xl lg:text-4xl font-extrabold text-[var(--color-text-primary)] leading-tight tracking-[-0.03em] animate-fade-fast">
           {title}
         </h1>
         {description && (
-          <p className="mt-1.5 text-[14px] text-[var(--color-text-secondary)] leading-snug font-normal">
+          <p className="mt-2.5 text-[15px] lg:text-[16px] text-[var(--color-text-secondary)] leading-relaxed font-medium animate-fade-fast" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
             {description}
           </p>
         )}
       </div>
       {actions && (
-        <div className="flex items-center gap-3 shrink-0">{actions}</div>
+        <div className="flex items-center gap-4 shrink-0 animate-fade-fast" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
+          {actions}
+        </div>
       )}
     </div>
   );
@@ -53,8 +55,8 @@ export function PageContent({
   className?: string;
 }) {
   return (
-    <div className={`flex-1 overflow-y-auto ${className ?? ""}`}>
-      <div className="max-w-[1600px] mx-auto w-full px-6 lg:px-8 py-6 lg:py-8">
+    <div className={`flex-1 overflow-y-auto scrollbar-thin ${className ?? ""}`}>
+      <div className="max-w-[1600px] mx-auto w-full px-8 lg:px-12 pb-12 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
         {children}
       </div>
     </div>

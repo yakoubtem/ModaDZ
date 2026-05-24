@@ -18,11 +18,11 @@ const rankColors = [
 export function TopProductsList({ products, isLoading }: TopProductsListProps) {
   if (isLoading || !products) {
     return (
-      <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 h-[380px] flex flex-col gap-4 shadow-sm">
-        <Skeleton className="h-4 w-40" />
-        <div className="space-y-3 mt-4 flex-1">
+      <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] h-[400px] flex flex-col gap-6 shadow-[var(--shadow-sm)]">
+        <Skeleton className="h-5 w-48" />
+        <div className="space-y-4 flex-1">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
+            <Skeleton key={i} className="h-14 w-full" />
           ))}
         </div>
       </div>
@@ -30,13 +30,13 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
   }
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 h-[380px] flex flex-col shadow-sm overflow-hidden">
+    <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] h-[400px] flex flex-col shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow-md)] overflow-hidden">
       <div>
-        <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-amber-500" />
+        <h3 className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em] flex items-center gap-2.5">
+          <Trophy className="w-5 h-5 text-amber-500" />
           Meilleures ventes (30j)
         </h3>
-        <p className="text-[12px] text-[var(--color-text-muted)] mt-1 ml-6">
+        <p className="text-[13px] text-[var(--color-text-muted)] mt-1.5 ml-7">
           Articles générant le plus de revenus
         </p>
       </div>

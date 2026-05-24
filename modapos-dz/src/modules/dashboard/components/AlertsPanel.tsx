@@ -15,11 +15,11 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
     return (
       <div className="flex flex-col gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-4">
-            <Skeleton className="h-4 w-40" />
-            <div className="space-y-3">
+          <div key={i} className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] flex flex-col gap-6">
+            <Skeleton className="h-5 w-40" />
+            <div className="space-y-4">
               {[...Array(4)].map((_, j) => (
-                <Skeleton key={j} className="h-10 w-full" />
+                <Skeleton key={j} className="h-12 w-full" />
               ))}
             </div>
           </div>
@@ -31,12 +31,12 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
   return (
     <div className="flex flex-col gap-6 h-full">
       {/* ── Low Stock Alerts ── */}
-      <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm">
-        <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-500" />
+      <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow-md)] flex flex-col h-[340px]">
+        <h3 className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em] mb-6 flex items-center gap-2.5">
+          <AlertTriangle className="w-5 h-5 text-amber-500" />
           Alertes de stock
           {lowStock.length > 0 && (
-            <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-100">
+            <span className="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-100">
               {lowStock.length}
             </span>
           )}
@@ -75,17 +75,18 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
       </div>
 
       {/* ── Recent Sales Feed ── */}
-      <div className="bg-white p-6 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col flex-1 min-h-0">
-        <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[var(--color-text-muted)]" />
+      <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow-md)] flex flex-col flex-1 min-h-0">
+        <h3 className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em] mb-6 flex items-center gap-2.5">
+          <Clock className="w-5 h-5 text-[var(--color-text-muted)]" />
           Ventes récentes
         </h3>
 
-        <div className="space-y-1.5 flex-1 overflow-y-auto pr-1 divide-y-0">
+        <div className="space-y-1.5 flex-1 overflow-y-auto pr-1 divide-y-0 h-full">
           {recentSales.length === 0 ? (
-            <p className="text-[var(--color-text-muted)] text-sm py-8 text-center italic">
-              Aucune vente récente.
-            </p>
+            <div className="flex flex-col items-center justify-center h-full text-[var(--color-text-muted)] opacity-80">
+              <CheckCircle2 className="w-8 h-8 mb-2" />
+              <p className="text-[14px] italic">Aucune vente récente.</p>
+            </div>
           ) : (
             recentSales.map((sale) => {
               const totalItems = sale.items.reduce((s, i) => s + i.quantity, 0);

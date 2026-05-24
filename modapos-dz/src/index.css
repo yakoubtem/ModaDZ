@@ -3,28 +3,28 @@
 
 /* ─── Tailwind v4 Design Tokens ──────────────────────────────────────────── */
 @theme {
-  /* ── Backgrounds (Light Mode) ──────────────────────────────────────── */
-  --color-bg-base:       #f5f7fa;   /* Page canvas — cool off-white       */
-  --color-bg-surface:    #ffffff;   /* Cards, panels — pure white         */
-  --color-bg-elevated:   #f1f4f8;   /* Input fills, subtle fills          */
-  --color-bg-overlay:    #e8ecf3;   /* Hover states, dropdown items       */
-  --color-bg-subtle:     #f8f9fc;   /* Section backgrounds                */
+  /* ── Backgrounds (SaaS Light Mode) ─────────────────────────────────── */
+  --color-bg-base:       #f8fafc;   /* Ultra-soft cool grey canvas        */
+  --color-bg-surface:    #ffffff;   /* Pure white cards                   */
+  --color-bg-elevated:   #f1f5f9;   /* Subtle fills for inputs            */
+  --color-bg-overlay:    #e2e8f0;   /* Hover states, dropdowns            */
+  --color-bg-subtle:     #f8fafc;   /* Section backgrounds                */
 
   /* ── Borders ─────────────────────────────────────────────────────────── */
-  --color-border:        #e2e7ef;   /* Default borders                    */
-  --color-border-strong: #c8d0dc;   /* Prominent / active borders         */
+  --color-border:        #e2e8f0;   /* Extremely soft borders             */
+  --color-border-strong: #cbd5e1;   /* Hover/Focus borders                */
 
   /* ── Text ─────────────────────────────────────────────────────────────── */
-  --color-text-primary:  #0d1117;   /* Headings, main content             */
-  --color-text-secondary:#4b5668;   /* Descriptions, sub-labels           */
-  --color-text-muted:    #8693a6;   /* Placeholders, hints                */
-  --color-text-disabled: #b8c4d0;   /* Disabled                          */
+  --color-text-primary:  #0f172a;   /* Deep slate for headings            */
+  --color-text-secondary:#475569;   /* Softer slate for body text         */
+  --color-text-muted:    #94a3b8;   /* Placeholders, hints                */
+  --color-text-disabled: #cbd5e1;   /* Disabled states                    */
 
-  /* ── Primary Accent — Elegant Blue (Stripe-inspired) ─────────────────── */
-  --color-accent:        #2563eb;
-  --color-accent-hover:  #1d4ed8;
-  --color-accent-subtle: #eff6ff;
-  --color-accent-border: #bfdbfe;
+  /* ── Primary Accent — Modern Indigo ────────────────────────────────── */
+  --color-accent:        #4f46e5;
+  --color-accent-hover:  #4338ca;
+  --color-accent-subtle: #e0e7ff;
+  --color-accent-border: #c7d2fe;
 
   /* ── Semantic Colors ──────────────────────────────────────────────────── */
   --color-success:       #059669;
@@ -45,21 +45,22 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
   /* ── Radius ───────────────────────────────────────────────────────────── */
-  --radius-xs:   3px;
-  --radius-sm:   6px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-2xl:  20px;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;
+  --radius-3xl:  32px;
   --radius-full: 9999px;
 
-  /* ── Shadows (soft, light-mode optimized) ──────────────────────────────── */
-  --shadow-xs:  0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-sm:  0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-md:  0 4px 12px -1px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg:  0 10px 30px -3px rgb(0 0 0 / 0.08), 0 4px 12px -4px rgb(0 0 0 / 0.06);
-  --shadow-xl:  0 20px 50px -6px rgb(0 0 0 / 0.10), 0 8px 20px -6px rgb(0 0 0 / 0.06);
-  --shadow-glow: 0 0 24px 0 rgb(37 99 235 / 0.14);
+  /* ── Ultra-soft Diffused Shadows (SaaS aesthetic) ────────────────────── */
+  --shadow-xs:  0 1px 2px 0 rgb(0 0 0 / 0.02);
+  --shadow-sm:  0 2px 4px -1px rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+  --shadow-md:  0 8px 16px -4px rgb(0 0 0 / 0.04), 0 4px 6px -2px rgb(0 0 0 / 0.02);
+  --shadow-lg:  0 20px 32px -8px rgb(0 0 0 / 0.06), 0 12px 16px -4px rgb(0 0 0 / 0.03);
+  --shadow-xl:  0 32px 64px -12px rgb(0 0 0 / 0.08), 0 16px 24px -8px rgb(0 0 0 / 0.04);
+  --shadow-glow: 0 0 40px 0 rgb(79 70 229 / 0.12);
 }
 
 /* ─── Base Reset ─────────────────────────────────────────────────────────── */
@@ -81,9 +82,10 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  letter-spacing: -0.01em;
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -255,7 +257,7 @@ button, a, input, select, textarea {
   font-feature-settings: "tnum";
 }
 
-/* ─── Surface Variants ────────────────────────────────────────────────────── */
+/* ─── Surface Variants & Glassmorphism ────────────────────────────────────── */
 .surface-card {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
@@ -265,8 +267,15 @@ button, a, input, select, textarea {
 .surface-elevated {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
+}
+.surface-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ─── Divider ──────────────────────────────────────────────────────────────── */
