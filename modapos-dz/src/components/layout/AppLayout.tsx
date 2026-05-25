@@ -8,45 +8,63 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="flex h-full w-full overflow-hidden bg-[var(--color-bg-base)]">
+    <div className="flex h-screen w-full overflow-hidden bg-[#f6f8fb]">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {children ?? <Outlet />}
+
+      <main className="relative flex-1 min-w-0 overflow-hidden bg-[#f6f8fb]">
+        <div className="h-full overflow-y-auto">
+          {children ?? <Outlet />}
+        </div>
       </main>
     </div>
   );
 }
 
-// ── Page Header ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Page Header
+// ─────────────────────────────────────────────────────────────
+
 interface PageHeaderProps {
   title: string;
   description?: string;
   actions?: ReactNode;
 }
 
-export function PageHeader({ title, description, actions }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+}: PageHeaderProps) {
   return (
-    <div className="flex items-end justify-between gap-6 px-10 pt-8 pb-6 shrink-0 z-10 relative">
-      <div className="min-w-0">
-        <h1 className="text-[28px] font-bold text-[var(--color-text-primary)] leading-tight tracking-[-0.02em] animate-fade-fast">
-          {title}
-        </h1>
-        {description && (
-          <p className="mt-1 text-[14px] text-[var(--color-text-secondary)] font-normal animate-fade-fast" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
-            {description}
-          </p>
+    <div className="sticky top-0 z-20 bg-[#f6f8fb]/80 backdrop-blur-xl border-b border-neutral-200/60">
+      <div className="max-w-[1600px] mx-auto px-8 py-6 flex items-start justify-between gap-6">
+
+        <div className="min-w-0">
+          <h1 className="text-[32px] font-semibold tracking-tight text-neutral-900 leading-none">
+            {title}
+          </h1>
+
+          {description && (
+            <p className="mt-2 text-[15px] text-neutral-500 leading-relaxed">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {actions && (
+          <div className="flex items-center gap-3 shrink-0">
+            {actions}
+          </div>
         )}
       </div>
-      {actions && (
-        <div className="flex items-center gap-4 shrink-0 animate-fade-fast" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
-          {actions}
-        </div>
-      )}
     </div>
   );
 }
 
-// ── Page Content Wrapper ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Page Content
+// ─────────────────────────────────────────────────────────────
+
 export function PageContent({
   children,
   className,
@@ -55,10 +73,8 @@ export function PageContent({
   className?: string;
 }) {
   return (
-    <div className={`flex-1 overflow-y-auto scrollbar-thin ${className ?? ""}`}>
-      <div className="max-w-[1280px] mx-auto w-full px-10 pb-12 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
-        {children}
-      </div>
+    <div className={`max-w-[1600px] mx-auto w-full px-8 py-8 ${className ?? ""}`}>
+      {children}
     </div>
   );
 }
