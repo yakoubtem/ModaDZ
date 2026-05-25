@@ -1,10 +1,8 @@
-import { PageHeader, PageContent } from "@/components/layout/AppLayout";
+import { TopBar } from "@/components/layout/AppLayout";
 import { useSalesHistory } from "./hooks/useSalesHistory";
 import { SaleTable } from "./components/SaleTable";
 import { SaleFilters as SaleFiltersComponent } from "./components/SaleFilters";
 import { SaleDetailsModal } from "./components/SaleDetailsModal";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { Button } from "@/components/ui/Button";
 
 export function SalesPage() {
   const {
@@ -26,24 +24,29 @@ export function SalesPage() {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <>
-      <PageHeader title="Historique des ventes" description="Toutes les transactions" />
-      <PageContent>
-        <div className="flex flex-col gap-6">
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <TopBar title="Ventes" description="Historique de toutes vos transactions." />
+
+      <main style={{ padding: "var(--space-container)", maxWidth: 1440, margin: "0 auto", width: "100%" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Filters */}
           <SaleFiltersComponent
             filters={filters}
             onChange={setFilters}
             onReset={resetFilters}
             total={total}
           />
-          
-          <div className="flex-1 min-h-0 rounded-lg flex flex-col gap-4">
+
+          {/* Table container */}
+          <div
+            className="glass-panel"
+            style={{ borderRadius: "var(--radius-xl)", overflow: "hidden" }}
+          >
             {isLoading && sales.length === 0 ? (
-              <div className="space-y-3">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
+              <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: 48, borderRadius: 8 }} />
+                ))}
               </div>
             ) : (
               <SaleTable sales={sales} onView={openDetail} />
@@ -51,38 +54,44 @@ export function SalesPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-between items-center bg-[var(--color-bg-surface)] p-4 border border-[var(--color-border)] rounded-lg mt-2 shadow-[var(--shadow-sm)]">
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  Affichage de {(page - 1) * pageSize + 1} à{" "}
-                  {Math.min(page * pageSize, total)} sur {total} ventes
+              <div
+                style={{
+                  padding: "16px 24px",
+                  borderTop: "1px solid rgba(208,197,175,0.3)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  background: "rgba(245,243,238,0.3)",
+                }}
+              >
+                <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+                  Affichage de {(page - 1) * pageSize + 1} à {Math.min(page * pageSize, total)} sur {total} ventes
                 </p>
-                <div className="flex gap-2">
-                  <Button
-                    variant="secondary"
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    className="btn-border"
                     onClick={() => handlePageChange(Math.max(1, page - 1))}
                     disabled={page === 1}
+                    style={{ opacity: page === 1 ? 0.4 : 1 }}
                   >
-                    Précédent
-                  </Button>
-                  <Button
-                    variant="secondary"
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_left</span>
+                  </button>
+                  <button
+                    className="btn-border"
                     onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
+                    style={{ opacity: page === totalPages ? 0.4 : 1 }}
                   >
-                    Suivant
-                  </Button>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_right</span>
+                  </button>
                 </div>
               </div>
             )}
           </div>
         </div>
-      </PageContent>
-      
-      <SaleDetailsModal
-        isOpen={isDetailOpen}
-        onClose={closeDetail}
-        sale={detailSale}
-      />
-    </>
+      </main>
+
+      <SaleDetailsModal isOpen={isDetailOpen} onClose={closeDetail} sale={detailSale} />
+    </div>
   );
 }

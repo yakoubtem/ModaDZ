@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { ShoppingBag } from "lucide-react";
 import { usePOSSearch } from "./hooks/usePOSSearch";
 import { ProductSearch } from "./components/ProductSearch";
 import { ProductGrid } from "./components/ProductGrid";
@@ -10,24 +9,20 @@ import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import type { Product } from "@/types";
 
+const CATEGORIES = ["Tous les produits", "Sacs à main", "Chaussures", "Accessoires", "Prêt-à-porter"];
+
 export function POSPage() {
   const { query, setQuery, products, isSearching, clearSearch } = usePOSSearch();
-
   const isEmpty = useCartStore(cartSelectors.isEmpty);
-
-  // Modal states
+  const [activeCategory, setActiveCategory] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
-  // Auto-add: if search finds exactly 1 product with 1 variant → add it
   const handleEnterOnSearch = useCallback(() => {
     if (products.length === 1) {
       const product = products[0];
       const activeVariants = product.variants.filter((v) => v.stock > 0);
-      if (activeVariants.length === 1) {
-        setSelectedProduct(product);
-        // VariantPicker will handle adding and closing
-      } else if (activeVariants.length > 1) {
+      if (activeVariants.length >= 1) {
         setSelectedProduct(product);
       }
     } else if (products.length > 1) {
@@ -39,68 +34,97 @@ export function POSPage() {
     if (!isEmpty) setIsCheckoutOpen(true);
   }, [isEmpty]);
 
-  // ── Keyboard shortcuts ────────────────────────────────────
   useKeyboard({
-    // F1 → focus search bar
     F1: (e) => {
       e.preventDefault();
       const el = document.getElementById("pos-search") as HTMLInputElement | null;
       el?.focus();
       el?.select();
     },
-    // F9 → open checkout
     F9: (e) => {
       e.preventDefault();
       openCheckout();
     },
-    // Escape → close modals or clear search
     Escape: () => {
-      if (isCheckoutOpen) return; // let the modal handle it
-      if (selectedProduct) {
-        setSelectedProduct(null);
-        return;
-      }
+      if (isCheckoutOpen) return;
+      if (selectedProduct) { setSelectedProduct(null); return; }
       clearSearch();
     },
   });
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
       {/* ── Left: Product panel ── */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* POS top bar */}
-        <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-[0_1px_0_0_var(--color-border)]">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-[var(--color-accent)]" />
-              <span className="font-semibold text-[var(--color-text-primary)]">
-                Caisse
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] border-b-2 rounded text-[10px] text-[var(--color-text-secondary)] shadow-[var(--shadow-xs)]">
-                F1
-              </kbd>
-              <span>Recherche</span>
-              <span className="mx-1">·</span>
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] border-b-2 rounded text-[10px] text-[var(--color-text-secondary)] shadow-[var(--shadow-xs)]">
-                F9
-              </kbd>
-              <span>Payer</span>
-            </div>
+      <section
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          overflow: "hidden",
+        }}
+      >
+        {/* Search + filter bar */}
+        <div
+          style={{
+            position: "sticky",
+            top: 0,
+            background: "rgba(251,249,244,0.9)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            zIndex: 20,
+            padding: "16px var(--space-container) 16px",
+            borderBottom: "1px solid rgba(208,197,175,0.2)",
+          }}
+        >
+          {/* Search input */}
+          <div style={{ position: "relative", maxWidth: 640, marginBottom: "24px" }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: "absolute",
+                left: 16,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "var(--color-on-surface-variant)",
+                fontSize: 22,
+                pointerEvents: "none",
+              }}
+            >
+              search
+            </span>
+            <ProductSearch
+              query={query}
+              onChange={setQuery}
+              onClear={clearSearch}
+              isSearching={isSearching}
+              onEnter={handleEnterOnSearch}
+            />
           </div>
 
-          <ProductSearch
-            query={query}
-            onChange={setQuery}
-            onClear={clearSearch}
-            isSearching={isSearching}
-            onEnter={handleEnterOnSearch}
-          />
+          {/* Category chips */}
+          <div
+            style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px" }}
+            className="no-scrollbar"
+          >
+            {CATEGORIES.map((cat, i) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(i)}
+                className={`chip ${i === activeCategory ? "chip-active" : "chip-default"}`}
+                style={{ whiteSpace: "nowrap", cursor: "pointer", border: "none", fontFamily: "var(--font-body)" }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Product grid — scrollable */}
-        <div className="flex-1 overflow-y-auto p-4">
+        {/* Product grid */}
+        <div
+          style={{ flex: 1, overflowY: "auto", padding: "var(--space-container)" }}
+          className="no-scrollbar"
+        >
           <ProductGrid
             products={products}
             isSearching={isSearching}
@@ -108,24 +132,16 @@ export function POSPage() {
             onVariantNeeded={setSelectedProduct}
           />
         </div>
-      </div>
+      </section>
 
-      {/* ── Right: Cart panel (fixed width) ── */}
-      <div className="w-[360px] shrink-0 border-l border-[var(--color-border)] flex flex-col overflow-hidden">
-        <CartPanel onCheckout={openCheckout} />
-      </div>
+      {/* ── Right: Cart panel ── */}
+      <CartPanel onCheckout={openCheckout} />
 
       {/* ── Variant picker modal ── */}
-      <VariantPicker
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
+      <VariantPicker product={selectedProduct} onClose={() => setSelectedProduct(null)} />
 
       {/* ── Checkout modal ── */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-      />
+      <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
   );
 }

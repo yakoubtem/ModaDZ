@@ -1,7 +1,5 @@
-import { Package, AlertTriangle, Plus } from "lucide-react";
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cartStore";
 import { toast } from "sonner";
 
@@ -15,14 +13,10 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
 
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
   const isOutOfStock = totalStock === 0;
-  const isLowStock = !isOutOfStock && totalStock <= 10;
 
   const handleClick = () => {
     if (isOutOfStock) return;
-
     const activeVariants = product.variants.filter((v) => v.stock > 0);
-
-    // Single in-stock variant → add directly without picker
     if (activeVariants.length === 1) {
       const v = activeVariants[0];
       addItem({
@@ -39,84 +33,176 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
       toast.success(`${product.name} ajouté`, { duration: 1200 });
       return;
     }
-
-    // Multiple variants → open picker
     onVariantNeeded(product);
   };
 
   return (
-    <button
+    <div
+      className={`product-card${isOutOfStock ? " out-of-stock" : ""}`}
       onClick={handleClick}
-      disabled={isOutOfStock}
-      className={cn(
-        "group relative flex flex-col text-left",
-        "rounded-[var(--radius-xl)] border bg-[var(--color-bg-surface)]",
-        "transition-all duration-300 overflow-hidden shadow-[var(--shadow-xs)]",
-        isOutOfStock
-          ? "border-[var(--color-border)] opacity-50 cursor-not-allowed grayscale-[0.5]"
-          : "border-[var(--color-border)] hover:border-[var(--color-accent)]/50 hover:shadow-[var(--shadow-md)] hover:-translate-y-1 active:scale-[0.97] active:translate-y-0 cursor-pointer"
-      )}
+      style={{ cursor: isOutOfStock ? "default" : "pointer" }}
     >
-      {/* Product Image */}
-      <div className="aspect-square w-full bg-[var(--color-bg-subtle)] relative overflow-hidden">
+      {/* Image */}
+      <div
+        style={{
+          aspectRatio: "1",
+          background: "var(--color-surface-container-low)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
         {product.imagePath ? (
           <img
             src={`media://${product.imagePath}`}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.5s ease",
+            }}
+            className="product-card-img"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Package className="w-10 h-10 text-[var(--color-text-muted)]" />
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--color-outline)",
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 48 }}>image</span>
+          </div>
+        )}
+
+        {/* Stock badge */}
+        {!isOutOfStock && (
+          <div
+            style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              background: "rgba(255,255,255,0.9)",
+              backdropFilter: "blur(4px)",
+              padding: "2px 8px",
+              borderRadius: "var(--radius-sm)",
+              fontSize: "var(--text-label-sm)",
+              fontWeight: "var(--fw-label-sm)",
+              letterSpacing: "var(--ls-label-sm)",
+              color: "var(--color-primary)",
+            }}
+          >
+            En stock: {totalStock}
           </div>
         )}
 
         {/* Out of stock overlay */}
         {isOutOfStock && (
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center">
-            <span className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
-              Épuisé
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(251,249,244,0.2)",
+              backdropFilter: "blur(2px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span
+              style={{
+                background: "rgba(228,226,221,0.9)",
+                padding: "6px 12px",
+                borderRadius: "var(--radius-sm)",
+                fontSize: "var(--text-label-md)",
+                fontWeight: "var(--fw-label-md)",
+                letterSpacing: "var(--ls-label-md)",
+                color: "var(--color-on-surface-variant)",
+              }}
+            >
+              Rupture
             </span>
           </div>
         )}
-
-        {/* Low stock badge */}
-        {isLowStock && (
-          <div className="absolute top-2 left-2 flex items-center gap-1 bg-[var(--color-warning)] text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-            <AlertTriangle className="w-2.5 h-2.5" />
-            {totalStock}
-          </div>
-        )}
-
-        {/* Add overlay on hover */}
-        {!isOutOfStock && (
-          <div className="absolute inset-0 bg-[var(--color-accent)]/0 group-hover:bg-[var(--color-accent)]/8 transition-colors flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--color-accent)] rounded-full p-2 shadow-lg">
-              <Plus className="w-4 h-4 text-white" />
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Product Info */}
-      <div className="p-3.5 flex flex-col gap-1">
-        <p className="text-[13px] font-bold text-[var(--color-text-primary)] leading-tight line-clamp-2">
+      {/* Info */}
+      <div
+        style={{
+          padding: "16px",
+          opacity: isOutOfStock ? 0.7 : 1,
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "var(--text-body-lg)",
+            fontWeight: 600,
+            color: "var(--color-on-surface)",
+            marginBottom: "4px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {product.name}
+        </h3>
+        <p
+          style={{
+            fontSize: "var(--text-body-sm)",
+            color: "var(--color-secondary)",
+            marginBottom: "12px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {product.category?.name ?? ""}
         </p>
-        {product.category && (
-          <p className="text-[10px] text-[var(--color-text-muted)]">
-            {product.category.name}
-          </p>
-        )}
-        <div className="flex items-center justify-between mt-1">
-          <span className="text-sm font-bold text-[var(--color-accent)] tabular-nums">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "var(--text-headline-md)",
+              fontWeight: 700,
+              color: "var(--color-on-surface)",
+            }}
+          >
             {formatCurrency(product.price)}
           </span>
-          <span className="text-[10px] text-[var(--color-text-muted)]">
-            {product.variants.length} var.
-          </span>
+          {!isOutOfStock && (
+            <button
+              onClick={(e) => { e.stopPropagation(); handleClick(); }}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                background: "var(--color-surface-container-high)",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--color-on-surface)",
+                cursor: "pointer",
+                transition: "background 0.2s, color 0.2s",
+              }}
+              className="product-add-btn"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>add_shopping_cart</span>
+            </button>
+          )}
         </div>
       </div>
-    </button>
+
+      <style>{`
+        .product-card:hover .product-card-img { transform: scale(1.05); }
+        .product-card:hover .product-add-btn {
+          background: var(--color-primary-container) !important;
+          color: white !important;
+        }
+      `}</style>
+    </div>
   );
 }

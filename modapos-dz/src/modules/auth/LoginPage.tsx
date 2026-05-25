@@ -1,22 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, Store, Sparkles, ShoppingBag, Package, BarChart3 } from "lucide-react";
 import { useIPC } from "@/hooks/useIPC";
 import { useAuth } from "./AuthContext";
 import type { User } from "@/types";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-
-const features = [
-  { icon: ShoppingBag, title: "Caisse ultra-rapide", desc: "Encaissez en quelques secondes avec des raccourcis clavier" },
-  { icon: Package,     title: "Gestion des stocks",  desc: "Suivez vos produits et variantes en temps réel" },
-  { icon: BarChart3,   title: "Analytiques avancées",desc: "Visualisez vos performances et tendances" },
-];
 
 export function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const api = useIPC();
   const { login } = useAuth();
@@ -43,140 +35,345 @@ export function LoginPage() {
   };
 
   return (
-    <div className="h-full w-full flex overflow-hidden bg-[var(--color-bg-base)] animate-fade-in">
-      {/* ── Left Panel: Brand ────────────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[52%] xl:w-[55%] relative flex-col overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800" />
-
-        {/* Decorative circles */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-16 w-80 h-80 rounded-full bg-white/5" />
-        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-64 h-64 rounded-full bg-white/3" />
-
-        {/* Grid texture */}
+    <div
+      style={{
+        height: "100vh",
+        width: "100%",
+        display: "flex",
+        overflow: "hidden",
+        background: "var(--color-background)",
+        fontFamily: "var(--font-body)",
+      }}
+    >
+      {/* ── Left Panel: Brand ── */}
+      <div
+        style={{
+          display: "none",
+          width: "50%",
+          position: "relative",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "40px",
+          background: "rgba(228, 226, 221, 0.2)",
+          overflow: "hidden",
+        }}
+        className="login-left-panel"
+      >
+        {/* Ambient blobs */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
-            backgroundSize: "28px 28px",
+            position: "absolute",
+            top: "-20%",
+            left: "-10%",
+            width: 600,
+            height: 600,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(212,175,55,0.3) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: "-20%",
+            right: "-10%",
+            width: 800,
+            height: 800,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(115,92,0,0.1) 0%, transparent 70%)",
+            filter: "blur(100px)",
+            pointerEvents: "none",
           }}
         />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col h-full px-12 py-10">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[var(--radius-lg)] bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-              <Store className="w-4.5 h-4.5 text-white" />
-            </div>
-            <span className="text-white font-bold text-lg tracking-tight">ModaDZ</span>
-          </div>
+        {/* Top logo */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "var(--text-headline-md)",
+              fontWeight: 500,
+              color: "var(--color-on-surface)",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            ModaDZ
+            <span style={{ color: "var(--color-primary-container)" }}>.</span>
+          </h1>
+        </div>
 
-          {/* Main copy */}
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 w-fit mb-6">
-              <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-              <span className="text-blue-100 text-xs font-medium">Point of Sale Premium</span>
-            </div>
-
-            <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-[1.1] tracking-tight mb-4">
-              Gérez votre
-              <br />
-              <span className="text-blue-200">boutique</span>
-              <br />
-              intelligemment
-            </h1>
-
-            <p className="text-blue-100/80 text-base leading-relaxed max-w-sm">
-              La solution tout-en-un pour les magasins de vêtements algériens. Rapide, élégante, efficace.
+        {/* Center content */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: "64px" }}>
+          <div>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "var(--text-display-lg)",
+                fontWeight: "var(--fw-display-lg)",
+                lineHeight: "var(--lh-display-lg)",
+                letterSpacing: "var(--ls-display-lg)",
+                color: "var(--color-on-surface)",
+                marginBottom: "24px",
+                maxWidth: "480px",
+              }}
+            >
+              L'élégance au service de la performance.
+            </h2>
+            <p
+              style={{
+                fontSize: "var(--text-body-lg)",
+                color: "var(--color-on-surface-variant)",
+                maxWidth: "400px",
+                lineHeight: "var(--lh-body-lg)",
+              }}
+            >
+              Une expérience de vente repensée pour les boutiques d'exception. Gérez vos transactions avec précision et fluidité.
             </p>
+          </div>
 
-            {/* Feature list */}
-            <div className="mt-10 space-y-4">
-              {features.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-3.5">
-                  <div className="w-8 h-8 rounded-[var(--radius-md)] bg-white/10 border border-white/15 flex items-center justify-center shrink-0 mt-0.5">
-                    <Icon className="w-4 h-4 text-blue-200" />
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-semibold">{title}</p>
-                    <p className="text-blue-200/70 text-xs mt-0.5 leading-relaxed">{desc}</p>
-                  </div>
+          {/* Feature cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "420px" }}>
+            {[
+              { icon: "speed", title: "Encaissement Ultra-Rapide", desc: "Fluidifiez le passage en caisse." },
+              { icon: "inventory_2", title: "Gestion d'Inventaire Précise", desc: "Suivi en temps réel des stocks." },
+            ].map((f) => (
+              <div key={f.icon} className="glass-login" style={{ padding: "16px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "16px" }}>
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: "rgba(251,249,244,0.8)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-primary-container)",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    {f.icon}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-on-surface)", marginBottom: "2px" }}>{f.title}</p>
+                  <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)" }}>{f.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* Footer */}
-          <div className="flex items-center gap-2 text-blue-300/60 text-xs">
-            <Lock className="w-3 h-3" />
-            <span>Session locale sécurisée — vos données restent sur votre machine</span>
-          </div>
+        {/* Footer */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", color: "rgba(79,70,53,0.6)", textTransform: "uppercase" }}>
+            Système POS Premium © 2024
+          </p>
         </div>
       </div>
 
-      {/* ── Right Panel: Login Form ──────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 overflow-y-auto">
-        <div className="w-full max-w-[360px] animate-slide-up">
-          {/* Mobile logo (visible on small screens only) */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-[var(--radius-lg)] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-[var(--shadow-md)]">
-              <Store className="w-4.5 h-4.5 text-white" />
-            </div>
-            <span className="text-[var(--color-text-primary)] font-bold text-lg">ModaDZ</span>
-          </div>
-
+      {/* ── Right Panel: Login Form ── */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "48px 32px",
+          background: "var(--color-surface)",
+          overflowY: "auto",
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: 420, display: "flex", flexDirection: "column" }}>
           {/* Header */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] tracking-tight">
+          <div style={{ marginBottom: "48px" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "var(--text-headline-lg)",
+                fontWeight: "var(--fw-headline-lg)",
+                color: "var(--color-on-surface)",
+                marginBottom: "8px",
+              }}
+            >
               Bon retour 👋
             </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] mt-1.5">
-              Connectez-vous à votre espace de gestion
+            <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-on-surface-variant)" }}>
+              Veuillez vous connecter pour accéder à votre espace de vente.
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              label="Nom d'utilisateur"
-              placeholder="votre_identifiant"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-              autoComplete="username"
-            />
-            <Input
-              label="Mot de passe"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            {/* Username */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label
+                htmlFor="username"
+                style={{
+                  fontSize: "var(--text-label-sm)",
+                  fontWeight: "var(--fw-label-sm)",
+                  letterSpacing: "var(--ls-label-sm)",
+                  color: "var(--color-on-surface)",
+                  textTransform: "uppercase",
+                }}
+              >
+                Identifiant
+              </label>
+              <div style={{ position: "relative" }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: "absolute",
+                    left: 16,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "var(--color-on-surface-variant)",
+                    pointerEvents: "none",
+                    fontSize: 22,
+                  }}
+                >
+                  person
+                </span>
+                <input
+                  id="username"
+                  type="text"
+                  className="input-glass"
+                  style={{ paddingLeft: 48, paddingTop: 16, paddingBottom: 16 }}
+                  placeholder="nom@boutique.com"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  autoFocus
+                  autoComplete="username"
+                />
+              </div>
+            </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full mt-2"
-              disabled={isLoading || !username || !password}
-              isLoading={isLoading}
-            >
-              {isLoading ? "Connexion..." : "Se connecter"}
-            </Button>
+            {/* Password */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label
+                  htmlFor="password"
+                  style={{
+                    fontSize: "var(--text-label-sm)",
+                    fontWeight: "var(--fw-label-sm)",
+                    letterSpacing: "var(--ls-label-sm)",
+                    color: "var(--color-on-surface)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Mot de passe
+                </label>
+                <a
+                  href="#"
+                  style={{
+                    fontSize: "var(--text-label-sm)",
+                    fontWeight: "var(--fw-label-sm)",
+                    letterSpacing: "var(--ls-label-sm)",
+                    color: "var(--color-primary)",
+                    textDecoration: "none",
+                  }}
+                >
+                  Oublié ?
+                </a>
+              </div>
+              <div style={{ position: "relative" }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: "absolute",
+                    left: 16,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "var(--color-on-surface-variant)",
+                    pointerEvents: "none",
+                    fontSize: 22,
+                  }}
+                >
+                  lock
+                </span>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className="input-glass"
+                  style={{ paddingLeft: 48, paddingRight: 48, paddingTop: 16, paddingBottom: 16 }}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "var(--color-on-surface-variant)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+                    {showPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <div style={{ marginTop: "16px" }}>
+              <button
+                type="submit"
+                className="btn-login"
+                disabled={isLoading || !username || !password}
+                style={{ opacity: isLoading || !username || !password ? 0.6 : 1 }}
+              >
+                {isLoading ? "Connexion..." : "Se connecter"}
+                {!isLoading && (
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    arrow_forward
+                  </span>
+                )}
+              </button>
+            </div>
           </form>
 
-          {/* Security notice */}
-          <div className="flex items-center justify-center gap-1.5 mt-8 text-[var(--color-text-muted)] text-xs">
-            <Lock className="w-3 h-3" />
-            <span>Session sécurisée locale</span>
+          {/* Security note */}
+          <div
+            style={{
+              marginTop: "48px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              color: "var(--color-on-surface-variant)",
+              opacity: 0.7,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>gpp_good</span>
+            <span style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
+              Session sécurisée locale
+            </span>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .login-left-panel { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }
