@@ -29,24 +29,21 @@ export function Sidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="w-[280px] flex flex-col h-full bg-[var(--color-bg-surface)] shadow-[var(--shadow-md)] relative z-20">
+    <aside className="w-[256px] flex flex-col h-full bg-[var(--color-bg-subtle)] border-r border-[var(--color-border)] relative z-20">
       {/* ── Brand / Logo ── */}
-      <div className="h-[88px] px-8 flex items-center gap-4">
-        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-hover)] flex items-center justify-center shadow-[var(--shadow-sm)] shadow-[var(--color-accent)]/20">
-          <Shirt className="w-6 h-6 text-white stroke-[2px]" />
+      <div className="h-[72px] px-6 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-[var(--color-text-primary)] flex items-center justify-center shadow-[var(--shadow-xs)]">
+          <Shirt className="w-4 h-4 text-[var(--color-bg-surface)] stroke-[2px]" />
         </div>
         <div>
-          <h1 className="text-[22px] font-extrabold tracking-tight text-[var(--color-text-primary)] leading-none">
+          <h1 className="text-[16px] font-bold tracking-tight text-[var(--color-text-primary)] leading-none">
             ModaDZ
           </h1>
-          <p className="text-[11px] uppercase tracking-[0.15em] font-bold text-[var(--color-text-muted)] mt-1.5">
-            Point de vente
-          </p>
         </div>
       </div>
 
       {/* ── Navigation ── */}
-      <nav className="flex-1 overflow-y-auto py-4 px-5 space-y-2 scrollbar-none">
+      <nav className="flex-1 overflow-y-auto py-2 px-3 space-y-1 scrollbar-none">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
@@ -55,10 +52,10 @@ export function Sidebar() {
               to={item.path}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3.5 px-4 py-3.5 rounded-[var(--radius-xl)] font-semibold transition-all duration-300 group relative overflow-hidden",
+                  "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] font-medium transition-all duration-200 group",
                   isActive
-                    ? "text-[var(--color-accent)] bg-[var(--color-accent-subtle)]/70 shadow-[var(--shadow-sm)]"
-                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)]/50"
+                    ? "text-[var(--color-text-primary)] bg-[var(--color-bg-surface)] shadow-[var(--shadow-xs)] border border-[var(--color-border)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] border border-transparent"
                 )
               }
             >
@@ -66,11 +63,11 @@ export function Sidebar() {
                 <>
                   <Icon 
                     className={cn(
-                      "w-[22px] h-[22px] shrink-0 transition-transform duration-300",
-                      isActive ? "stroke-[2.5px] scale-105" : "stroke-[2px] group-hover:scale-110"
+                      "w-[18px] h-[18px] shrink-0 transition-transform duration-200",
+                      isActive ? "stroke-[2px] text-[var(--color-text-primary)]" : "stroke-[1.5px] group-hover:text-[var(--color-text-primary)]"
                     )} 
                   />
-                  <span className="text-[15px] tracking-tight">
+                  <span className="text-[13px] tracking-tight">
                     {item.name}
                   </span>
                 </>
@@ -81,13 +78,13 @@ export function Sidebar() {
       </nav>
 
       {/* ── Footer ── */}
-      <div className="p-5">
+      <div className="p-3">
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[var(--radius-xl)] text-[var(--color-text-secondary)] font-semibold transition-all hover:bg-[var(--color-danger-subtle)] hover:text-[var(--color-danger)] active:scale-[0.98] group"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-[var(--color-text-secondary)] font-medium transition-all hover:bg-[var(--color-danger-subtle)] hover:text-[var(--color-danger)] active:scale-[0.98] group"
         >
-          <LogOut className="w-[22px] h-[22px] stroke-[2px] transition-transform group-hover:-translate-x-1" />
-          <span className="text-[15px]">Déconnexion</span>
+          <LogOut className="w-[18px] h-[18px] stroke-[1.5px] transition-transform group-hover:-translate-x-1 group-hover:text-[var(--color-danger)]" />
+          <span className="text-[13px]">Déconnexion</span>
         </button>
       </div>
     </aside>

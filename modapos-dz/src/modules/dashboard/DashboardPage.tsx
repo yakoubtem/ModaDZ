@@ -15,15 +15,15 @@ export function DashboardPage() {
         title="Tableau de bord"
         description="Vue d'ensemble en temps réel de l'activité du magasin"
       />
-      <PageContent className="space-y-8">
+      <PageContent className="space-y-6">
         <div className="animate-slide-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
           <KPICards kpis={data?.kpis} isLoading={isLoading} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-slide-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-          <div className="lg:col-span-8 flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-slide-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+          <div className="lg:col-span-8 flex flex-col gap-6">
             <RevenueChart data={data?.revenueChart} isLoading={isLoading} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <PaymentDistributionChart data={data?.paymentMethods} isLoading={isLoading} />
               <TopProductsList products={data?.topProducts} isLoading={isLoading} />
             </div>

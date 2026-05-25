@@ -24,11 +24,11 @@ const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
-  "icon-sm": "h-8 w-8 rounded-[var(--radius-lg)]",
-  sm: "h-9 px-4 text-[13px] rounded-[var(--radius-xl)]",
-  md: "h-11 px-6 text-[14px] rounded-[var(--radius-xl)]",
-  lg: "h-12 px-8 text-[15px] rounded-[var(--radius-2xl)]",
-  icon: "h-11 w-11 rounded-full",
+  "icon-sm": "h-8 w-8 rounded-[var(--radius-md)]",
+  sm: "h-8 px-3 text-xs rounded-[var(--radius-md)]",
+  md: "h-9 px-4 text-[13px] rounded-[var(--radius-md)]",
+  lg: "h-10 px-5 text-[14px] rounded-[var(--radius-lg)]",
+  icon: "h-9 w-9 rounded-full",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

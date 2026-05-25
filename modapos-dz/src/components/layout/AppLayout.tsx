@@ -26,13 +26,13 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <div className="flex items-end justify-between gap-6 px-8 lg:px-12 pt-10 pb-6 shrink-0 z-10 relative">
+    <div className="flex items-end justify-between gap-6 px-10 pt-8 pb-6 shrink-0 z-10 relative">
       <div className="min-w-0">
-        <h1 className="text-3xl lg:text-4xl font-extrabold text-[var(--color-text-primary)] leading-tight tracking-[-0.03em] animate-fade-fast">
+        <h1 className="text-[28px] font-bold text-[var(--color-text-primary)] leading-tight tracking-[-0.02em] animate-fade-fast">
           {title}
         </h1>
         {description && (
-          <p className="mt-2.5 text-[15px] lg:text-[16px] text-[var(--color-text-secondary)] leading-relaxed font-medium animate-fade-fast" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
+          <p className="mt-1 text-[14px] text-[var(--color-text-secondary)] font-normal animate-fade-fast" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
             {description}
           </p>
         )}
@@ -56,7 +56,7 @@ export function PageContent({
 }) {
   return (
     <div className={`flex-1 overflow-y-auto scrollbar-thin ${className ?? ""}`}>
-      <div className="max-w-[1600px] mx-auto w-full px-8 lg:px-12 pb-12 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
+      <div className="max-w-[1280px] mx-auto w-full px-10 pb-12 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
         {children}
       </div>
     </div>

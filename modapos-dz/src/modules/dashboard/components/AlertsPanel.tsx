@@ -15,11 +15,11 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
     return (
       <div className="flex flex-col gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] flex flex-col gap-6">
+          <div key={i} className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] flex flex-col gap-6">
             <Skeleton className="h-5 w-40" />
             <div className="space-y-4">
               {[...Array(4)].map((_, j) => (
-                <Skeleton key={j} className="h-12 w-full" />
+                <Skeleton key={j} className="h-10 w-full" />
               ))}
             </div>
           </div>
@@ -31,12 +31,12 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
   return (
     <div className="flex flex-col gap-6 h-full">
       {/* ── Low Stock Alerts ── */}
-      <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow-md)] flex flex-col h-[340px]">
-        <h3 className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em] mb-6 flex items-center gap-2.5">
-          <AlertTriangle className="w-5 h-5 text-amber-500" />
+      <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)] flex flex-col h-[340px]">
+        <h3 className="text-[14px] font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-500" />
           Alertes de stock
           {lowStock.length > 0 && (
-            <span className="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-100">
+            <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-100">
               {lowStock.length}
             </span>
           )}
@@ -75,9 +75,9 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
       </div>
 
       {/* ── Recent Sales Feed ── */}
-      <div className="bg-[var(--color-bg-surface)] p-8 rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow-md)] flex flex-col flex-1 min-h-0">
-        <h3 className="text-[13px] font-bold text-[var(--color-text-secondary)] uppercase tracking-[0.1em] mb-6 flex items-center gap-2.5">
-          <Clock className="w-5 h-5 text-[var(--color-text-muted)]" />
+      <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)] flex flex-col flex-1 min-h-0">
+        <h3 className="text-[14px] font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-[var(--color-text-muted)]" />
           Ventes récentes
         </h3>
 
