@@ -328,40 +328,130 @@ select {
    ─────────────────────────────────────────────────────────────────── */
 
 /* Backgrounds */
-.bg-background { background-color: var(--color-background); }
-.bg-surface { background-color: var(--color-surface); }
-.bg-surface-dim { background-color: var(--color-surface-dim); }
-.bg-surface-variant { background-color: var(--color-surface-variant); }
-.bg-surface-container-lowest { background-color: var(--color-surface-container-lowest); }
-.bg-surface-container-low { background-color: var(--color-surface-container-low); }
-.bg-surface-container { background-color: var(--color-surface-container); }
-.bg-surface-container-high { background-color: var(--color-surface-container-high); }
-.bg-surface-container-highest { background-color: var(--color-surface-container-highest); }
+.bg-background {
+  background-color: var(--color-background);
+}
 
-.bg-primary { background-color: var(--color-primary); }
-.bg-primary-container { background-color: var(--color-primary-container); }
-.bg-secondary { background-color: var(--color-secondary); }
-.bg-secondary-container { background-color: var(--color-secondary-container); }
-.bg-tertiary { background-color: var(--color-tertiary); }
-.bg-tertiary-container { background-color: var(--color-tertiary-container); }
-.bg-error { background-color: var(--color-error); }
-.bg-error-container { background-color: var(--color-error-container); }
-.bg-charcoal { background-color: var(--color-charcoal); }
-.bg-sand { background-color: var(--color-sand); }
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.bg-surface-dim {
+  background-color: var(--color-surface-dim);
+}
+
+.bg-surface-variant {
+  background-color: var(--color-surface-variant);
+}
+
+.bg-surface-container-lowest {
+  background-color: var(--color-surface-container-lowest);
+}
+
+.bg-surface-container-low {
+  background-color: var(--color-surface-container-low);
+}
+
+.bg-surface-container {
+  background-color: var(--color-surface-container);
+}
+
+.bg-surface-container-high {
+  background-color: var(--color-surface-container-high);
+}
+
+.bg-surface-container-highest {
+  background-color: var(--color-surface-container-highest);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-primary-container {
+  background-color: var(--color-primary-container);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-secondary-container {
+  background-color: var(--color-secondary-container);
+}
+
+.bg-tertiary {
+  background-color: var(--color-tertiary);
+}
+
+.bg-tertiary-container {
+  background-color: var(--color-tertiary-container);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.bg-error-container {
+  background-color: var(--color-error-container);
+}
+
+.bg-charcoal {
+  background-color: var(--color-charcoal);
+}
+
+.bg-sand {
+  background-color: var(--color-sand);
+}
 
 /* Text colors */
-.text-on-surface { color: var(--color-on-surface); }
-.text-on-surface-variant { color: var(--color-on-surface-variant); }
-.text-on-background { color: var(--color-on-background); }
-.text-primary { color: var(--color-primary); }
-.text-primary-container { color: var(--color-primary-container); }
-.text-on-primary-container { color: var(--color-on-primary-container); }
-.text-secondary { color: var(--color-secondary); }
-.text-tertiary { color: var(--color-tertiary); }
-.text-error { color: var(--color-error); }
-.text-on-error-container { color: var(--color-on-error-container); }
-.text-outline { color: var(--color-outline); }
-.text-outline-variant { color: var(--color-outline-variant); }
+.text-on-surface {
+  color: var(--color-on-surface);
+}
+
+.text-on-surface-variant {
+  color: var(--color-on-surface-variant);
+}
+
+.text-on-background {
+  color: var(--color-on-background);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-primary-container {
+  color: var(--color-primary-container);
+}
+
+.text-on-primary-container {
+  color: var(--color-on-primary-container);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-tertiary);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-on-error-container {
+  color: var(--color-on-error-container);
+}
+
+.text-outline {
+  color: var(--color-outline);
+}
+
+.text-outline-variant {
+  color: var(--color-outline-variant);
+}
 
 /* ───────────────────────────────────────────────────────────────────
    GLASS CARD — Stitch's signature glass panel look
@@ -960,18 +1050,37 @@ select {
    ─────────────────────────────────────────────────────────────────── */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-fade-in {
@@ -1046,7 +1155,7 @@ select {
     margin: 3mm 4mm;
   }
 
-  body > * {
+  body>* {
     display: none !important;
   }
 

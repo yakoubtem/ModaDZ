@@ -29,10 +29,10 @@ const LABELS: Record<string, string> = {
 export function PaymentDistributionChart({ data, isLoading }: PaymentDistributionChartProps) {
   if (isLoading || !data) {
     return (
-      <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col gap-6 shadow-[var(--shadow-sm)]">
-        <Skeleton className="h-6 w-48" />
+      <>
+        <Skeleton className="h-6 w-48 mb-4" />
         <Skeleton className="flex-1 w-full rounded-full" />
-      </div>
+      </>
     );
   }
 
@@ -46,12 +46,32 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
   const hasData = formattedData.reduce((acc, d) => acc + d.value, 0) > 0;
 
   return (
-    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col shadow-[var(--shadow-sm)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]">
-      <h3 className="text-[14px] font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+    <>
+      <h3
+        style={{
+          fontSize: "var(--text-label-md)",
+          fontWeight: "var(--fw-label-md)",
+          letterSpacing: "var(--ls-label-md)",
+          color: "var(--color-secondary)",
+          marginBottom: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "#f59e0b",
+            display: "inline-block",
+            flexShrink: 0,
+          }}
+        />
         Répartition des paiements
       </h3>
-      <div className="flex-1 min-h-0 relative">
+      <div style={{ flex: 1, minHeight: 0, position: "relative", height: "100%" }}>
         {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -96,6 +116,6 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

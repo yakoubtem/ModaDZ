@@ -19,20 +19,40 @@ interface RevenueChartProps {
 export function RevenueChart({ data, isLoading }: RevenueChartProps) {
   if (isLoading || !data) {
     return (
-    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col gap-6 shadow-[var(--shadow-sm)]">
-        <Skeleton className="h-6 w-48" />
+      <>
+        <Skeleton className="h-6 w-48 mb-4" />
         <Skeleton className="flex-1 w-full" />
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col shadow-[var(--shadow-sm)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]">
-      <h3 className="text-[14px] font-semibold text-[var(--color-text-primary)] flex items-center gap-2 mb-4">
-        <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block" />
+    <>
+      <h3
+        style={{
+          fontSize: "var(--text-label-md)",
+          fontWeight: "var(--fw-label-md)",
+          letterSpacing: "var(--ls-label-md)",
+          color: "var(--color-secondary)",
+          marginBottom: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "var(--color-primary-container)",
+            display: "inline-block",
+            flexShrink: 0,
+          }}
+        />
         Évolution du chiffre d'affaires
       </h3>
-      <div className="flex-1 min-h-0">
+      <div style={{ flex: 1, minHeight: 0, height: "100%" }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
@@ -90,6 +110,6 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </>
   );
 }

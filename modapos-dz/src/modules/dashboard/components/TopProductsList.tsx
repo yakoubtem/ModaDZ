@@ -18,58 +18,96 @@ const rankColors = [
 export function TopProductsList({ products, isLoading }: TopProductsListProps) {
   if (isLoading || !products) {
     return (
-      <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col gap-6 shadow-[var(--shadow-sm)]">
-        <Skeleton className="h-5 w-48" />
-        <div className="space-y-4 flex-1">
+      <>
+        <Skeleton className="h-5 w-48 mb-4" />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
           {[...Array(4)].map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />
           ))}
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="bg-[var(--color-bg-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] h-[400px] flex flex-col shadow-[var(--shadow-sm)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)] overflow-hidden">
-      <div className="mb-4">
-        <h3 className="text-[14px] font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-amber-500" />
+    <>
+      <div style={{ marginBottom: 16 }}>
+        <h3
+          style={{
+            fontSize: "var(--text-label-md)",
+            fontWeight: "var(--fw-label-md)",
+            letterSpacing: "var(--ls-label-md)",
+            color: "var(--color-secondary)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <Trophy className="w-4 h-4" style={{ color: "#f59e0b" }} />
           Meilleures ventes (30j)
         </h3>
-        <p className="text-[12px] text-[var(--color-text-muted)] mt-1 ml-6">
+        <p
+          style={{
+            fontSize: 12,
+            color: "var(--color-outline)",
+            marginTop: 4,
+            marginLeft: 24,
+          }}
+        >
           Articles générant le plus de revenus
         </p>
       </div>
 
-      <div className="space-y-1.5 mt-5 flex-1 overflow-y-auto pr-1">
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 20, flex: 1, overflowY: "auto", paddingRight: 4 }}>
         {products.length === 0 ? (
-          <p className="text-[var(--color-text-muted)] text-sm py-8 text-center italic">
+          <p style={{ color: "var(--color-outline)", fontSize: 14, padding: "32px 0", textAlign: "center", fontStyle: "italic" }}>
             Aucune vente enregistrée
           </p>
         ) : (
           products.map((product, idx) => {
-            const rank = rankColors[idx] ?? { bg: "bg-[var(--color-bg-elevated)]", text: "text-[var(--color-text-muted)]", border: "border-[var(--color-border)]" };
+            const rankBg = idx === 0 ? "#fffbeb" : idx === 1 ? "#f8fafc" : idx === 2 ? "#fff7ed" : "var(--color-surface-container)";
+            const rankText = idx === 0 ? "#d97706" : idx === 1 ? "#64748b" : idx === 2 ? "#f97316" : "var(--color-outline)";
             return (
               <div
                 key={product.id}
-                className="flex items-center gap-3.5 py-2 px-2.5 rounded-xl hover:bg-[var(--color-bg-subtle)] transition-colors border border-transparent hover:border-neutral-100"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "8px 10px",
+                  borderRadius: 12,
+                  border: "1px solid transparent",
+                  cursor: "default",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "var(--color-surface-container-low)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
               >
                 {/* Rank badge */}
                 <div
-                  className={cn(
-                    "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border",
-                    rank.bg, rank.text, rank.border
-                  )}
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    background: rankBg,
+                    color: rankText,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    flexShrink: 0,
+                  }}
                 >
                   {idx + 1}
                 </div>
 
                 {/* Product info */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {product.name}
                   </p>
-                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                  <p style={{ fontSize: 12, color: "var(--color-outline)", marginTop: 2 }}>
                     {product.size && product.color
                       ? `${product.size} / ${product.color}`
                       : `Variante #${product.id}`}
@@ -77,11 +115,11 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
                 </div>
 
                 {/* Stats */}
-                <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-[var(--color-text-primary)] tabular-nums">
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-on-surface)", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(product.revenueGenerated)}
                   </p>
-                  <p className="text-[11px] text-[var(--color-accent)] font-semibold mt-0.5">
+                  <p style={{ fontSize: 11, color: "var(--color-primary)", fontWeight: 600, marginTop: 2 }}>
                     {product.quantitySold} vendus
                   </p>
                 </div>
@@ -90,6 +128,6 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
           })
         )}
       </div>
-    </div>
+    </>
   );
 }
