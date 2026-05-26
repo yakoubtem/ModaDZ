@@ -2,14 +2,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 const NAV_ITEMS = [
-  { name: "Dashboard",  path: "/dashboard", icon: "dashboard" },
-  { name: "POS",        path: "/pos",        icon: "point_of_sale" },
-  { name: "Products",   path: "/products",   icon: "inventory_2" },
-  { name: "Inventory",  path: "/inventory",  icon: "warehouse" },
-  { name: "Customers",  path: "/customers",  icon: "group" },
-  { name: "Sales",      path: "/sales",      icon: "payments" },
-  { name: "Stats",      path: "/stats",      icon: "leaderboard" },
-  { name: "Settings",   path: "/settings",   icon: "settings" },
+  { name: "Tableau de bord",  path: "/dashboard", icon: "dashboard" },
+  { name: "Point de vente",   path: "/pos",        icon: "point_of_sale" },
+  { name: "Produits",         path: "/products",   icon: "inventory_2" },
+  { name: "Inventaire",       path: "/inventory",  icon: "warehouse" },
+  { name: "Clients",          path: "/customers",  icon: "group" },
+  { name: "Ventes",           path: "/sales",      icon: "payments" },
+  { name: "Statistiques",     path: "/stats",      icon: "leaderboard" },
+  { name: "Paramètres",       path: "/settings",   icon: "settings" },
 ];
 
 export function Sidebar() {
@@ -21,7 +21,7 @@ export function Sidebar() {
       {/* ── Brand ── */}
       <div style={{ marginBottom: "40px" }}>
         <h1 className="sidebar-logo-title">ModaDZ</h1>
-        <p className="sidebar-logo-sub">Luxury Retail POS</p>
+        <p className="sidebar-logo-sub">Vente au détail de luxe</p>
       </div>
 
       {/* ── CTA ── */}
@@ -31,7 +31,7 @@ export function Sidebar() {
         onClick={() => navigate("/pos")}
       >
         <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-        New Transaction
+        Nouvelle transaction
       </button>
 
       {/* ── Navigation ── */}
@@ -87,7 +87,7 @@ export function Sidebar() {
           </span>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <span style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.05em" }}>
-              {user?.name || "User Profile"}
+              {user?.name || "Profil utilisateur"}
             </span>
             <span
               style={{
@@ -98,7 +98,7 @@ export function Sidebar() {
                 letterSpacing: "normal",
               }}
             >
-              {user?.role || "Manager"}
+              {user?.role || "Responsable"}
             </span>
           </div>
         </button>
