@@ -9,7 +9,6 @@ interface CartPanelProps {
 export function CartPanel({ onCheckout }: CartPanelProps) {
   const items = useCartStore((s) => s.items);
   const cartDiscount = useCartStore((s) => s.cartDiscount);
-  const setCartDiscount = useCartStore((s) => s.setCartDiscount);
   const clearCart = useCartStore((s) => s.clearCart);
 
   const subtotal = useCartStore(cartSelectors.subtotal);

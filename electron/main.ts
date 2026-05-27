@@ -8,7 +8,29 @@ import {
   session,
 } from "electron";
 import path from "path";
+import fs from "fs";
 import { pathToFileURL } from "url";
+
+// Initialize DATABASE_URL for Prisma to use a persistent writeable path in both dev and production
+const isDev = process.env.NODE_ENV === "development";
+const dbDir = isDev
+  ? path.join(app.getAppPath(), "prisma", "prisma")
+  : path.join(app.getPath("userData"), "prisma");
+const dbPath = path.join(dbDir, "store.db");
+
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+if (!isDev && !fs.existsSync(dbPath)) {
+  const seedDbPath = path.join(app.getAppPath(), "prisma", "prisma", "store.db");
+  if (fs.existsSync(seedDbPath)) {
+    fs.copyFileSync(seedDbPath, dbPath);
+  }
+}
+
+process.env.DATABASE_URL = `file:${dbPath}`;
+
 import { registerProductHandlers } from "./handlers/products";
 import { registerCategoryHandlers } from "./handlers/categories";
 import { registerSaleHandlers } from "./handlers/sales";
@@ -19,7 +41,6 @@ import { registerDashboardHandlers } from "./handlers/dashboard";
 import { registerSettingsHandlers } from "./handlers/settings";
 import { registerBackupHandlers } from "./handlers/backups";
 
-const isDev = process.env.NODE_ENV === "development";
 
 // MUST be called before app.whenReady()
 // Registers media:// as a privileged scheme so the renderer can use it

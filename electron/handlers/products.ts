@@ -79,15 +79,22 @@ export function registerProductHandlers(ipcMain: IpcMain) {
   // ─── Create ───────────────────────────────────────────────
   ipcMain.handle("products:create", async (_e, data: ProductInput) => {
     const { variants, ...productData } = data;
-    return prisma.product.create({
-      data: {
-        ...productData,
-        variants: {
-          create: (variants ?? []).map(({ id: _id, ...v }) => v),
+    try {
+      return await prisma.product.create({
+        data: {
+          ...productData,
+          variants: {
+            create: (variants ?? []).map(({ id: _id, ...v }) => v),
+          },
         },
-      },
-      include: { category: true, variants: true },
-    });
+        include: { category: true, variants: true },
+      });
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new Error("Un produit avec ce SKU existe déjà.");
+      }
+      throw error;
+    }
   });
 
   // ─── Update (smart variant upsert) ────────────────────────
@@ -96,57 +103,79 @@ export function registerProductHandlers(ipcMain: IpcMain) {
     async (_e, id: number, data: ProductInput) => {
       const { variants, ...productData } = data;
 
-      return prisma.$transaction(async (tx) => {
-        // Find existing variant IDs for this product
-        const existing = await tx.productVariant.findMany({
-          where: { productId: id },
-          select: { id: true },
-        });
-        const existingIds = existing.map((v) => v.id);
-        const submittedIds = (variants ?? [])
-          .filter((v) => v.id !== undefined)
-          .map((v) => v.id as number);
+      try {
+        return await prisma.$transaction(async (tx) => {
+          // Get old product to see if imagePath changed
+          const oldProduct = await tx.product.findUnique({
+            where: { id },
+            select: { imagePath: true },
+          });
 
-        // Delete variants no longer in the form (only if not referenced by sales)
-        const toDelete = existingIds.filter((vid) => !submittedIds.includes(vid));
-        for (const variantId of toDelete) {
-          const count = await tx.saleItem.count({ where: { variantId } });
-          if (count === 0) {
-            await tx.productVariant.delete({ where: { id: variantId } });
+          if (oldProduct && oldProduct.imagePath && oldProduct.imagePath !== productData.imagePath) {
+            try {
+              const oldFullPath = path.join(app.getPath("userData"), oldProduct.imagePath);
+              if (fs.existsSync(oldFullPath)) fs.unlinkSync(oldFullPath);
+            } catch (err) {
+              console.error("Error deleting old image:", err);
+            }
           }
-        }
 
-        // Upsert submitted variants
-        for (const variant of variants ?? []) {
-          if (variant.id) {
-            await tx.productVariant.update({
-              where: { id: variant.id },
-              data: {
-                size: variant.size,
-                color: variant.color,
-                stock: variant.stock,
-                barcode: variant.barcode ?? null,
-              },
-            });
-          } else {
-            await tx.productVariant.create({
-              data: {
-                productId: id,
-                size: variant.size,
-                color: variant.color,
-                stock: variant.stock,
-                barcode: variant.barcode ?? null,
-              },
-            });
+          // Find existing variant IDs for this product
+          const existing = await tx.productVariant.findMany({
+            where: { productId: id },
+            select: { id: true },
+          });
+          const existingIds = existing.map((v) => v.id);
+          const submittedIds = (variants ?? [])
+            .filter((v) => v.id !== undefined)
+            .map((v) => v.id as number);
+
+          // Delete variants no longer in the form (only if not referenced by sales)
+          const toDelete = existingIds.filter((vid) => !submittedIds.includes(vid));
+          for (const variantId of toDelete) {
+            const count = await tx.saleItem.count({ where: { variantId } });
+            if (count === 0) {
+              await tx.productVariant.delete({ where: { id: variantId } });
+            }
           }
-        }
 
-        return tx.product.update({
-          where: { id },
-          data: productData,
-          include: { category: true, variants: true },
+          // Upsert submitted variants
+          for (const variant of variants ?? []) {
+            if (variant.id) {
+              await tx.productVariant.update({
+                where: { id: variant.id },
+                data: {
+                  size: variant.size,
+                  color: variant.color,
+                  stock: variant.stock,
+                  barcode: variant.barcode ?? null,
+                },
+              });
+            } else {
+              await tx.productVariant.create({
+                data: {
+                  productId: id,
+                  size: variant.size,
+                  color: variant.color,
+                  stock: variant.stock,
+                  barcode: variant.barcode ?? null,
+                },
+              });
+            }
+          }
+
+          return tx.product.update({
+            where: { id },
+            data: productData,
+            include: { category: true, variants: true },
+          });
         });
-      });
+      } catch (error: any) {
+        if (error.code === "P2002") {
+          throw new Error("Un produit avec ce SKU existe déjà.");
+        }
+        throw error;
+      }
     }
   );
 

@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { TopBar } from "@/components/layout/AppLayout";
 import { useIPC } from "@/hooks/useIPC";
-import { useAuth } from "@/modules/auth/AuthContext";
 import { formatCurrency } from "@/lib/utils";
 import { toastSuccess, toastError } from "@/components/ui/toast";
 
@@ -27,7 +26,6 @@ const LOW_STOCK_THRESHOLD = 5;
 
 export function InventoryPage() {
   const api = useIPC();
-  const { user } = useAuth();
   const [variants, setVariants] = useState<InventoryVariant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");

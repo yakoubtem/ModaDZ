@@ -61,8 +61,20 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
       }),
       ...((params?.from || params?.to) && {
         createdAt: {
-          ...(params.from && { gte: new Date(params.from) }),
-          ...(params.to && { lte: new Date(params.to) }),
+          ...(params.from && {
+            gte: (() => {
+              const d = new Date(params.from);
+              d.setHours(0, 0, 0, 0);
+              return d;
+            })(),
+          }),
+          ...(params.to && {
+            lte: (() => {
+              const d = new Date(params.to);
+              d.setHours(23, 59, 59, 999);
+              return d;
+            })(),
+          }),
         },
       }),
     };

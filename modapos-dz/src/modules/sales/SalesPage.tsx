@@ -19,6 +19,7 @@ export function SalesPage() {
     handlePageChange,
     openDetail,
     closeDetail,
+    refund,
   } = useSalesHistory();
 
   const totalPages = Math.ceil(total / pageSize);
@@ -31,10 +32,10 @@ export function SalesPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           {/* Filters */}
           <SaleFiltersComponent
-            filters={filters}
-            onChange={setFilters}
-            onReset={resetFilters}
-            total={total}
+             filters={filters}
+             onChange={setFilters}
+             onReset={resetFilters}
+             total={total}
           />
 
           {/* Table container */}
@@ -91,7 +92,7 @@ export function SalesPage() {
         </div>
       </main>
 
-      <SaleDetailsModal isOpen={isDetailOpen} onClose={closeDetail} sale={detailSale} />
+      <SaleDetailsModal isOpen={isDetailOpen} onClose={closeDetail} sale={detailSale} onRefund={refund} />
     </div>
   );
 }

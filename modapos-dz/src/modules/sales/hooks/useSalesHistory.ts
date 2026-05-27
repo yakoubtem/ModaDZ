@@ -26,6 +26,7 @@ interface UseSalesHistoryReturn {
   handlePageChange: (p: number) => void;
   openDetail: (id: number) => Promise<void>;
   closeDetail: () => void;
+  refund: (id: number) => Promise<boolean>;
 }
 
 export function useSalesHistory(): UseSalesHistoryReturn {
@@ -123,6 +124,25 @@ export function useSalesHistory(): UseSalesHistoryReturn {
     setDetailSale(null);
   }, []);
 
+  const refund = useCallback(
+    async (id: number) => {
+      try {
+        await api("sales:refund", id);
+        toast.success("Vente remboursée avec succès. Le stock a été restauré.");
+        await loadPage(page, filters);
+        const updated = await api<Sale>("sales:getById", id);
+        if (updated) {
+          setDetailSale(updated);
+        }
+        return true;
+      } catch (err: any) {
+        toast.error(err.message || "Erreur lors du remboursement");
+        return false;
+      }
+    },
+    [api, page, filters, loadPage]
+  );
+
   return {
     sales,
     total,
@@ -137,5 +157,6 @@ export function useSalesHistory(): UseSalesHistoryReturn {
     handlePageChange,
     openDetail,
     closeDetail,
+    refund,
   };
 }

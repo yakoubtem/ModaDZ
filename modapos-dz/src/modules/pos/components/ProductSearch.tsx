@@ -4,11 +4,10 @@ interface ProductSearchProps {
   query: string;
   onChange: (q: string) => void;
   onClear: () => void;
-  isSearching: boolean;
   onEnter?: () => void;
 }
 
-export function ProductSearch({ query, onChange, onClear, isSearching, onEnter }: ProductSearchProps) {
+export function ProductSearch({ query, onChange, onClear, onEnter }: ProductSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

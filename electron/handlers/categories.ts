@@ -21,6 +21,10 @@ export function registerCategoryHandlers(ipcMain: IpcMain) {
   );
 
   ipcMain.handle("categories:delete", async (_e, id: number) => {
+    await prisma.product.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    });
     return prisma.category.delete({ where: { id } });
   });
 }

@@ -96,7 +96,6 @@ export function POSPage() {
               query={query}
               onChange={setQuery}
               onClear={clearSearch}
-              isSearching={isSearching}
               onEnter={handleEnterOnSearch}
             />
           </div>

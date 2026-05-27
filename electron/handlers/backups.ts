@@ -13,7 +13,10 @@ async function requireAdmin(userId?: number) {
 }
 
 export function registerBackupHandlers(ipcMain: IpcMain) {
-  const dbPath = path.join(app.getPath("userData"), "prisma", "store.db");
+  const isDev = process.env.NODE_ENV === "development";
+  const dbPath = isDev
+    ? path.join(app.getAppPath(), "prisma", "prisma", "store.db")
+    : path.join(app.getPath("userData"), "prisma", "store.db");
   const backupDir = path.join(app.getPath("userData"), "backups");
 
   if (!fs.existsSync(backupDir)) {
@@ -56,8 +59,8 @@ export function registerBackupHandlers(ipcMain: IpcMain) {
     if (!fs.existsSync(source)) throw new Error("Fichier de sauvegarde manquant");
 
     // Copy to DB path
-    // NOTE: In production, we'd need to close prisma before overwriting,
-    // then recreate the client. For simple Electron apps, sometimes a restart is recommended.
+    // NOTE: Disconnect prisma first to release SQLite file lock before overwriting
+    await prisma.$disconnect();
     fs.copyFileSync(source, dbPath);
     return true; // The UI should probably trigger a reload
   });

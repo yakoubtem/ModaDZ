@@ -126,7 +126,15 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       : 0;
   const canSubmit =
     items.length > 0 &&
-    (paymentMethod !== "cash" || amountPaidNum >= total || amountPaid === "");
+    (paymentMethod !== "cash" ||
+      amountPaid === "" ||
+      amountPaidNum >= total ||
+      (amountPaidNum < total && selectedCustomer !== null));
+
+  const dbAmountPaid =
+    paymentMethod === "cash"
+      ? (amountPaid === "" ? total : Math.min(amountPaidNum, total))
+      : total;
 
   // ── Checkout handler ────────────────────────────────────────────────────────
   const handleConfirm = async () => {
@@ -142,6 +150,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         total,
         discount: totalItemDiscounts + cartDiscount,
         tax: 0,
+        amountPaid: dbAmountPaid,
         items: items.map((i) => ({
           variantId: i.variantId,
           quantity: i.quantity,

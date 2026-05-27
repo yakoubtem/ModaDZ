@@ -5,7 +5,6 @@ import { CustomerTable } from "./components/CustomerTable";
 import { CustomerFormModal } from "./components/CustomerFormModal";
 import { CustomerProfileModal } from "./components/CustomerProfileModal";
 import type { CustomerWithStats } from "@/types";
-import { formatCurrency } from "@/lib/utils";
 
 export function CustomersPage() {
   const {
@@ -48,7 +47,6 @@ export function CustomersPage() {
     setTimeout(() => handleEdit(asStats), 150);
   };
 
-  const totalDebt = customers.reduce((s, c) => s + c.debt, 0);
   const debtCount = customers.filter(c => c.debt > 0).length;
 
   return (

@@ -98,24 +98,45 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
 
     const paymentMethods = Array.from(paymentMap.entries()).map(([name, value]) => ({ name, value }));
 
-    // Populate Top Products Names — single batched query (no N+1)
+    // Populate Top Products Names & Revenue — single batched query (no N+1)
     const variantIds = topVariantsQuery.map((tv) => tv.variantId);
-    const variants = await prisma.productVariant.findMany({
-      where: { id: { in: variantIds } },
-      include: { product: { select: { name: true } } },
+    const [variants, saleItemsForRevenue] = await Promise.all([
+      prisma.productVariant.findMany({
+        where: { id: { in: variantIds } },
+        include: { product: { select: { name: true } } },
+      }),
+      prisma.saleItem.findMany({
+        where: {
+          variantId: { in: variantIds },
+          sale: { status: "completed", createdAt: { gte: fromDate } },
+        },
+        select: {
+          variantId: true,
+          quantity: true,
+          unitPrice: true,
+          discount: true,
+        },
+      }),
+    ]);
+
+    const revenueMap = new Map<number, number>();
+    saleItemsForRevenue.forEach((item) => {
+      const rev = item.quantity * item.unitPrice - item.discount;
+      revenueMap.set(item.variantId, (revenueMap.get(item.variantId) ?? 0) + rev);
     });
+
     const variantMap = new Map(variants.map((v) => [v.id, v]));
 
     const topVariantsWithNames = topVariantsQuery.map((tv) => {
       const variant = variantMap.get(tv.variantId);
-      // Use actual sum of (unitPrice * quantity) from SaleItems for accurate historical revenue
+      // Use actual sum of (unitPrice * quantity - discount) from SaleItems for accurate historical revenue
       return {
         id: tv.variantId,
         name: variant?.product?.name || `Variante #${tv.variantId}`,
         size: variant?.size,
         color: variant?.color,
         quantitySold: tv._sum.quantity ?? 0,
-        revenueGenerated: tv._sum.unitPrice ?? 0,
+        revenueGenerated: revenueMap.get(tv.variantId) ?? 0,
       };
     });
 

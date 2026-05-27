@@ -75,11 +75,13 @@ export function ProductsPage() {
             marginBottom: "var(--space-section)",
           }}
         >
-          {[
-            { label: "Produits actifs", value: stats.totalProducts, icon: "inventory_2", sub: "Catalogue actif" },
-            { label: "Total variantes", value: stats.totalVariants, icon: "style", sub: "Couleurs et Tailles" },
-            { label: "Stocks bas", value: stats.lowStockVariants, icon: "warning", error: true, sub: "Nécessite réassort" },
-          ].map((card) => (
+          {(() => {
+            const statsCards: { label: string; value: number; icon: string; sub: string; error?: boolean; trend?: string }[] = [
+              { label: "Produits actifs", value: stats.totalProducts, icon: "inventory_2", sub: "Catalogue actif" },
+              { label: "Total variantes", value: stats.totalVariants, icon: "style", sub: "Couleurs et Tailles" },
+              { label: "Stocks bas", value: stats.lowStockVariants, icon: "warning", error: true, sub: "Nécessite réassort" },
+            ];
+            return statsCards.map((card) => (
             <div
               key={card.label}
               className="glass-panel"
@@ -112,7 +114,8 @@ export function ProductsPage() {
                 </div>
               )}
             </div>
-          ))}
+          ));
+        })()}
         </div>
 
         {/* Table card */}

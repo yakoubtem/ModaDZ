@@ -1155,23 +1155,31 @@ select {
     margin: 3mm 4mm;
   }
 
-  body>* {
-    display: none !important;
+  body {
+    visibility: hidden;
+    background: white !important;
   }
 
-  [data-sonner-toaster],
-  [role="dialog"] {
-    display: none !important;
+  #receipt-print-root,
+  #receipt-print-root * {
+    visibility: visible;
   }
 
   #receipt-print-root {
     display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: white !important;
     color: black !important;
     font-size: 11px !important;
     line-height: 1.45 !important;
     font-family: "Courier New", monospace !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   #receipt-print-root * {

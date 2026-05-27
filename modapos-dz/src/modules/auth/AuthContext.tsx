@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     try {
-      const stored = sessionStorage.getItem("modadz_user");
+      const stored = localStorage.getItem("modadz_user");
       return stored ? (JSON.parse(stored) as User) : null;
     } catch {
       return null;
@@ -22,12 +22,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback((user: User) => {
     setUser(user);
-    sessionStorage.setItem("modadz_user", JSON.stringify(user));
+    localStorage.setItem("modadz_user", JSON.stringify(user));
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
-    sessionStorage.removeItem("modadz_user");
+    localStorage.removeItem("modadz_user");
   }, []);
 
   return (

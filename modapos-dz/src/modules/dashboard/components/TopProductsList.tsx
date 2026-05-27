@@ -2,18 +2,11 @@ import { formatCurrency } from "@/lib/utils";
 import type { TopProduct } from "@/types";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TopProductsListProps {
   products?: TopProduct[];
   isLoading: boolean;
 }
-
-const rankColors = [
-  { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200/50" },
-  { bg: "bg-slate-50",  text: "text-slate-500",  border: "border-slate-200/50" },
-  { bg: "bg-orange-50", text: "text-orange-500", border: "border-orange-200/50" },
-];
 
 export function TopProductsList({ products, isLoading }: TopProductsListProps) {
   if (isLoading || !products) {
