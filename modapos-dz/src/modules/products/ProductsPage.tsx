@@ -76,7 +76,7 @@ export function ProductsPage() {
           }}
         >
           {[
-            { label: "Produits actifs", value: stats.totalProducts, icon: "inventory_2", trend: "+12 ce mois", trendUp: true },
+            { label: "Produits actifs", value: stats.totalProducts, icon: "inventory_2", sub: "Catalogue actif" },
             { label: "Total variantes", value: stats.totalVariants, icon: "style", sub: "Couleurs et Tailles" },
             { label: "Stocks bas", value: stats.lowStockVariants, icon: "warning", error: true, sub: "Nécessite réassort" },
           ].map((card) => (

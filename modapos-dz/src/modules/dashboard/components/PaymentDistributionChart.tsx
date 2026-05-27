@@ -15,9 +15,9 @@ interface PaymentDistributionChartProps {
 }
 
 const COLORS = {
-  cash: "var(--color-success)",
-  card: "var(--color-accent)",
-  transfer: "var(--color-warning)",
+  cash: "var(--color-tertiary)",
+  card: "var(--color-primary-container)",
+  transfer: "#f59e0b",
 };
 
 const LABELS: Record<string, string> = {
@@ -91,9 +91,9 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#ffffff",
-                  borderColor: "var(--color-border)",
+                  borderColor: "var(--color-outline-variant)",
                   borderRadius: "10px",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-on-surface)",
                   boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   fontSize: "12px",
                 }}
@@ -111,7 +111,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[var(--color-text-muted)] text-sm italic">
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-secondary)", fontSize: 14, fontStyle: "italic" }}>
             Aucun paiement enregistré
           </div>
         )}

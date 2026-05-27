@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { usePOSSearch } from "./hooks/usePOSSearch";
+import { useCategories } from "@/modules/products/hooks/useCategories";
 import { ProductSearch } from "./components/ProductSearch";
 import { ProductGrid } from "./components/ProductGrid";
 import { CartPanel } from "./components/CartPanel";
@@ -9,12 +10,10 @@ import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import type { Product } from "@/types";
 
-const CATEGORIES = ["Tous les produits", "Sacs à main", "Chaussures", "Accessoires", "Prêt-à-porter"];
-
 export function POSPage() {
-  const { query, setQuery, products, isSearching, clearSearch } = usePOSSearch();
+  const { query, setQuery, products, isSearching, clearSearch, categoryId, setCategoryId } = usePOSSearch();
+  const { categories } = useCategories();
   const isEmpty = useCartStore(cartSelectors.isEmpty);
-  const [activeCategory, setActiveCategory] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
@@ -102,19 +101,29 @@ export function POSPage() {
             />
           </div>
 
-          {/* Category chips */}
+          {/* Category chips — driven from DB */}
           <div
             style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px" }}
             className="no-scrollbar"
           >
-            {CATEGORIES.map((cat, i) => (
+            {/* "All products" chip */}
+            <button
+              onClick={() => setCategoryId(undefined)}
+              className={`chip ${categoryId === undefined ? "chip-active" : "chip-default"}`}
+              style={{ whiteSpace: "nowrap", cursor: "pointer", border: "none", fontFamily: "var(--font-body)" }}
+            >
+              Tous les produits
+            </button>
+
+            {/* DB category chips */}
+            {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(i)}
-                className={`chip ${i === activeCategory ? "chip-active" : "chip-default"}`}
+                key={cat.id}
+                onClick={() => setCategoryId(cat.id === categoryId ? undefined : cat.id)}
+                className={`chip ${cat.id === categoryId ? "chip-active" : "chip-default"}`}
                 style={{ whiteSpace: "nowrap", cursor: "pointer", border: "none", fontFamily: "var(--font-body)" }}
               >
-                {cat}
+                {cat.name}
               </button>
             ))}
           </div>

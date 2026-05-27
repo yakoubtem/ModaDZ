@@ -98,23 +98,26 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
 
     const paymentMethods = Array.from(paymentMap.entries()).map(([name, value]) => ({ name, value }));
 
-    // Populate Top Products Names
-    const topVariantsWithNames = await Promise.all(
-      topVariantsQuery.map(async (tv) => {
-        const variant = await prisma.productVariant.findUnique({
-          where: { id: tv.variantId },
-          include: { product: { select: { name: true, price: true } } }
-        });
-        return {
-          id: tv.variantId,
-          name: variant?.product?.name || `Variante #${tv.variantId}`,
-          size: variant?.size,
-          color: variant?.color,
-          quantitySold: tv._sum.quantity ?? 0,
-          revenueGenerated: (tv._sum.quantity ?? 0) * (variant?.product?.price ?? 0)
-        };
-      })
-    );
+    // Populate Top Products Names — single batched query (no N+1)
+    const variantIds = topVariantsQuery.map((tv) => tv.variantId);
+    const variants = await prisma.productVariant.findMany({
+      where: { id: { in: variantIds } },
+      include: { product: { select: { name: true } } },
+    });
+    const variantMap = new Map(variants.map((v) => [v.id, v]));
+
+    const topVariantsWithNames = topVariantsQuery.map((tv) => {
+      const variant = variantMap.get(tv.variantId);
+      // Use actual sum of (unitPrice * quantity) from SaleItems for accurate historical revenue
+      return {
+        id: tv.variantId,
+        name: variant?.product?.name || `Variante #${tv.variantId}`,
+        size: variant?.size,
+        color: variant?.color,
+        quantitySold: tv._sum.quantity ?? 0,
+        revenueGenerated: tv._sum.unitPrice ?? 0,
+      };
+    });
 
     return {
       kpis: {

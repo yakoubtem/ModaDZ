@@ -10,18 +10,18 @@ const CARDS = [
   {
     label: "Revenu du jour",
     icon: "payments",
-    trend: "+12%",
-    trendDir: "up",
-    trendVs: "vs hier",
+    trend: null,
+    trendDir: null,
+    trendVs: "Ventes du jour",
     valueKey: "todayRevenue" as const,
     format: "currency",
   },
   {
     label: "Revenu du mois",
     icon: "account_balance_wallet",
-    trend: "+8%",
-    trendDir: "up",
-    trendVs: "vs mois dernier",
+    trend: null,
+    trendDir: null,
+    trendVs: "Mois en cours",
     valueKey: "monthRevenue" as const,
     format: "currency",
   },
@@ -37,13 +37,14 @@ const CARDS = [
   {
     label: "Clients",
     icon: "group",
-    trend: "+24",
-    trendDir: "up",
-    trendVs: "nouveaux cette semaine",
+    trend: null,
+    trendDir: null,
+    trendVs: "Total enregistrés",
     valueKey: "totalCustomers" as const,
     format: "number",
   },
 ];
+
 
 export function KPICards({ kpis, isLoading }: KPICardsProps) {
   if (isLoading || !kpis) {

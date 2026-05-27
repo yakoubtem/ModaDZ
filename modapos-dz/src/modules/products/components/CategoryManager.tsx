@@ -126,7 +126,7 @@ export function CategoryManager({
                     onClick={handleUpdate}
                     isLoading={isSubmitting}
                   >
-                    OK
+                    Valider
                   </Button>
                   <Button
                     size="sm"

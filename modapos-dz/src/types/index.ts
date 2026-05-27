@@ -1,4 +1,4 @@
-﻿// â”€â”€â”€ Enums â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€â”€ Enums â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export type UserRole = "admin" | "cashier";
 export type SaleStatus = "completed" | "refunded" | "pending";
 
@@ -173,32 +173,7 @@ export interface SalesFilters {
   to: string;
 }
 
-// â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-export interface DashboardStats {
-  todayRevenue: number;
-  todaySalesCount: number;
-  monthRevenue: number;
-  monthSalesCount: number;
-  totalProducts: number;
-  lowStockCount: number;
-  totalCustomers: number;
-  recentSales: RecentSale[];
-}
-
-export interface RecentSale {
-  id: number;
-  total: number;
-  createdAt: string;
-  customer?: { name: string } | null;
-  items: { quantity: number }[];
-}
-
-export interface RevenueDataPoint {
-  date: string;
-  revenue: number;
-}
-
-// â”€â”€â”€ Products Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —————————————————————————————————————————————————————————————————————
 export interface PaginatedProducts {
   products: Product[];
   total: number;

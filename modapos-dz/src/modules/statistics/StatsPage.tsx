@@ -1,18 +1,92 @@
+import { useState } from "react";
 import { TopBar } from "@/components/layout/AppLayout";
+import { useDashboard } from "@/modules/dashboard/hooks/useDashboard";
+import { RevenueChart } from "@/modules/dashboard/components/RevenueChart";
+import { PaymentDistributionChart } from "@/modules/dashboard/components/PaymentDistributionChart";
+import { TopProductsList } from "@/modules/dashboard/components/TopProductsList";
+import { formatCurrency } from "@/lib/utils";
 
-const STAT_CARDS = [
-  { label: "CA Total (mois)", value: "€124,500", icon: "trending_up", trend: "+8%", trendUp: true },
-  { label: "Ticket Moyen", value: "€285", icon: "receipt_long", trend: "+3.2%", trendUp: true },
-  { label: "Transactions", value: "437", icon: "point_of_sale", trend: "+12", trendUp: true },
-  { label: "Taux de retour", value: "2.1%", icon: "keyboard_return", trend: "-0.3%", trendUp: false },
+type Period = 7 | 30 | 90;
+
+const PERIOD_OPTIONS: { value: Period; label: string }[] = [
+  { value: 7, label: "7 jours" },
+  { value: 30, label: "30 jours" },
+  { value: 90, label: "90 jours" },
 ];
 
 export function StatsPage() {
+  const [period, setPeriod] = useState<Period>(30);
+  const { data, isLoading } = useDashboard(period);
+
+  // Derived KPIs from real dashboard data
+  const kpis = data?.kpis;
+  const avgTicket =
+    kpis && kpis.monthSalesCount > 0
+      ? kpis.monthRevenue / kpis.monthSalesCount
+      : 0;
+
+  const STAT_CARDS = [
+    {
+      label: "CA du mois",
+      value: kpis ? formatCurrency(kpis.monthRevenue) : "—",
+      icon: "trending_up",
+      sub: `${kpis?.monthSalesCount ?? 0} transactions`,
+    },
+    {
+      label: "Ticket moyen",
+      value: kpis ? formatCurrency(avgTicket) : "—",
+      icon: "receipt_long",
+      sub: "Ce mois-ci",
+    },
+    {
+      label: "Transactions totales",
+      value: kpis?.monthSalesCount?.toLocaleString("fr-DZ") ?? "—",
+      icon: "point_of_sale",
+      sub: "Ce mois-ci",
+    },
+    {
+      label: "CA aujourd'hui",
+      value: kpis ? formatCurrency(kpis.todayRevenue) : "—",
+      icon: "today",
+      sub: `${kpis?.todaySalesCount ?? 0} ventes`,
+    },
+  ];
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar
         title="Statistiques"
         description="Analyses et performances de votre boutique."
+        actions={
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "var(--text-label-sm)", color: "var(--color-secondary)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
+              Période
+            </span>
+            <div style={{ display: "flex", gap: "4px", background: "var(--color-surface-container-high)", borderRadius: "var(--radius-lg)", padding: "4px" }}>
+              {PERIOD_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setPeriod(opt.value)}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: "var(--radius-md)",
+                    border: "none",
+                    fontSize: "var(--text-label-sm)",
+                    fontWeight: "var(--fw-label-sm)",
+                    fontFamily: "var(--font-body)",
+                    cursor: "pointer",
+                    background: period === opt.value ? "var(--color-surface-container-lowest)" : "transparent",
+                    color: period === opt.value ? "var(--color-on-surface)" : "var(--color-secondary)",
+                    boxShadow: period === opt.value ? "var(--shadow-soft)" : "none",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        }
       />
 
       <main
@@ -35,45 +109,36 @@ export function StatsPage() {
             gap: "var(--space-card-gap)",
           }}
         >
-          {STAT_CARDS.map((card) => (
-            <div key={card.label} className="kpi-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
-                <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)" }}>
-                  {card.label}
-                </span>
-                <div className="kpi-icon">
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{card.icon}</span>
+          {isLoading
+            ? [...Array(4)].map((_, i) => (
+                <div key={i} className="kpi-card skeleton" style={{ height: 130 }} />
+              ))
+            : STAT_CARDS.map((card) => (
+                <div key={card.label} className="kpi-card animate-fade-in">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                    <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)" }}>
+                      {card.label}
+                    </span>
+                    <div className="kpi-icon">
+                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{card.icon}</span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "var(--text-headline-lg)",
+                      fontWeight: "var(--fw-headline-lg)",
+                      color: "var(--color-on-surface)",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {card.value}
+                  </div>
+                  <div style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+                    {card.sub}
+                  </div>
                 </div>
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "var(--text-headline-lg)",
-                  fontWeight: "var(--fw-headline-lg)",
-                  color: "var(--color-on-surface)",
-                  marginBottom: "8px",
-                }}
-              >
-                {card.value}
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "14px" }}>
-                <span
-                  style={{
-                    color: card.trendUp ? "var(--color-tertiary)" : "var(--color-error)",
-                    display: "flex",
-                    alignItems: "center",
-                    fontWeight: 600,
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                    {card.trendUp ? "trending_up" : "trending_down"}
-                  </span>
-                  {card.trend}
-                </span>
-                <span style={{ color: "var(--color-secondary)" }}>vs mois dernier</span>
-              </div>
-            </div>
-          ))}
+              ))}
         </div>
 
         {/* Charts grid */}
@@ -83,120 +148,99 @@ export function StatsPage() {
             className="glass-card"
             style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 400, display: "flex", flexDirection: "column" }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-              <h3
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "var(--text-headline-md)",
-                  fontWeight: "var(--fw-headline-md)",
-                  color: "var(--color-on-surface)",
-                }}
-              >
-                Évolution du chiffre d'affaires
-              </h3>
-              <select
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "var(--color-secondary)",
-                  fontSize: "var(--text-body-sm)",
-                  fontFamily: "var(--font-body)",
-                  outline: "none",
-                  cursor: "pointer",
-                }}
-              >
-                <option>Cette semaine</option>
-                <option>Ce mois</option>
-                <option>Cette année</option>
-              </select>
-            </div>
-            <div
-              style={{
-                flex: 1,
-                background: "rgba(245,243,238,0.5)",
-                borderRadius: "var(--radius-lg)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid rgba(208,197,175,0.2)",
-              }}
-            >
-              <div style={{ textAlign: "center" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline)", opacity: 0.5, display: "block", marginBottom: "8px" }}>show_chart</span>
-                <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>Zone de visualisation du graphique</p>
-              </div>
-            </div>
+            <RevenueChart data={data?.revenueChart} isLoading={isLoading} />
           </div>
 
-          {/* Donut chart */}
+          {/* Payment distribution chart */}
           <div
             className="glass-card"
             style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 400, display: "flex", flexDirection: "column" }}
           >
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "var(--text-headline-md)",
-                fontWeight: "var(--fw-headline-md)",
-                color: "var(--color-on-surface)",
-                marginBottom: "24px",
-              }}
-            >
-              Répartition des ventes
-            </h3>
-            <div
-              style={{
-                flex: 1,
-                background: "rgba(245,243,238,0.5)",
-                borderRadius: "var(--radius-lg)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid rgba(208,197,175,0.2)",
-              }}
-            >
-              <div style={{ textAlign: "center" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline)", opacity: 0.5, display: "block", marginBottom: "8px" }}>pie_chart</span>
-                <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>Par catégorie</p>
-              </div>
-            </div>
+            <PaymentDistributionChart data={data?.paymentMethods} isLoading={isLoading} />
           </div>
         </div>
 
         {/* Bottom grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-card-gap)" }}>
-          {["Meilleurs produits", "Meilleurs vendeurs"].map((title) => (
-            <div
-              key={title}
-              className="glass-card"
-              style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 280 }}
+          {/* Top products */}
+          <div
+            className="glass-card"
+            style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 320, display: "flex", flexDirection: "column" }}
+          >
+            <TopProductsList products={data?.topProducts} isLoading={isLoading} />
+          </div>
+
+          {/* Additional real stats: recent transactions summary */}
+          <div
+            className="glass-card"
+            style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 320, display: "flex", flexDirection: "column" }}
+          >
+            <h3
+              style={{
+                fontSize: "var(--text-label-md)",
+                fontWeight: "var(--fw-label-md)",
+                letterSpacing: "var(--ls-label-md)",
+                color: "var(--color-secondary)",
+                marginBottom: 16,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
             >
-              <h3
+              <span
                 style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "var(--text-headline-md)",
-                  fontWeight: "var(--fw-headline-md)",
-                  color: "var(--color-on-surface)",
-                  marginBottom: "24px",
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "var(--color-tertiary)",
+                  display: "inline-block",
+                  flexShrink: 0,
                 }}
-              >
-                {title}
-              </h3>
-              <div
-                style={{
-                  height: 180,
-                  background: "rgba(245,243,238,0.5)",
-                  borderRadius: "var(--radius-lg)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid rgba(208,197,175,0.2)",
-                }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 32, color: "var(--color-outline)", opacity: 0.4 }}>bar_chart</span>
+              />
+              Résumé de la période
+            </h3>
+
+            {isLoading ? (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: 40, borderRadius: 8 }} />
+                ))}
               </div>
-            </div>
-          ))}
+            ) : (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+                {[
+                  { label: "Chiffre d'affaires", value: formatCurrency(kpis?.monthRevenue ?? 0), icon: "payments" },
+                  { label: "Nombre de ventes", value: (kpis?.monthSalesCount ?? 0).toLocaleString("fr-DZ"), icon: "shopping_cart" },
+                  { label: "Ticket moyen", value: formatCurrency(avgTicket), icon: "receipt_long" },
+                  { label: "Produits au catalogue", value: (kpis?.totalProducts ?? 0).toLocaleString("fr-DZ"), icon: "inventory_2" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "12px 16px",
+                      borderRadius: "var(--radius-lg)",
+                      background: "var(--color-surface-container-low)",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--color-primary)" }}>
+                        {stat.icon}
+                      </span>
+                      <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)" }}>
+                        {stat.label}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", color: "var(--color-on-surface)", fontVariantNumeric: "tabular-nums" }}>
+                      {stat.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

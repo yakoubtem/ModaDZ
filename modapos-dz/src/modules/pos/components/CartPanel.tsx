@@ -17,9 +17,6 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
   const total = useCartStore(cartSelectors.total);
   const isEmpty = useCartStore(cartSelectors.isEmpty);
 
-  // Simple TVA estimate (20%)
-  const tva = total * 0.2;
-  const totalTTC = total + tva;
 
   return (
     <aside className="cart-panel">
@@ -168,14 +165,16 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
             </div>
             {totalItemDiscounts > 0 && (
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                <span>Remises</span>
+                <span>Remises articles</span>
                 <span>−{formatCurrency(totalItemDiscounts)}</span>
               </div>
             )}
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-              <span>TVA (20%)</span>
-              <span>{formatCurrency(tva)}</span>
-            </div>
+            {cartDiscount > 0 && (
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+                <span>Remise panier</span>
+                <span>−{formatCurrency(cartDiscount)}</span>
+              </div>
+            )}
 
             {/* Total TTC */}
             <div
@@ -196,7 +195,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                   color: "var(--color-on-surface)",
                 }}
               >
-                Total TTC
+                Total
               </span>
               <span
                 style={{
@@ -207,7 +206,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                   letterSpacing: "-0.02em",
                 }}
               >
-                {formatCurrency(totalTTC)}
+                {formatCurrency(total)}
               </span>
             </div>
           </div>

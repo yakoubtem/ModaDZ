@@ -5,6 +5,8 @@ import type { Product, PaginatedProducts } from "@/types";
 interface UsePOSSearchReturn {
   query: string;
   setQuery: (q: string) => void;
+  categoryId: number | undefined;
+  setCategoryId: (id: number | undefined) => void;
   products: Product[];
   isSearching: boolean;
   clearSearch: () => void;
@@ -12,26 +14,29 @@ interface UsePOSSearchReturn {
 
 /**
  * Handles product search for the POS grid.
- * - Empty query: loads the first 40 active products
+ * - Empty query: loads the first 40 active products (filtered by categoryId if set)
  * - With query: searches by name, SKU, or barcode (200ms debounce)
  * - Barcode scanner support: if query contains only digits and length >= 4,
  *   the debounce is bypassed for instant lookup
+ * - categoryId: when set, filters the initial load by DB category
  */
 export function usePOSSearch(): UsePOSSearchReturn {
   const api = useIPC();
   const [query, setQueryState] = useState("");
+  const [categoryId, setCategoryIdState] = useState<number | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const doSearch = useCallback(
-    async (q: string) => {
+    async (q: string, catId?: number) => {
       setIsSearching(true);
       try {
         if (q.length === 0) {
           const result = await api<PaginatedProducts>("products:getAll", {
             page: 1,
             pageSize: 40,
+            categoryId: catId,
           });
           setProducts(result.products);
         } else {
@@ -56,24 +61,34 @@ export function usePOSSearch(): UsePOSSearchReturn {
       const isLikelyBarcode = /^\d{4,}$/.test(q.trim());
       const delay = isLikelyBarcode ? 0 : 200;
 
-      timerRef.current = setTimeout(() => doSearch(q), delay);
+      timerRef.current = setTimeout(() => doSearch(q, categoryId), delay);
+    },
+    [doSearch, categoryId]
+  );
+
+  const setCategoryId = useCallback(
+    (id: number | undefined) => {
+      setCategoryIdState(id);
+      doSearch("", id);
+      setQueryState("");
     },
     [doSearch]
   );
 
   const clearSearch = useCallback(() => {
     setQueryState("");
-    doSearch("");
-  }, [doSearch]);
+    doSearch("", categoryId);
+  }, [doSearch, categoryId]);
 
   // Initial load
   useEffect(() => {
-    doSearch("");
+    doSearch("", undefined);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { query, setQuery, products, isSearching, clearSearch };
+  return { query, setQuery, categoryId, setCategoryId, products, isSearching, clearSearch };
 }
+

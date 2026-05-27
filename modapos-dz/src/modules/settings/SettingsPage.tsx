@@ -47,7 +47,7 @@ export function SettingsPage() {
           <button className="top-bar-icon-btn"><span className="material-symbols-outlined">search</span></button>
           <button className="top-bar-icon-btn"><span className="material-symbols-outlined">notifications</span></button>
           <button className="top-bar-icon-btn"><span className="material-symbols-outlined">help</span></button>
-          <button className="btn-checkout">Check Out</button>
+          <button className="btn-checkout">Encaisser</button>
         </div>
       </header>
 

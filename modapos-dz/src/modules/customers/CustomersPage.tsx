@@ -60,7 +60,7 @@ export function CustomersPage() {
             <button className="btn-border" style={{ padding: "8px 16px", borderRadius: "var(--radius-md)" }}>
               Notifications
             </button>
-            <button className="btn-checkout">Check Out</button>
+            <button className="btn-checkout">Encaisser</button>
           </div>
         }
       />

@@ -18,7 +18,7 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
     );
   }
 
-  const alertCount = (lowStock?.length || 0) + (recentSales?.filter(s => !s.customer).length || 0);
+  const alertCount = lowStock?.length || 0;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>

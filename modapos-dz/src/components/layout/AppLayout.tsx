@@ -74,7 +74,7 @@ export function TopBar({ title, description, actions }: TopBarProps) {
         </div>
 
         {actions ?? (
-          <button className="btn-checkout">Check Out</button>
+          <button className="btn-checkout">Encaisser</button>
         )}
       </div>
     </header>
