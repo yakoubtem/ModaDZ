@@ -137,8 +137,38 @@
   --shadow-elevated: 0px 20px 48px rgba(26, 26, 26, 0.08);
   --shadow-gold: 0 0 15px rgba(212, 175, 55, 0.15);
 
-  /* ── Sidebar width ───────────────────────────────────────────────── */
   --sidebar-w: 272px;
+
+  /* ── Mapped background/border/text variables for Tailwind components ── */
+  --color-bg-base: var(--color-background);
+  --color-bg-surface: var(--color-surface-container-lowest); /* #ffffff (White background for modals) */
+  --color-bg-elevated: var(--color-surface-container-low);
+  --color-bg-overlay: rgba(79, 70, 53, 0.08);
+  --color-bg-subtle: var(--color-surface-container);
+  
+  --color-border: var(--color-outline-variant);
+  --color-border-strong: var(--color-outline);
+  
+  --color-text-primary: var(--color-on-surface);
+  --color-text-secondary: var(--color-secondary);
+  --color-text-muted: var(--color-outline);
+
+  --color-accent: var(--color-primary);
+  --color-accent-hover: #5e4b00;
+  --color-accent-border: var(--color-primary-container);
+  --color-accent-subtle: rgba(212, 175, 55, 0.15);
+
+  --color-danger: var(--color-error);
+  --color-danger-subtle: var(--color-error-container);
+
+  --color-success: var(--color-tertiary);
+  --color-success-subtle: var(--color-tertiary-container);
+
+  --color-warning: #b45309;
+  --color-warning-subtle: #fef3c7;
+
+  --color-info: #0284c7;
+  --color-info-subtle: #e0f2fe;
 }
 
 /* ───────────────────────────────────────────────────────────────────
