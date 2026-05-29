@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { name: "Inventaire",       path: "/inventory",  icon: "warehouse" },
   { name: "Clients",          path: "/customers",  icon: "group" },
   { name: "Ventes",           path: "/sales",      icon: "payments" },
+  { name: "Dettes",           path: "/debts",      icon: "account_balance_wallet" },
   { name: "Statistiques",     path: "/stats",      icon: "leaderboard" },
   { name: "Paramètres",       path: "/settings",   icon: "settings" },
 ];

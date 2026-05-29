@@ -60,13 +60,28 @@ model ProductVariant {
 // ─── Customers ────────────────────────────────────────────
 
 model Customer {
-  id        Int      @id @default(autoincrement())
-  name      String
-  phone     String?
-  email     String?
-  notes     String?
-  createdAt DateTime @default(now())
-  sales     Sale[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  phone        String?
+  email        String?
+  notes        String?
+  createdAt    DateTime       @default(now())
+  sales        Sale[]
+  debtPayments DebtPayment[]
+}
+
+// ─── Debt Payments ────────────────────────────────────────
+
+model DebtPayment {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  saleId     Int?
+  amount     Float
+  method     String   @default("cash") // cash | card | transfer
+  note       String?
+  createdAt  DateTime @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 // ─── Sales ────────────────────────────────────────────────

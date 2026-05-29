@@ -292,3 +292,84 @@ export interface BackupItem {
   type: string;
   createdAt: string;
 }
+
+// ─── Debt Management Module ────────────────────────────────
+
+export interface DebtPayment {
+  id: number;
+  customerId: number;
+  saleId?: number | null;
+  amount: number;
+  method: string;
+  note?: string | null;
+  createdAt: string;
+}
+
+/** A row in the debts table — one entry per customer */
+export interface CustomerDebtSummary {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  createdAt: string;
+  totalPurchases: number;
+  totalPaid: number;
+  currentDebt: number;
+  lastPurchaseDate?: string;
+  salesCount: number;
+}
+
+/** KPI statistics for the debt dashboard */
+export interface DebtStatistics {
+  totalDebt: number;
+  debtorCount: number;
+  recoveredThisMonth: number;
+  avgDebtPerDebtor: number;
+}
+
+/** Sale row inside the customer debt modal */
+export interface DebtSaleRow {
+  id: number;
+  receiptNumber?: string | null;
+  total: number;
+  amountPaid: number;
+  remaining: number;
+  paymentMethod: string;
+  status: string;
+  createdAt: string;
+}
+
+/** Full data for the customer debt detail modal */
+export interface DebtCustomerDetail {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  summary: {
+    totalPurchases: number;
+    totalPaid: number;
+    currentDebt: number;
+  };
+  sales: DebtSaleRow[];
+  payments: DebtPayment[];
+}
+
+export interface AddPaymentPayload {
+  customerId: number;
+  amount: number;
+  method: "cash" | "card" | "transfer";
+  note?: string;
+}
+
+export interface PaginatedDebtCustomers {
+  customers: CustomerDebtSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export type DebtFilter = "all" | "with_debt" | "no_debt" | "gt_10k" | "gt_50k";
+export type DebtSort = "debt_asc" | "debt_desc" | "name_asc" | "name_desc";
+
