@@ -71,9 +71,9 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
         />
         Répartition des paiements
       </h3>
-      <div style={{ flex: 1, minHeight: 0, position: "relative", height: "100%" }}>
+      <div style={{ minWidth: 0, width: "100%", height: 220, position: "relative" }}>
         {hasData ? (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie
                 data={formattedData}
