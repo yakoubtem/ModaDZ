@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Tag } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Tag,
+  Check,
+  X,
+} from "lucide-react";
+
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
+
 import type { Category } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -27,32 +36,47 @@ export function CategoryManager({
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
+
     setIsSubmitting(true);
+
     const ok = await onCreate(newName.trim());
-    if (ok) setNewName("");
+
+    if (ok) {
+      setNewName("");
+    }
+
     setIsSubmitting(false);
   };
 
   const handleUpdate = async () => {
     if (!editingName.trim() || editingId === null) return;
+
     setIsSubmitting(true);
+
     const ok = await onUpdate(editingId, editingName.trim());
+
     if (ok) {
       setEditingId(null);
       setEditingName("");
     }
+
     setIsSubmitting(false);
   };
 
   const handleDelete = async (id: number) => {
     setIsSubmitting(true);
+
     const ok = await onDelete(id);
-    if (ok) setDeleteConfirmId(null);
+
+    if (ok) {
+      setDeleteConfirmId(null);
+    }
+
     setIsSubmitting(false);
   };
 
@@ -67,127 +91,209 @@ export function CategoryManager({
       isOpen={isOpen}
       onClose={onClose}
       title="Gestion des catégories"
-      description="Créez et gérez les catégories de vos produits."
-      size="sm"
+      description="Organisez vos produits avec des catégories claires et structurées."
+      size="md"
     >
-      {/* Create new */}
-      <div className="flex gap-2 mb-5">
-        <Input
-          placeholder="Nom de la catégorie..."
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          className="flex-1"
-        />
-        <Button
-          variant="primary"
-          size="md"
-          onClick={handleCreate}
-          isLoading={isSubmitting && !editingId}
-          disabled={!newName.trim()}
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
+      <div className="space-y-8">
+        {/* CREATE SECTION */}
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50/70 p-5">
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-neutral-900">
+              Nouvelle catégorie
+            </h3>
 
-      {/* Category list */}
-      <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
-        {categories.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-8 text-[var(--color-text-muted)]">
-            <Tag className="w-8 h-8" />
-            <p className="text-sm">Aucune catégorie créée</p>
+            <p className="mt-1 text-[13px] text-neutral-500">
+              Ajoutez une nouvelle catégorie pour organiser votre catalogue.
+            </p>
           </div>
-        ) : (
-          categories.map((cat) => (
-            <div
-              key={cat.id}
-              className={cn(
-                "group flex items-center gap-2 px-3 py-2.5 rounded-[var(--radius-md)]",
-                "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                "transition-colors hover:border-[var(--color-border-strong)]"
-              )}
+
+          <div className="flex items-center gap-3">
+            <Input
+              placeholder="Ex: Sneakers, Accessoires, Vestes..."
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && handleCreate()
+              }
+              className="flex-1"
+            />
+
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleCreate}
+              disabled={!newName.trim()}
+              isLoading={isSubmitting && editingId === null}
+              className="min-w-[110px]"
             >
-              {editingId === cat.id ? (
-                // Edit mode
-                <>
-                  <input
-                    autoFocus
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleUpdate();
-                      if (e.key === "Escape") setEditingId(null);
-                    }}
-                    className="flex-1 bg-transparent text-sm text-[var(--color-text-primary)] focus:outline-none"
-                  />
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={handleUpdate}
-                    isLoading={isSubmitting}
-                  >
-                    Valider
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setEditingId(null)}
-                  >
-                    ✕
-                  </Button>
-                </>
-              ) : deleteConfirmId === cat.id ? (
-                // Delete confirm
-                <>
-                  <p className="flex-1 text-xs text-[var(--color-danger)]">
-                    Supprimer "{cat.name}" ?
-                  </p>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => handleDelete(cat.id)}
-                    isLoading={isSubmitting}
-                  >
-                    Oui
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setDeleteConfirmId(null)}
-                  >
-                    Non
-                  </Button>
-                </>
-              ) : (
-                // Display mode
-                <>
-                  <span className="flex-1 text-sm text-[var(--color-text-primary)]">
-                    {cat.name}
-                  </span>
-                  {cat._count && (
-                    <Badge variant="default">
-                      {cat._count.products} produit{cat._count.products !== 1 ? "s" : ""}
-                    </Badge>
-                  )}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => startEdit(cat)}
-                      className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirmId(cat.id)}
-                      className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </>
-              )}
+              <Plus className="h-4 w-4" />
+              Ajouter
+            </Button>
+          </div>
+        </div>
+
+        {/* LIST */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-neutral-900">
+                Catégories existantes
+              </h3>
+
+              <p className="mt-1 text-[13px] text-neutral-500">
+                {categories.length} catégorie
+                {categories.length !== 1 ? "s" : ""}
+              </p>
             </div>
-          ))
-        )}
+          </div>
+
+          {categories.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 py-14">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-100">
+                <Tag className="h-6 w-6 text-neutral-500" />
+              </div>
+
+              <p className="text-sm font-medium text-neutral-700">
+                Aucune catégorie
+              </p>
+
+              <p className="mt-1 text-[13px] text-neutral-500">
+                Commencez par créer votre première catégorie.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+              {categories.map((cat) => (
+                <div
+                  key={cat.id}
+                  className={cn(
+                    "group rounded-2xl border border-neutral-200 bg-white px-4 py-4",
+                    "transition-all duration-200",
+                    "hover:border-neutral-300 hover:shadow-sm"
+                  )}
+                >
+                  {editingId === cat.id ? (
+                    <div className="space-y-4">
+                      <Input
+                        autoFocus
+                        value={editingName}
+                        onChange={(e) =>
+                          setEditingName(e.target.value)
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleUpdate();
+
+                          if (e.key === "Escape") {
+                            setEditingId(null);
+                          }
+                        }}
+                      />
+
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingId(null)}
+                        >
+                          <X className="h-4 w-4" />
+                          Annuler
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={handleUpdate}
+                          isLoading={isSubmitting}
+                        >
+                          <Check className="h-4 w-4" />
+                          Enregistrer
+                        </Button>
+                      </div>
+                    </div>
+                  ) : deleteConfirmId === cat.id ? (
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm font-medium text-red-600">
+                          Supprimer cette catégorie ?
+                        </p>
+
+                        <p className="mt-1 text-[13px] text-neutral-500">
+                          Cette action est irréversible.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            setDeleteConfirmId(null)
+                          }
+                        >
+                          Annuler
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDelete(cat.id)}
+                          isLoading={isSubmitting}
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-neutral-900">
+                          {cat.name}
+                        </p>
+
+                        <div className="mt-2">
+                          <Badge variant="default">
+                            {cat._count?.products || 0} produit
+                            {(cat._count?.products || 0) !== 1
+                              ? "s"
+                              : ""}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <button
+                          onClick={() => startEdit(cat)}
+                          className={cn(
+                            "flex h-9 w-9 items-center justify-center rounded-xl",
+                            "border border-neutral-200 bg-white",
+                            "text-neutral-500 transition-all",
+                            "hover:border-neutral-300 hover:bg-neutral-50 hover:text-neutral-900"
+                          )}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            setDeleteConfirmId(cat.id)
+                          }
+                          className={cn(
+                            "flex h-9 w-9 items-center justify-center rounded-xl",
+                            "border border-neutral-200 bg-white",
+                            "text-neutral-500 transition-all",
+                            "hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                          )}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );

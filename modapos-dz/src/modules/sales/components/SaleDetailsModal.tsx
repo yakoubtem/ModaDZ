@@ -68,4 +68,4 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
       </div>
     </Modal>
   );
-}
+}

@@ -44,9 +44,6 @@ export function SettingsPage() {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="top-bar-icon-btn"><span className="material-symbols-outlined">search</span></button>
-          <button className="top-bar-icon-btn"><span className="material-symbols-outlined">notifications</span></button>
-          <button className="top-bar-icon-btn"><span className="material-symbols-outlined">help</span></button>
           <button className="btn-checkout">Encaisser</button>
         </div>
       </header>

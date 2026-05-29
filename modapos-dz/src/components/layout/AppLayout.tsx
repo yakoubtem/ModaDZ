@@ -61,18 +61,6 @@ export function TopBar({ title, description, actions }: TopBarProps) {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="top-bar-icon-btn">
-            <span className="material-symbols-outlined">search</span>
-          </button>
-          <button className="top-bar-icon-btn">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="top-bar-icon-btn">
-            <span className="material-symbols-outlined">help</span>
-          </button>
-        </div>
-
         {actions ?? (
           <button className="btn-checkout">Encaisser</button>
         )}
