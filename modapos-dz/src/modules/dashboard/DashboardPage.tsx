@@ -5,6 +5,7 @@ import { RevenueChart } from "./components/RevenueChart";
 import { PaymentDistributionChart } from "./components/PaymentDistributionChart";
 import { TopProductsList } from "./components/TopProductsList";
 import { AlertsPanel } from "./components/AlertsPanel";
+import { DebtWidget } from "./components/DebtWidget";
 
 export function DashboardPage() {
   const { data, isLoading } = useDashboard(30);
@@ -90,13 +91,31 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {/* Right column — Alerts */}
+          {/* Right column — Alerts + Debt Widget */}
           <div className="dashboard-right">
             <div
-              className="glass-card"
-              style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column", position: "sticky", top: 100 }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-card-gap)",
+                position: "sticky",
+                top: 100,
+              }}
             >
-              <AlertsPanel recentSales={data?.recentSales} lowStock={data?.lowStockVariants} isLoading={isLoading} />
+              <div
+                className="glass-card"
+                style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column" }}
+              >
+                <AlertsPanel recentSales={data?.recentSales} lowStock={data?.lowStockVariants} isLoading={isLoading} />
+              </div>
+
+              {/* ── Créances clients widget ── */}
+              <DebtWidget
+                totalDebt={data?.debtWidget?.totalDebt ?? 0}
+                debtorCount={data?.debtWidget?.debtorCount ?? 0}
+                recoveryRate={data?.debtWidget?.recoveryRate ?? 0}
+                isLoading={isLoading}
+              />
             </div>
           </div>
         </section>

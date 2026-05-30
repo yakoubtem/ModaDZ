@@ -140,6 +140,40 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       };
     });
 
+    // ── Debt widget for dashboard ─────────────────────────────────────
+    const allCustomerSales = await prisma.sale.findMany({
+      where: { customerId: { not: null }, status: { not: "refunded" } },
+      select: { customerId: true, total: true, amountPaid: true },
+    });
+    let dashTotalDebt = 0;
+    const debtByCustomer = new Map<number, number>();
+    for (const s of allCustomerSales) {
+      const remaining = Math.max(0, s.total - s.amountPaid);
+      if (remaining > 0 && s.customerId) {
+        dashTotalDebt += remaining;
+        debtByCustomer.set(s.customerId, (debtByCustomer.get(s.customerId) ?? 0) + remaining);
+      }
+    }
+    const dashDebtorCount = debtByCustomer.size;
+
+    const dashRecoveredResult = await prisma.debtPayment.aggregate({
+      where: { createdAt: { gte: startOfMonth } },
+      _sum: { amount: true },
+    });
+    const dashRecovered = dashRecoveredResult._sum.amount ?? 0;
+    const dashMonthSales = await prisma.sale.findMany({
+      where: { status: { not: "refunded" }, createdAt: { gte: startOfMonth } },
+      select: { total: true, amountPaid: true },
+    });
+    const dashMonthGenerated = dashMonthSales.reduce(
+      (sum, s) => sum + Math.max(0, s.total - s.amountPaid),
+      0
+    );
+    const dashRecoveryRate =
+      dashMonthGenerated > 0
+        ? Math.min(100, Math.round((dashRecovered / dashMonthGenerated) * 100))
+        : 0;
+
     return {
       kpis: {
         todayRevenue: todaySales._sum.total ?? 0,
@@ -153,7 +187,12 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       recentSales,
       revenueChart,
       paymentMethods,
-      topProducts: topVariantsWithNames
+      topProducts: topVariantsWithNames,
+      debtWidget: {
+        totalDebt: dashTotalDebt,
+        debtorCount: dashDebtorCount,
+        recoveryRate: dashRecoveryRate,
+      },
     };
   });
 }

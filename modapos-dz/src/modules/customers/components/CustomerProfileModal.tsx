@@ -12,6 +12,7 @@ import {
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 import type { CustomerDetail, Sale } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -202,12 +203,12 @@ export function CustomerProfileModal({
                           <Badge variant="danger">Remboursé</Badge>
                         )}
 
-                        {/* Debt indicator */}
-                        {sale.amountPaid < sale.total && (
-                          <Badge variant="warning">
-                            Crédit {formatCurrency(sale.total - sale.amountPaid)}
-                          </Badge>
-                        )}
+                        {/* Payment status badge */}
+                        <PaymentStatusBadge
+                          amountPaid={sale.amountPaid}
+                          total={sale.total}
+                          compact
+                        />
 
                         {/* Total */}
                         <span className="ml-auto font-semibold text-[var(--color-text-primary)] tabular-nums">

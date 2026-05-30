@@ -10,6 +10,7 @@ import { FileText, Eye, FileSearch } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 
 const columnHelper = createColumnHelper<SaleSummary>();
 
@@ -77,6 +78,17 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
         const method = info.getValue();
         return PAYMENT_METHOD_LABELS[method] || method;
       },
+    }),
+    columnHelper.display({
+      id: "paymentStatus",
+      header: "Paiement",
+      cell: (info) => (
+        <PaymentStatusBadge
+          amountPaid={info.row.original.amountPaid}
+          total={info.row.original.total}
+          compact
+        />
+      ),
     }),
     columnHelper.accessor("status", {
       header: "Statut",

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { formatCurrency, formatDate, formatDateTime, initials } from "@/lib/utils";
 import { PaymentFormModal } from "./PaymentFormModal";
 import type { DebtCustomerDetail } from "@/types";
+import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 
 // ─── Helpers ─────────────────────────────────────────────
 
@@ -408,6 +409,7 @@ export function CustomerDebtModal({
                     <TH>Restant</TH>
                     <TH>Méthode</TH>
                     <TH>Statut</TH>
+                    <TH>Paiement</TH>
                   </tr>
                 </thead>
                 <tbody>
@@ -445,6 +447,13 @@ export function CustomerDebtModal({
                         >
                           {sale.status === "completed" ? "Complétée" : sale.status === "refunded" ? "Remboursée" : "En attente"}
                         </span>
+                      </TD>
+                      <TD>
+                        <PaymentStatusBadge
+                          amountPaid={sale.amountPaid}
+                          total={sale.total}
+                          compact
+                        />
                       </TD>
                     </tr>
                   ))}

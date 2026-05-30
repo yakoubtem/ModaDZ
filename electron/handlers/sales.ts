@@ -119,13 +119,46 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
 
   // ─── POS Checkout ─────────────────────────────────────────
   // Transaction order:
-  //   1. Validate all stock (throws on first failure)
-  //   2. Decrement stock
-  //   3. Create Sale + SaleItems
-  //   4. Patch receiptNumber onto the new record
+  //   1. Business-rule validation (amounts, customer required for debt)
+  //   2. Validate all stock (throws on first failure)
+  //   3. Decrement stock
+  //   4. Create Sale + SaleItems
+  //   5. Patch receiptNumber onto the new record
   ipcMain.handle("pos:checkout", async (_e, data: POSCheckoutPayload) => {
     return prisma.$transaction(async (tx) => {
-      // ── 1. Stock validation ──
+      // ── 1. Business-rule validation ──
+      const amountPaid = data.amountPaid ?? data.total;
+
+      // amountPaid must be non-negative
+      if (amountPaid < 0) {
+        throw new Error("Le montant payé ne peut pas être négatif.");
+      }
+
+      // amountPaid must not exceed the sale total
+      if (amountPaid > data.total) {
+        throw new Error("Le montant payé ne peut pas dépasser le total de la vente.");
+      }
+
+      // A customer is REQUIRED when the sale generates a debt
+      const remainingDebt = data.total - amountPaid;
+      if (remainingDebt > 0 && !data.customerId) {
+        throw new Error(
+          "Veuillez sélectionner un client pour enregistrer une dette."
+        );
+      }
+
+      // Verify the provided customer actually exists
+      if (data.customerId) {
+        const customer = await tx.customer.findUnique({
+          where: { id: data.customerId },
+          select: { id: true },
+        });
+        if (!customer) {
+          throw new Error(`Client introuvable (ID: ${data.customerId})`);
+        }
+      }
+
+      // ── 2. Stock validation ──
       for (const item of data.items) {
         const variant = await tx.productVariant.findUnique({
           where: { id: item.variantId },
@@ -144,7 +177,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         }
       }
 
-      // ── 2. Decrement stock ──
+      // ── 3. Decrement stock ──
       for (const item of data.items) {
         await tx.productVariant.update({
           where: { id: item.variantId },
@@ -152,8 +185,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         });
       }
 
-      // ── 3. Create sale ──
-      const amountPaid = data.amountPaid ?? data.total;
+      // ── 4. Create sale (amountPaid already validated above) ──
       const sale = await tx.sale.create({
         data: {
           userId: data.userId,
@@ -177,7 +209,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         select: { id: true },
       });
 
-      // ── 4. Patch receiptNumber (needs the new ID) ──
+      // ── 5. Patch receiptNumber (needs the new ID) ──
       const receiptNumber = generateReceiptNumber(sale.id);
       return tx.sale.update({
         where: { id: sale.id },

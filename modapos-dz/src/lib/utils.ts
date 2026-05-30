@@ -8,6 +8,18 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+// ─── Payment Status ────────────────────────────────────────
+export type PaymentStatus = "paid" | "partial" | "unpaid";
+
+export function getPaymentStatus(
+  amountPaid: number,
+  total: number
+): PaymentStatus {
+  if (amountPaid >= total) return "paid";
+  if (amountPaid > 0) return "partial";
+  return "unpaid";
+}
+
 // ─── Date Formatters ──────────────────────────────────────
 export function formatDate(dateStr: string): string {
   return new Intl.DateTimeFormat("fr-DZ", {

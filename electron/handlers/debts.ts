@@ -66,18 +66,37 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
     }
 
     // Recovered this month = sum of DebtPayment.amount in current month
-    const recoveredThisMonth = await prisma.debtPayment.aggregate({
+    const recoveredThisMonthResult = await prisma.debtPayment.aggregate({
       where: { createdAt: { gte: startOfMonth } },
       _sum: { amount: true },
     });
+    const recoveredThisMonth = recoveredThisMonthResult._sum.amount ?? 0;
+
+    // Month-generated debt = sum of (total - amountPaid) for sales this month with remaining balance
+    const monthSalesWithDebt = await prisma.sale.findMany({
+      where: {
+        status: { not: "refunded" },
+        createdAt: { gte: startOfMonth },
+      },
+      select: { total: true, amountPaid: true },
+    });
+    const monthGeneratedDebt = monthSalesWithDebt.reduce(
+      (sum, s) => sum + Math.max(0, s.total - s.amountPaid),
+      0
+    );
+    const recoveryRate =
+      monthGeneratedDebt > 0
+        ? Math.min(100, Math.round((recoveredThisMonth / monthGeneratedDebt) * 100))
+        : 0;
 
     const avgDebtPerDebtor = debtorCount > 0 ? totalDebt / debtorCount : 0;
 
     return {
       totalDebt,
       debtorCount,
-      recoveredThisMonth: recoveredThisMonth._sum.amount ?? 0,
+      recoveredThisMonth,
       avgDebtPerDebtor,
+      recoveryRate,
     };
   });
 

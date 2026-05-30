@@ -204,18 +204,46 @@ export function ReceiptPreview({
             <span>{PAYMENT_LABELS[sale.paymentMethod] ?? sale.paymentMethod}</span>
           </div>
 
-          {sale.paymentMethod === "cash" && amountPaid > 0 && (
-            <>
-              <div className="flex justify-between">
-                <span>Montant reçu</span>
-                <span className="tabular-nums">{formatCurrency(amountPaid)}</span>
-              </div>
-              <div className="flex justify-between text-[var(--color-success)] font-semibold print:text-black">
-                <span>Monnaie</span>
-                <span className="tabular-nums">{formatCurrency(change)}</span>
-              </div>
-            </>
-          )}
+          {/* ── Cash: show amount received and either change or remaining debt ── */}
+          {sale.paymentMethod === "cash" && (() => {
+            const saleRemaining = Math.max(0, sale.total - sale.amountPaid);
+            const cashChange = amountPaid > 0 ? Math.max(0, amountPaid - sale.total) : 0;
+
+            if (cashChange > 0) {
+              // Customer over-paid — show change
+              return (
+                <>
+                  <div className="flex justify-between">
+                    <span>Montant reçu</span>
+                    <span className="tabular-nums">{formatCurrency(amountPaid)}</span>
+                  </div>
+                  <div className="flex justify-between text-[var(--color-success)] font-semibold print:text-black">
+                    <span>Monnaie</span>
+                    <span className="tabular-nums">{formatCurrency(cashChange)}</span>
+                  </div>
+                </>
+              );
+            }
+
+            if (saleRemaining > 0) {
+              // Partial / zero payment — show amount paid + remaining debt
+              return (
+                <>
+                  <div className="flex justify-between">
+                    <span>Montant payé</span>
+                    <span className="tabular-nums">{formatCurrency(sale.amountPaid)}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold print:text-black" style={{ color: "var(--color-danger, #ba1a1a)" }}>
+                    <span>Reste (Dette)</span>
+                    <span className="tabular-nums">{formatCurrency(saleRemaining)}</span>
+                  </div>
+                </>
+              );
+            }
+
+            // Fully paid — nothing extra to show
+            return null;
+          })()}
         </div>
 
         <ReceiptDivider />

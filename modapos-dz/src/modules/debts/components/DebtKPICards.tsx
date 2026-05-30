@@ -134,9 +134,9 @@ export function DebtKPICards({ stats, isLoading }: DebtKPICardsProps) {
         isLoading={isLoading}
       />
       <KPICard
-        icon="trending_down"
-        label="Dette moyenne / client"
-        value={stats ? formatCurrency(stats.avgDebtPerDebtor) : "—"}
+        icon="track_changes"
+        label="Taux de recouvrement"
+        value={stats ? `${stats.recoveryRate} %` : "—"}
         iconBg="rgba(180,83,9,0.1)"
         iconColor="var(--color-warning)"
         isLoading={isLoading}

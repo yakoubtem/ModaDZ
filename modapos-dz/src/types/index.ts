@@ -273,6 +273,11 @@ export interface DashboardSummary {
   revenueChart: RevenueDataPoint[];
   paymentMethods: PaymentDataPoint[];
   topProducts: TopProduct[];
+  debtWidget: {
+    totalDebt: number;
+    debtorCount: number;
+    recoveryRate: number;
+  };
 }
 
 
@@ -325,6 +330,7 @@ export interface DebtStatistics {
   debtorCount: number;
   recoveredThisMonth: number;
   avgDebtPerDebtor: number;
+  recoveryRate: number; // percentage: (monthCollected / monthGeneratedDebt) * 100
 }
 
 /** Sale row inside the customer debt modal */

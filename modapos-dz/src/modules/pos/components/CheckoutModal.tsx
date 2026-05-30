@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { UserCircle, X, Printer } from "lucide-react";
+import { UserCircle, X, Printer, AlertTriangle } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -71,6 +71,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   // ── Local state ─────────────────────────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>("form");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
+  // Default to total so the sale starts as fully paid
   const [amountPaid, setAmountPaid] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,27 +119,43 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }, 300);
   }, [customerQuery, api]);
 
-  // Derived values
-  const amountPaidNum = parseFloat(amountPaid) || 0;
-  const change =
-    paymentMethod === "cash" && amountPaidNum >= total
-      ? amountPaidNum - total
-      : 0;
+  // ─── Derived debt values ─────────────────────────────────────────────────────
+  // When amountPaid is blank, we treat it as full payment (no debt).
+  const amountPaidNum = amountPaid === "" ? total : Math.max(0, parseFloat(amountPaid) || 0);
+
+  // The amount we will write to the DB — capped at total, floored at 0.
+  const dbAmountPaid =
+    paymentMethod !== "cash"
+      ? total                                    // non-cash: always fully paid
+      : Math.min(amountPaidNum, total);          // cash: what they actually gave
+
+  const remaining = Math.max(0, total - dbAmountPaid);
+
+  // Cash change (only when they over-pay)
+  const change = paymentMethod === "cash" && amountPaidNum > total ? amountPaidNum - total : 0;
+
+  // Whether the form can be submitted
+  const hasDebt = remaining > 0;
+  const missingCustomer = hasDebt && !selectedCustomer;
+
   const canSubmit =
     items.length > 0 &&
-    (paymentMethod !== "cash" ||
-      amountPaid === "" ||
-      amountPaidNum >= total ||
-      (amountPaidNum < total && selectedCustomer !== null));
-
-  const dbAmountPaid =
-    paymentMethod === "cash"
-      ? (amountPaid === "" ? total : Math.min(amountPaidNum, total))
-      : total;
+    dbAmountPaid >= 0 &&
+    !missingCustomer;
 
   // ── Checkout handler ────────────────────────────────────────────────────────
   const handleConfirm = async () => {
     if (!user) return;
+
+    // Client-side guard: customer required for debt
+    if (hasDebt && !selectedCustomer) {
+      toastError(
+        "Client requis",
+        "Veuillez sélectionner un client pour enregistrer une dette."
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -162,6 +179,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       clearCart();
       setCompletedSale(sale);
       setPhase("receipt");
+
+      if (remaining > 0) {
+        toastSuccess(
+          "Vente enregistrée",
+          `Dette de ${formatCurrency(remaining)} enregistrée pour ${selectedCustomer?.name}.`
+        );
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Erreur lors du paiement";
@@ -315,14 +339,21 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </div>
             </div>
 
-            {/* ── Customer (optional) ── */}
+            {/* ── Customer — required when there is a debt ── */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide">
-                Client (optionnel)
+                Client{hasDebt ? " (requis pour la dette)" : " (optionnel)"}
               </label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <UserCircle className="w-4 h-4 text-[var(--color-text-muted)]" />
+                  <UserCircle
+                    className={cn(
+                      "w-4 h-4",
+                      missingCustomer
+                        ? "text-[var(--color-danger)]"
+                        : "text-[var(--color-text-muted)]"
+                    )}
+                  />
                 </div>
                 <input
                   type="text"
@@ -337,7 +368,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   }
                   className={cn(
                     "w-full h-9 pl-9 pr-8 text-sm",
-                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
+                    "bg-[var(--color-bg-elevated)] border",
+                    missingCustomer
+                      ? "border-[var(--color-danger)]"
+                      : "border-[var(--color-border)]",
                     "rounded-[var(--radius-md)] text-[var(--color-text-primary)]",
                     "placeholder:text-[var(--color-text-muted)]",
                     "focus:outline-none focus:border-[var(--color-accent)] transition-colors"
@@ -436,25 +470,85 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   hint="Laissez vide si le montant exact est donné"
                 />
 
-                {/* Change display */}
-                {amountPaidNum >= total && amountPaidNum > 0 && (
-                  <div className="flex items-center justify-between px-4 py-3 rounded-[var(--radius-md)] bg-[var(--color-success-subtle)] border border-[var(--color-success)]/30 animate-fade-in">
-                    <span className="text-sm font-medium text-[var(--color-text-secondary)]">
-                      Monnaie à rendre
-                    </span>
-                    <span className="text-xl font-bold text-[var(--color-success)] tabular-nums">
-                      {formatCurrency(change)}
-                    </span>
+                {/* ── Live payment summary ── */}
+                <div className="rounded-[var(--radius-md)] border border-[var(--color-border)] overflow-hidden">
+                  <div className="divide-y divide-[var(--color-border)]">
+                    {/* Total row */}
+                    <div className="flex justify-between items-center px-4 py-2.5 text-sm">
+                      <span className="text-[var(--color-text-secondary)]">Total</span>
+                      <span className="tabular-nums font-semibold text-[var(--color-text-primary)]">
+                        {formatCurrency(total)}
+                      </span>
+                    </div>
+                    {/* Amount paid row */}
+                    <div className="flex justify-between items-center px-4 py-2.5 text-sm">
+                      <span className="text-[var(--color-text-secondary)]">Montant payé</span>
+                      <span className="tabular-nums font-semibold text-[var(--color-text-primary)]">
+                        {formatCurrency(dbAmountPaid)}
+                      </span>
+                    </div>
+                    {/* Remaining / change row */}
+                    {change > 0 ? (
+                      <div className="flex justify-between items-center px-4 py-2.5 text-sm bg-[var(--color-success-subtle)]">
+                        <span className="text-[var(--color-success)] font-medium">Monnaie à rendre</span>
+                        <span className="tabular-nums font-bold text-[var(--color-success)]">
+                          {formatCurrency(change)}
+                        </span>
+                      </div>
+                    ) : remaining > 0 ? (
+                      <div className="flex justify-between items-center px-4 py-2.5 text-sm bg-[var(--color-danger-subtle)]">
+                        <span className="text-[var(--color-danger)] font-medium">Reste (Dette)</span>
+                        <span className="tabular-nums font-bold text-[var(--color-danger)]">
+                          {formatCurrency(remaining)}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center px-4 py-2.5 text-sm bg-[var(--color-success-subtle)]">
+                        <span className="text-[var(--color-success)] font-medium">Soldé</span>
+                        <span className="tabular-nums font-bold text-[var(--color-success)]">✓</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {/* Warning: insufficient amount */}
-                {amountPaidNum > 0 && amountPaidNum < total && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-sm)] bg-[var(--color-danger-subtle)] border border-[var(--color-danger)]/20 animate-fade-in">
-                    <span className="text-xs text-[var(--color-danger)]">
-                      Montant insuffisant — {formatCurrency(total - amountPaidNum)}{" "}
-                      manquant
-                    </span>
+                {/* ── Debt warning / customer-required error ── */}
+                {remaining > 0 && (
+                  <div
+                    className={cn(
+                      "flex items-start gap-2.5 px-3.5 py-3 rounded-[var(--radius-md)] border animate-fade-in",
+                      missingCustomer
+                        ? "bg-[var(--color-danger-subtle)] border-[var(--color-danger)]/30"
+                        : "bg-amber-50 border-amber-200"
+                    )}
+                  >
+                    <AlertTriangle
+                      className={cn(
+                        "w-4 h-4 mt-0.5 shrink-0",
+                        missingCustomer ? "text-[var(--color-danger)]" : "text-amber-600"
+                      )}
+                    />
+                    <div>
+                      <p
+                        className={cn(
+                          "text-sm font-semibold",
+                          missingCustomer ? "text-[var(--color-danger)]" : "text-amber-700"
+                        )}
+                      >
+                        {missingCustomer
+                          ? "Client requis"
+                          : `Cette vente générera une dette client de ${formatCurrency(remaining)}`}
+                      </p>
+                      <p
+                        className={cn(
+                          "text-xs mt-0.5",
+                          missingCustomer ? "text-[var(--color-danger)]/80" : "text-amber-600"
+                        )}
+                      >
+                        {missingCustomer
+                          ? "Veuillez sélectionner un client pour enregistrer une dette."
+                          : `Le client ${selectedCustomer?.name} sera redevable de ${formatCurrency(remaining)}.`}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -474,7 +568,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           completedSale && (
             <ReceiptPreview
               sale={completedSale}
-              amountPaid={amountPaidNum}
+              amountPaid={dbAmountPaid}
               onClose={handleClose}
               storeName={receiptSettings.storeName}
               storePhone={receiptSettings.storePhone}
