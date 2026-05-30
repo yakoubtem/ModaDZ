@@ -4,7 +4,7 @@ import { useDebtDetails } from "./hooks/useDebtDetails";
 import { DebtKPICards } from "./components/DebtKPICards";
 import { DebtFilters } from "./components/DebtFilters";
 import { DebtTable } from "./components/DebtTable";
-import { TopDebtorsWidget } from "./components/TopDebtorsWidget";
+
 import { CustomerDebtModal } from "./components/CustomerDebtModal";
 import { formatCurrency } from "@/lib/utils";
 
@@ -250,45 +250,24 @@ export function DebtsPage() {
         {/* ── KPI Cards ── */}
         <DebtKPICards stats={stats} isLoading={isStatsLoading} />
 
-        {/* ── Main grid: content + sidebar ── */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 340px",
-            gap: 24,
-            alignItems: "start",
-          }}
-        >
-          {/* Left: filters + table */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            <DebtFilters
-              search={search}
-              filter={filter}
-              sort={sort}
-              onSearch={handleSearch}
-              onFilter={handleFilter}
-              onSort={handleSort}
-            />
-            <DebtTable
-              customers={customers}
-              isLoading={isLoading}
-              total={total}
-              page={page}
-              pageSize={pageSize}
-              onViewDetail={openDetail}
-              onPageChange={handlePageChange}
-            />
-          </div>
-
-          {/* Right: widget */}
-          <div style={{ position: "sticky", top: 80 }}>
-            <TopDebtorsWidget
-              customers={customers}
-              isLoading={isLoading}
-              onViewDetail={openDetail}
-            />
-          </div>
-        </div>
+        {/* ── Filters + Table ── */}
+        <DebtFilters
+          search={search}
+          filter={filter}
+          sort={sort}
+          onSearch={handleSearch}
+          onFilter={handleFilter}
+          onSort={handleSort}
+        />
+        <DebtTable
+          customers={customers}
+          isLoading={isLoading}
+          total={total}
+          page={page}
+          pageSize={pageSize}
+          onViewDetail={openDetail}
+          onPageChange={handlePageChange}
+        />
       </main>
 
       {/* ── Customer Debt Modal ── */}
@@ -302,11 +281,6 @@ export function DebtsPage() {
 
       {/* ── Responsive styles ── */}
       <style>{`
-        @media (max-width: 1200px) {
-          #debts-page main > div:last-of-type {
-            grid-template-columns: 1fr !important;
-          }
-        }
         @media (max-width: 600px) {
           #debts-page main {
             padding: 16px !important;
