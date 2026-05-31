@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { name: "Clients",          path: "/customers",  icon: "group" },
   { name: "Ventes",           path: "/sales",      icon: "payments" },
   { name: "Dettes",           path: "/debts",      icon: "account_balance_wallet" },
+  { name: "Dépenses",         path: "/expenses",   icon: "receipt_long" },
   { name: "Statistiques",     path: "/stats",      icon: "leaderboard" },
   { name: "Paramètres",       path: "/settings",   icon: "settings" },
 ];

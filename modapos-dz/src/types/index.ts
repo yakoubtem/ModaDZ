@@ -379,3 +379,96 @@ export interface PaginatedDebtCustomers {
 export type DebtFilter = "all" | "with_debt" | "no_debt" | "gt_10k" | "gt_50k";
 export type DebtSort = "debt_asc" | "debt_desc" | "name_asc" | "name_desc";
 
+// ─── Expense Management ──────────────────────────────────
+
+export type ExpenseCategory =
+  | "Loyer"
+  | "Salaires"
+  | "Transport"
+  | "Marketing"
+  | "Internet"
+  | "Électricité"
+  | "Eau"
+  | "Maintenance"
+  | "Achats"
+  | "Fournisseurs"
+  | "Taxes"
+  | "Autres";
+
+export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+  "Loyer",
+  "Salaires",
+  "Transport",
+  "Marketing",
+  "Internet",
+  "Électricité",
+  "Eau",
+  "Maintenance",
+  "Achats",
+  "Fournisseurs",
+  "Taxes",
+  "Autres",
+];
+
+export type ExpensePaymentMethod =
+  | "Espèces"
+  | "Carte"
+  | "Virement"
+  | "Chèque"
+  | "Autre";
+
+export const EXPENSE_PAYMENT_METHODS: ExpensePaymentMethod[] = [
+  "Espèces",
+  "Carte",
+  "Virement",
+  "Chèque",
+  "Autre",
+];
+
+export interface Expense {
+  id: number;
+  title: string;
+  description?: string | null;
+  amount: number;
+  category: string;
+  paymentMethod?: string | null;
+  expenseDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExpenseFormData {
+  title: string;
+  amount: number;
+  category: string;
+  expenseDate: string;
+  paymentMethod?: string;
+  description?: string;
+}
+
+export type ExpenseSort = "newest" | "oldest" | "highest" | "lowest";
+
+export interface ExpenseFilters {
+  search: string;
+  category: string;
+  from: string;
+  to: string;
+  minAmount: string;
+  maxAmount: string;
+  sort: ExpenseSort;
+}
+
+export interface ExpenseSummary {
+  monthTotal: number;
+  todayTotal: number;
+  topCategory: { name: string; amount: number } | null;
+  totalSalesMonth: number;
+}
+
+export interface PaginatedExpenses {
+  expenses: Expense[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+

@@ -41,6 +41,7 @@ import { registerDashboardHandlers } from "./handlers/dashboard";
 import { registerSettingsHandlers } from "./handlers/settings";
 import { registerBackupHandlers } from "./handlers/backups";
 import { registerDebtHandlers } from "./handlers/debts";
+import { registerExpenseHandlers } from "./handlers/expenses";
 
 
 // MUST be called before app.whenReady()
@@ -106,6 +107,7 @@ function registerHandlers() {
   registerSettingsHandlers(ipcMain);
   registerBackupHandlers(ipcMain);
   registerDebtHandlers(ipcMain);
+  registerExpenseHandlers(ipcMain);
 }
 
 app.whenReady().then(() => {

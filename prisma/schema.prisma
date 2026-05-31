@@ -128,3 +128,16 @@ model Backup {
   type      String   @default("manual") // manual | auto
   createdAt DateTime @default(now())
 }
+
+// --- Expenses ----------------------------------------------
+model Expense {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  amount        Float
+  category      String
+  paymentMethod String?
+  expenseDate   DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
