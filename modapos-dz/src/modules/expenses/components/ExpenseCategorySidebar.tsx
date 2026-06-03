@@ -5,6 +5,7 @@ import type { Expense } from "@/types";
 interface ExpenseCategorySidebarProps {
   expenses: Expense[];
   isLoading: boolean;
+  onManageCategories?: () => void;
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -22,7 +23,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   Autres: "more_horiz",
 };
 
-export function ExpenseCategorySidebar({ expenses, isLoading }: ExpenseCategorySidebarProps) {
+export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories }: ExpenseCategorySidebarProps) {
   const categories = useMemo(() => {
     const map = new Map<string, number>();
     let totalAmount = 0;
@@ -112,103 +113,116 @@ export function ExpenseCategorySidebar({ expenses, isLoading }: ExpenseCategoryS
           Aucune dépense
         </p>
       ) : (
-        categories.map((cat) => (
-          <div
-            key={cat.name}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              padding: "12px 14px",
-              borderRadius: "var(--radius-lg)",
-              background: "var(--color-surface-container-low)",
-              transition: "background 0.15s ease",
-            }}
-          >
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {categories.map((cat) => (
             <div
+              key={cat.name}
               style={{
-                width: 34,
-                height: 34,
-                borderRadius: "var(--radius-md)",
-                background: "rgba(212,175,55,0.12)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
+                gap: 12,
+                padding: "12px 14px",
+                borderRadius: "var(--radius-lg)",
+                background: "var(--color-surface-container-low)",
+                transition: "background 0.15s ease",
               }}
             >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 18, color: "var(--color-primary)" }}
-              >
-                {cat.icon}
-              </span>
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
               <div
                 style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: "var(--radius-md)",
+                  background: "rgba(212,175,55,0.12)",
                   display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  marginBottom: 6,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
                 }}
               >
                 <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, color: "var(--color-primary)" }}
+                >
+                  {cat.icon}
+                </span>
+              </div>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
                   style={{
-                    fontSize: "var(--text-body-sm)",
-                    fontWeight: 600,
-                    color: "var(--color-on-surface)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    marginBottom: 6,
                   }}
                 >
-                  {cat.name}
-                </span>
+                  <span
+                    style={{
+                      fontSize: "var(--text-body-sm)",
+                      fontWeight: 600,
+                      color: "var(--color-on-surface)",
+                    }}
+                  >
+                    {cat.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "var(--color-primary)",
+                      flexShrink: 0,
+                      marginLeft: 8,
+                    }}
+                  >
+                    {cat.percentage}%
+                  </span>
+                </div>
+
+                {/* Progress bar */}
+                <div
+                  style={{
+                    height: 4,
+                    borderRadius: "var(--radius-full)",
+                    background: "rgba(208,197,175,0.25)",
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${cat.percentage}%`,
+                      borderRadius: "var(--radius-full)",
+                      background: "var(--color-primary-container)",
+                      transition: "width 0.4s ease",
+                    }}
+                  />
+                </div>
+
                 <span
                   style={{
                     fontSize: 11,
-                    fontWeight: 700,
-                    color: "var(--color-primary)",
-                    flexShrink: 0,
-                    marginLeft: 8,
+                    color: "var(--color-secondary)",
+                    marginTop: 4,
+                    display: "block",
                   }}
                 >
-                  {cat.percentage}%
+                  {formatCurrency(cat.amount)}
                 </span>
               </div>
-
-              {/* Progress bar */}
-              <div
-                style={{
-                  height: 4,
-                  borderRadius: "var(--radius-full)",
-                  background: "rgba(208,197,175,0.25)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${cat.percentage}%`,
-                    borderRadius: "var(--radius-full)",
-                    background: "var(--color-primary-container)",
-                    transition: "width 0.4s ease",
-                  }}
-                />
-              </div>
-
-              <span
-                style={{
-                  fontSize: 11,
-                  color: "var(--color-secondary)",
-                  marginTop: 4,
-                  display: "block",
-                }}
-              >
-                {formatCurrency(cat.amount)}
-              </span>
             </div>
-          </div>
-        ))
+          ))}
+        </div>
+      )}
+
+      {onManageCategories && (
+        <button
+          onClick={onManageCategories}
+          className="btn-border"
+          style={{ width: "100%", marginTop: 16, justifyContent: "center", gap: 6 }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>settings</span>
+          Gérer les catégories
+        </button>
       )}
     </div>
   );

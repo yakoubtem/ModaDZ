@@ -19,6 +19,7 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
     const [
       todaySales,
       monthSales,
+      monthExpenses,
       totalProducts,
       lowStockVariants,
       totalCustomers,
@@ -37,6 +38,11 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         where: { status: "completed", createdAt: { gte: startOfMonth } },
         _sum: { total: true },
         _count: { id: true },
+      }),
+      // 2b. Month expenses
+      prisma.expense.aggregate({
+        where: { expenseDate: { gte: startOfMonth } },
+        _sum: { amount: true },
       }),
       // 3. Products
       prisma.product.count({ where: { isActive: true } }),
@@ -180,6 +186,8 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         todaySalesCount: todaySales._count.id,
         monthRevenue: monthSales._sum.total ?? 0,
         monthSalesCount: monthSales._count.id,
+        monthExpenses: monthExpenses._sum.amount ?? 0,
+        netProfitMonth: (monthSales._sum.total ?? 0) - (monthExpenses._sum.amount ?? 0),
         totalProducts,
         totalCustomers,
       },
@@ -188,6 +196,65 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       revenueChart,
       paymentMethods,
       topProducts: topVariantsWithNames,
+      expenseAlerts: await (async () => {
+        const alerts: { type: "budget_exceeded" | "spike" | "high_expense"; title: string; message: string; severity: "info" | "warning" | "danger" }[] = [];
+
+        const settings = await prisma.setting.findUnique({ where: { key: "expensesMonthlyBudget" } });
+        const budget = settings?.value ? parseFloat(settings.value) : 0;
+        const monthTotal = monthExpenses._sum.amount ?? 0;
+        if (budget > 0 && monthTotal > budget) {
+          alerts.push({
+            type: "budget_exceeded",
+            title: "Budget mensuel dépassé",
+            message: `Dépenses du mois: ${Math.round(monthTotal).toLocaleString("fr-DZ")} DZD`,
+            severity: "danger",
+          });
+        }
+
+        const last30Start = new Date();
+        last30Start.setDate(last30Start.getDate() - 30);
+        const last7Start = new Date();
+        last7Start.setDate(last7Start.getDate() - 7);
+        const prev7Start = new Date();
+        prev7Start.setDate(prev7Start.getDate() - 14);
+
+        const [last30Expenses, last7Agg, prev7Agg] = await Promise.all([
+          prisma.expense.findMany({ where: { expenseDate: { gte: last30Start } }, select: { amount: true } }),
+          prisma.expense.aggregate({ where: { expenseDate: { gte: last7Start } }, _sum: { amount: true } }),
+          prisma.expense.aggregate({ where: { expenseDate: { gte: prev7Start, lt: last7Start } }, _sum: { amount: true } }),
+        ]);
+
+        const avg30 = last30Expenses.length
+          ? last30Expenses.reduce((s, e) => s + e.amount, 0) / last30Expenses.length
+          : 0;
+        if (avg30 > 0) {
+          const high = last30Expenses.find((e) => e.amount > avg30 * 2.2);
+          if (high) {
+            alerts.push({
+              type: "high_expense",
+              title: "Dépense inhabituelle",
+              message: `Une dépense récente dépasse la moyenne.`,
+              severity: "warning",
+            });
+          }
+        }
+
+        const last7Total = last7Agg._sum.amount ?? 0;
+        const prev7Total = prev7Agg._sum.amount ?? 0;
+        if (prev7Total > 0) {
+          const spikePct = Math.round(((last7Total - prev7Total) / prev7Total) * 100);
+          if (spikePct >= 25) {
+            alerts.push({
+              type: "spike",
+              title: "Pic de dépenses",
+              message: `+${spikePct}% sur 7 jours`,
+              severity: "warning",
+            });
+          }
+        }
+
+        return alerts;
+      })(),
       debtWidget: {
         totalDebt: dashTotalDebt,
         debtorCount: dashDebtorCount,

@@ -6,13 +6,16 @@ interface KPICardProps {
   label: string;
   value: string;
   sub?: string;
+  trend?: number;
+  trendLabel?: string;
   iconColor?: string;
   iconBg?: string;
   isLoading?: boolean;
   accent?: boolean;
 }
 
-function KPICard({ icon, label, value, sub, iconColor, iconBg, isLoading, accent }: KPICardProps) {
+function KPICard({ icon, label, value, sub, trend, trendLabel, iconColor, iconBg, isLoading, accent }: KPICardProps) {
+  const trendDir = (trend ?? 0) >= 0 ? "up" : "down";
   return (
     <div
       style={{
@@ -92,6 +95,26 @@ function KPICard({ icon, label, value, sub, iconColor, iconBg, isLoading, accent
                 {sub}
               </p>
             )}
+            {trend !== undefined && trendLabel && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 6 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: trendDir === "up" ? "var(--color-tertiary)" : "var(--color-error)",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    {trendDir === "up" ? "trending_up" : "trending_down"}
+                  </span>
+                  {Math.abs(trend)}%
+                </span>
+                <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>{trendLabel}</span>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -112,7 +135,7 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
         gap: 20,
         marginBottom: 32,
       }}
@@ -121,6 +144,8 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
         icon="payments"
         label="Total dépenses du mois"
         value={summary ? formatCurrency(summary.monthTotal) : "—"}
+        trend={summary?.monthChangePct}
+        trendLabel="vs mois dernier"
         iconBg="rgba(186,26,26,0.1)"
         iconColor="var(--color-error)"
         isLoading={isLoading}
@@ -129,15 +154,37 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
         icon="today"
         label="Total dépenses aujourd'hui"
         value={summary ? formatCurrency(summary.todayTotal) : "—"}
+        trend={summary?.todayChangePct}
+        trendLabel="vs hier"
         iconBg="rgba(212,175,55,0.15)"
         iconColor="var(--color-primary)"
+        isLoading={isLoading}
+      />
+      <KPICard
+        icon="calendar_view_week"
+        label="Dépenses cette semaine"
+        value={summary ? formatCurrency(summary.weekTotal) : "—"}
+        trend={summary?.weekChangePct}
+        trendLabel="vs semaine dernière"
+        iconBg="rgba(2,132,199,0.12)"
+        iconColor="var(--color-info)"
+        isLoading={isLoading}
+      />
+      <KPICard
+        icon="calendar_month"
+        label="Dépenses cette année"
+        value={summary ? formatCurrency(summary.yearTotal) : "—"}
+        trend={summary?.yearChangePct}
+        trendLabel="vs année passée"
+        iconBg="rgba(39,104,104,0.1)"
+        iconColor="var(--color-tertiary)"
         isLoading={isLoading}
       />
       <KPICard
         icon="category"
         label="Catégorie principale"
         value={summary?.topCategory?.name ?? "—"}
-        sub={summary?.topCategory ? formatCurrency(summary.topCategory.amount) : undefined}
+        sub={summary?.topCategory ? `${formatCurrency(summary.topCategory.amount)} · ${summary.topCategory.sharePct}%` : undefined}
         iconBg="rgba(180,83,9,0.1)"
         iconColor="var(--color-warning)"
         isLoading={isLoading}
@@ -147,6 +194,8 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
         label="Profit net estimé"
         value={summary ? formatCurrency(netProfit) : "—"}
         sub={summary ? `Ventes: ${formatCurrency(summary.totalSalesMonth)}` : undefined}
+        trend={summary?.netProfitChangePct}
+        trendLabel="vs mois dernier"
         iconBg={isPositive ? "rgba(39,104,104,0.12)" : "rgba(186,26,26,0.1)"}
         iconColor={isPositive ? "var(--color-tertiary)" : "var(--color-error)"}
         isLoading={isLoading}

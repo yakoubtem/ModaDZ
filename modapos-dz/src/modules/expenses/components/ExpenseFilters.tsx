@@ -1,16 +1,23 @@
-import { EXPENSE_CATEGORIES } from "@/types";
-import type { ExpenseSort } from "@/types";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import type { ExpenseCategoryRecord, ExpenseSort } from "@/types";
 
 interface ExpenseFiltersProps {
   search: string;
   category: string;
+  supplier: string;
+  paymentMethod: string;
   from: string;
   to: string;
   minAmount: string;
   maxAmount: string;
   sort: ExpenseSort;
+  categories: ExpenseCategoryRecord[];
+  paymentMethods: string[];
   onSearch: (q: string) => void;
   onCategory: (c: string) => void;
+  onSupplier: (s: string) => void;
+  onPaymentMethod: (m: string) => void;
   onDateRange: (from: string, to: string) => void;
   onAmountRange: (min: string, max: string) => void;
   onSort: (s: ExpenseSort) => void;
@@ -28,80 +35,49 @@ const SORT_OPTIONS: { value: ExpenseSort; label: string }[] = [
 export function ExpenseFilters({
   search,
   category,
+  supplier,
+  paymentMethod,
   from,
   to,
   minAmount,
   maxAmount,
   sort,
+  categories,
+  paymentMethods,
   onSearch,
   onCategory,
+  onSupplier,
+  onPaymentMethod,
   onDateRange,
   onAmountRange,
   onSort,
   onReset,
   total,
 }: ExpenseFiltersProps) {
-  const hasActiveFilters = category || from || to || minAmount || maxAmount || search;
+  const hasActiveFilters = category || from || to || minAmount || maxAmount || search || supplier || paymentMethod;
 
   return (
-    <div
-      style={{
-        background: "rgba(255,255,255,0.7)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        border: "1px solid rgba(208,197,175,0.3)",
-        borderRadius: "var(--radius-xl)",
-        padding: "24px",
-        marginBottom: 24,
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-      }}
-    >
+    <div className="bg-[var(--color-bg-elevated)]/80 backdrop-blur border border-[var(--color-border)] rounded-[var(--radius-xl)] p-6 space-y-4">
       {/* Row 1: Search + Sort */}
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <div style={{ position: "relative", flex: 1 }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: "absolute",
-              left: 16,
-              top: "50%",
-              transform: "translateY(-50%)",
-              fontSize: 18,
-              color: "var(--color-secondary)",
-            }}
-          >
-            search
-          </span>
-          <input
-            className="input-sand"
-            placeholder="Rechercher une dépense…"
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex-1 min-w-[220px]">
+          <Input
+            placeholder="Rechercher une dépense..."
             value={search}
             onChange={(e) => onSearch(e.target.value)}
-            style={{ paddingLeft: 48 }}
+            leftIcon={<span className="material-symbols-outlined text-sm">search</span>}
           />
         </div>
-
-        <div style={{ display: "flex", gap: 4, background: "var(--color-surface-container-high)", borderRadius: "var(--radius-lg)", padding: "4px" }}>
+        <div className="flex gap-1 bg-[var(--color-surface-container-high)] rounded-[var(--radius-lg)] p-1">
           {SORT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => onSort(opt.value)}
-              style={{
-                padding: "6px 14px",
-                borderRadius: "var(--radius-md)",
-                border: "none",
-                fontSize: "var(--text-label-sm)",
-                fontWeight: "var(--fw-label-sm)",
-                fontFamily: "var(--font-body)",
-                cursor: "pointer",
-                background: sort === opt.value ? "var(--color-surface-container-lowest)" : "transparent",
-                color: sort === opt.value ? "var(--color-on-surface)" : "var(--color-secondary)",
-                boxShadow: sort === opt.value ? "var(--shadow-soft)" : "none",
-                transition: "all 0.15s ease",
-                whiteSpace: "nowrap",
-              }}
+              className={`px-3 py-1.5 rounded-[var(--radius-md)] text-xs font-semibold transition-all ${
+                sort === opt.value
+                  ? "bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface)] shadow-[var(--shadow-soft)]"
+                  : "text-[var(--color-secondary)]"
+              }`}
             >
               {opt.label}
             </button>
@@ -109,132 +85,61 @@ export function ExpenseFilters({
         </div>
       </div>
 
-      {/* Row 2: Category + Dates + Amounts */}
-      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        {/* Category */}
-        <select
-          value={category}
-          onChange={(e) => onCategory(e.target.value)}
-          style={{
-            background: "var(--color-sand)",
-            border: "none",
-            borderRadius: "var(--radius-lg)",
-            padding: "10px 16px",
-            fontSize: "var(--text-body-sm)",
-            fontFamily: "var(--font-body)",
-            color: category ? "var(--color-on-surface)" : "var(--color-secondary)",
-            cursor: "pointer",
-            outline: "none",
-            minWidth: 160,
-          }}
-        >
+      {/* Row 2: Filters */}
+      <div className="grid grid-cols-1 xl:grid-cols-6 gap-3">
+        <Select value={category} onChange={(e) => onCategory(e.target.value)}>
           <option value="">Toutes catégories</option>
-          {EXPENSE_CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+          {categories.filter((c) => !c.isArchived).map((c) => (
+            <option key={c.id} value={c.name}>
+              {c.name}
+            </option>
           ))}
-        </select>
+        </Select>
 
-        {/* Date From */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 12, color: "var(--color-secondary)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}>Du</span>
-          <input
-            type="date"
-            value={from}
-            onChange={(e) => onDateRange(e.target.value, to)}
-            style={{
-              background: "var(--color-sand)",
-              border: "none",
-              borderRadius: "var(--radius-lg)",
-              padding: "10px 14px",
-              fontSize: "var(--text-body-sm)",
-              fontFamily: "var(--font-body)",
-              color: "var(--color-on-surface)",
-              outline: "none",
-            }}
-          />
-        </div>
-
-        {/* Date To */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 12, color: "var(--color-secondary)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}>Au</span>
-          <input
-            type="date"
-            value={to}
-            onChange={(e) => onDateRange(from, e.target.value)}
-            style={{
-              background: "var(--color-sand)",
-              border: "none",
-              borderRadius: "var(--radius-lg)",
-              padding: "10px 14px",
-              fontSize: "var(--text-body-sm)",
-              fontFamily: "var(--font-body)",
-              color: "var(--color-on-surface)",
-              outline: "none",
-            }}
-          />
-        </div>
-
-        {/* Min Amount */}
-        <input
-          type="number"
-          placeholder="Min (DA)"
-          value={minAmount}
-          onChange={(e) => onAmountRange(e.target.value, maxAmount)}
-          style={{
-            background: "var(--color-sand)",
-            border: "none",
-            borderRadius: "var(--radius-lg)",
-            padding: "10px 14px",
-            fontSize: "var(--text-body-sm)",
-            fontFamily: "var(--font-body)",
-            color: "var(--color-on-surface)",
-            outline: "none",
-            width: 110,
-          }}
+        <Input
+          placeholder="Fournisseur"
+          value={supplier}
+          onChange={(e) => onSupplier(e.target.value)}
         />
 
-        {/* Max Amount */}
-        <input
-          type="number"
-          placeholder="Max (DA)"
-          value={maxAmount}
-          onChange={(e) => onAmountRange(minAmount, e.target.value)}
-          style={{
-            background: "var(--color-sand)",
-            border: "none",
-            borderRadius: "var(--radius-lg)",
-            padding: "10px 14px",
-            fontSize: "var(--text-body-sm)",
-            fontFamily: "var(--font-body)",
-            color: "var(--color-on-surface)",
-            outline: "none",
-            width: 110,
-          }}
-        />
+        <Select value={paymentMethod} onChange={(e) => onPaymentMethod(e.target.value)}>
+          <option value="">Tous paiements</option>
+          {paymentMethods.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </Select>
 
-        {/* Result count + Reset */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
-          <span
-            style={{
-              fontSize: "var(--text-label-sm)",
-              color: "var(--color-secondary)",
-              fontWeight: 600,
-              letterSpacing: "0.05em",
-            }}
-          >
-            {total} résultat{total !== 1 ? "s" : ""}
-          </span>
-          {hasActiveFilters && (
-            <button
-              onClick={onReset}
-              className="btn-border"
-              style={{ gap: 4, fontSize: 12 }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
-              Réinitialiser
-            </button>
-          )}
+        <Input type="date" value={from} onChange={(e) => onDateRange(e.target.value, to)} />
+        <Input type="date" value={to} onChange={(e) => onDateRange(from, e.target.value)} />
+
+        <div className="grid grid-cols-2 gap-2">
+          <Input
+            type="number"
+            placeholder="Min (DA)"
+            value={minAmount}
+            onChange={(e) => onAmountRange(e.target.value, maxAmount)}
+          />
+          <Input
+            type="number"
+            placeholder="Max (DA)"
+            value={maxAmount}
+            onChange={(e) => onAmountRange(minAmount, e.target.value)}
+          />
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold tracking-wide text-[var(--color-text-secondary)]">
+          {total} resultat{total !== 1 ? "s" : ""}
+        </span>
+        {hasActiveFilters && (
+          <button onClick={onReset} className="btn-border text-xs px-3 py-1.5">
+            <span className="material-symbols-outlined text-sm">close</span>
+            Reinitialiser
+          </button>
+        )}
       </div>
     </div>
   );

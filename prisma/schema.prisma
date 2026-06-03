@@ -134,10 +134,23 @@ model Expense {
   id            Int      @id @default(autoincrement())
   title         String
   description   String?
+  supplier      String?
+  notes         String?
   amount        Float
   category      String
   paymentMethod String?
+  receiptPath   String?
   expenseDate   DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+// --- Expense Categories ------------------------------------
+model ExpenseCategory {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  isArchived Boolean  @default(false)
+  isSystem   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

@@ -13,6 +13,7 @@ export function GeneralSettings() {
     storePhone: "",
     storeAddress: "",
     receiptFooter: "",
+    expensesMonthlyBudget: "",
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -23,6 +24,7 @@ export function GeneralSettings() {
         storePhone: settings.storePhone || "",
         storeAddress: settings.storeAddress || "",
         receiptFooter: settings.receiptFooter || "",
+        expensesMonthlyBudget: settings.expensesMonthlyBudget || "",
       });
     }
   }, [settings]);
@@ -98,6 +100,25 @@ export function GeneralSettings() {
           }
           placeholder="ex. Merci de votre visite ! Retours acceptés sous 7 jours."
           rows={3}
+        />
+      </div>
+
+      <div className="bg-[var(--color-bg-elevated)] p-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] space-y-4">
+        <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
+          Budget dépenses
+        </h3>
+        <p className="text-sm text-[var(--color-text-secondary)] -mt-2">
+          Utilisé pour les alertes de dépassement mensuel.
+        </p>
+        <Input
+          label="Budget mensuel (DZD)"
+          type="number"
+          min={0}
+          value={formData.expensesMonthlyBudget}
+          onChange={(e) =>
+            setFormData({ ...formData, expensesMonthlyBudget: e.target.value })
+          }
+          placeholder="ex. 250000"
         />
       </div>
 

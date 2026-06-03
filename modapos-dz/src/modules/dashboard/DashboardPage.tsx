@@ -106,7 +106,12 @@ export function DashboardPage() {
                 className="glass-card"
                 style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column" }}
               >
-                <AlertsPanel recentSales={data?.recentSales} lowStock={data?.lowStockVariants} isLoading={isLoading} />
+                <AlertsPanel
+                  recentSales={data?.recentSales}
+                  lowStock={data?.lowStockVariants}
+                  expenseAlerts={data?.expenseAlerts}
+                  isLoading={isLoading}
+                />
               </div>
 
               {/* ── Créances clients widget ── */}

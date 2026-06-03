@@ -227,6 +227,8 @@ export interface DashboardStats {
   todaySalesCount: number;
   monthRevenue: number;
   monthSalesCount: number;
+  monthExpenses: number;
+  netProfitMonth: number;
   totalProducts: number;
   totalCustomers: number;
 }
@@ -273,6 +275,7 @@ export interface DashboardSummary {
   revenueChart: RevenueDataPoint[];
   paymentMethods: PaymentDataPoint[];
   topProducts: TopProduct[];
+  expenseAlerts: ExpenseAlert[];
   debtWidget: {
     totalDebt: number;
     debtorCount: number;
@@ -288,6 +291,7 @@ export interface AppSettings {
   storePhone: string;
   storeAddress: string;
   receiptFooter: string;
+  expensesMonthlyBudget: string;
 }
 
 export interface BackupItem {
@@ -381,33 +385,18 @@ export type DebtSort = "debt_asc" | "debt_desc" | "name_asc" | "name_desc";
 
 // ─── Expense Management ──────────────────────────────────
 
-export type ExpenseCategory =
-  | "Loyer"
-  | "Salaires"
-  | "Transport"
-  | "Marketing"
-  | "Internet"
-  | "Électricité"
-  | "Eau"
-  | "Maintenance"
-  | "Achats"
-  | "Fournisseurs"
-  | "Taxes"
-  | "Autres";
-
-export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+export const DEFAULT_EXPENSE_CATEGORIES: string[] = [
   "Loyer",
   "Salaires",
   "Transport",
   "Marketing",
-  "Internet",
-  "Électricité",
-  "Eau",
-  "Maintenance",
-  "Achats",
   "Fournisseurs",
-  "Taxes",
-  "Autres",
+  "Internet & Téléphone",
+  "Électricité & Eau",
+  "Maintenance",
+  "Emballage",
+  "Impôts & Taxes",
+  "Divers",
 ];
 
 export type ExpensePaymentMethod =
@@ -429,9 +418,12 @@ export interface Expense {
   id: number;
   title: string;
   description?: string | null;
+  supplier?: string | null;
+  notes?: string | null;
   amount: number;
   category: string;
   paymentMethod?: string | null;
+  receiptPath?: string | null;
   expenseDate: string;
   createdAt: string;
   updatedAt: string;
@@ -444,6 +436,9 @@ export interface ExpenseFormData {
   expenseDate: string;
   paymentMethod?: string;
   description?: string;
+  supplier?: string;
+  notes?: string;
+  receiptPath?: string;
 }
 
 export type ExpenseSort = "newest" | "oldest" | "highest" | "lowest";
@@ -451,6 +446,8 @@ export type ExpenseSort = "newest" | "oldest" | "highest" | "lowest";
 export interface ExpenseFilters {
   search: string;
   category: string;
+  supplier: string;
+  paymentMethod: string;
   from: string;
   to: string;
   minAmount: string;
@@ -461,8 +458,66 @@ export interface ExpenseFilters {
 export interface ExpenseSummary {
   monthTotal: number;
   todayTotal: number;
-  topCategory: { name: string; amount: number } | null;
+  weekTotal: number;
+  yearTotal: number;
+  monthChangePct: number;
+  todayChangePct: number;
+  weekChangePct: number;
+  yearChangePct: number;
+  topCategory: { name: string; amount: number; sharePct: number } | null;
   totalSalesMonth: number;
+  netProfitMonth: number;
+  netProfitChangePct: number;
+}
+
+export interface ExpenseCategoryRecord {
+  id: number;
+  name: string;
+  isArchived: boolean;
+  isSystem: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExpenseChartPoint {
+  label: string;
+  value: number;
+}
+
+export interface ExpenseRevenuePoint {
+  label: string;
+  revenue: number;
+  expenses: number;
+}
+
+export interface NetProfitPoint {
+  label: string;
+  profit: number;
+}
+
+export interface ProfitabilitySummary {
+  revenue: number;
+  expenses: number;
+  netProfit: number;
+  marginPct: number;
+  status: "excellent" | "moderate" | "low";
+}
+
+export interface ExpenseAlert {
+  type: "high_expense" | "budget_exceeded" | "spike";
+  title: string;
+  message: string;
+  severity: "info" | "warning" | "danger";
+}
+
+export interface ExpenseAnalytics {
+  monthlyTrend: ExpenseChartPoint[];
+  expensesByCategory: ExpenseChartPoint[];
+  revenueVsExpenses: ExpenseRevenuePoint[];
+  netProfitEvolution: NetProfitPoint[];
+  profitability: ProfitabilitySummary;
+  insights: string[];
+  alerts: ExpenseAlert[];
 }
 
 export interface PaginatedExpenses {

@@ -53,7 +53,6 @@ export function ReceiptPreview({
   storeFooter = "Merci de votre visite ! À bientôt.",
   printerWidth = "80mm",
 }: ReceiptPreviewProps) {
-  const change = amountPaid > 0 ? Math.max(0, amountPaid - sale.total) : 0;
   const subtotal = sale.items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
 
   const handlePrint = () => {

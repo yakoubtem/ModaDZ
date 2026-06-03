@@ -1,108 +1,109 @@
-import { useMemo } from "react";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
 } from "recharts";
-import type { Expense } from "@/types";
+import type { ExpenseAnalytics } from "@/types";
 import { formatCurrency } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/Skeleton";
 
-// ─── Colors for categories ────────────────────────────────
-const CATEGORY_COLORS: Record<string, string> = {
-  Loyer: "#735c00",
-  Salaires: "#276868",
-  Transport: "#f59e0b",
-  Marketing: "#d4af37",
-  Internet: "#0284c7",
-  "Électricité": "#b45309",
-  Eau: "#4d8b8b",
-  Maintenance: "#7f7663",
-  Achats: "#554300",
-  Fournisseurs: "#93d2d1",
-  Taxes: "#ba1a1a",
-  Autres: "#5f5e5e",
-};
-
-function getColor(category: string, index: number): string {
-  return CATEGORY_COLORS[category] || [
-    "#735c00", "#276868", "#f59e0b", "#d4af37",
-    "#0284c7", "#b45309", "#4d8b8b", "#7f7663",
-  ][index % 8];
-}
-
-// ─── Distribution Pie Chart ──────────────────────────────
-
-interface DistributionChartProps {
-  expenses: Expense[];
+interface ExpenseChartsProps {
+  analytics: ExpenseAnalytics | null;
   isLoading: boolean;
 }
 
-export function ExpenseDistributionChart({ expenses, isLoading }: DistributionChartProps) {
-  const data = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const exp of expenses) {
-      map.set(exp.category, (map.get(exp.category) ?? 0) + exp.amount);
-    }
-    return Array.from(map.entries())
-      .map(([name, value], i) => ({
-        name,
-        value: Math.round(value),
-        color: getColor(name, i),
-      }))
-      .sort((a, b) => b.value - a.value);
-  }, [expenses]);
+const CATEGORY_COLORS = [
+  "#735c00",
+  "#276868",
+  "#f59e0b",
+  "#d4af37",
+  "#0284c7",
+  "#b45309",
+  "#4d8b8b",
+  "#7f7663",
+];
 
-  const hasData = data.length > 0 && data.reduce((s, d) => s + d.value, 0) > 0;
-
-  if (isLoading) {
+export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
+  if (isLoading || !analytics) {
     return (
       <>
-        <div className="skeleton" style={{ height: 20, width: "60%", borderRadius: 8, marginBottom: 16 }} />
-        <div className="skeleton" style={{ height: 220, borderRadius: 12 }} />
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="glass-card rounded-[var(--radius-xl)] p-6">
+            <Skeleton className="h-6 w-40 mb-4" />
+            <Skeleton className="h-60 w-full" />
+          </div>
+        ))}
       </>
     );
   }
 
+  const categoryData = analytics.expensesByCategory.map((c, i) => ({
+    name: c.label,
+    value: c.value,
+    color: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+  }));
+
   return (
     <>
-      <h3
-        style={{
-          fontSize: "var(--text-label-md)",
-          fontWeight: "var(--fw-label-md)",
-          letterSpacing: "var(--ls-label-md)",
-          color: "var(--color-secondary)",
-          marginBottom: 16,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: "var(--color-primary-container)",
-            display: "inline-block",
-            flexShrink: 0,
-          }}
-        />
-        Répartition par catégorie
-      </h3>
-      <div style={{ minWidth: 0, width: "100%", height: 240, position: "relative" }}>
-        {hasData ? (
-          <ResponsiveContainer width="100%" height={240}>
+      {/* Monthly Expenses Trend */}
+      <div className="glass-card rounded-[var(--radius-xl)] p-6">
+        <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-primary-container)]" />
+          Evolution des depenses mensuelles
+        </h3>
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height={256}>
+            <LineChart data={analytics.monthlyTrend}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} />
+              <XAxis dataKey="label" tick={{ fill: "var(--color-secondary)", fontSize: 11 }} tickLine={false} axisLine={false} />
+              <YAxis
+                tick={{ fill: "var(--color-secondary)", fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                  borderColor: "var(--color-outline-variant)",
+                  borderRadius: "10px",
+                  color: "var(--color-on-surface)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  fontSize: "12px",
+                }}
+                formatter={(value: unknown) => {
+                  const n = typeof value === "number" ? value : Number(value ?? 0);
+                  return [formatCurrency(n), "Depenses"];
+                }}
+              />
+              <Line type="monotone" dataKey="value" stroke="var(--color-primary)" strokeWidth={3} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Expenses by Category */}
+      <div className="glass-card rounded-[var(--radius-xl)] p-6">
+        <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-warning)]" />
+          Depenses par categorie
+        </h3>
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height={256}>
             <PieChart>
               <Pie
-                data={data}
+                data={categoryData}
                 cx="50%"
                 cy="45%"
                 innerRadius={60}
@@ -110,7 +111,7 @@ export function ExpenseDistributionChart({ expenses, isLoading }: DistributionCh
                 paddingAngle={4}
                 dataKey="value"
               >
-                {data.map((entry, index) => (
+                {categoryData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} stroke="transparent" />
                 ))}
               </Pie>
@@ -128,114 +129,71 @@ export function ExpenseDistributionChart({ expenses, isLoading }: DistributionCh
                   return [formatCurrency(n), "Total"];
                 }}
               />
-              <Legend
-                verticalAlign="bottom"
-                height={36}
-                iconType="circle"
-                wrapperStyle={{ paddingTop: 6, fontSize: 11 }}
-              />
             </PieChart>
           </ResponsiveContainer>
-        ) : (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-secondary)",
-              fontSize: 14,
-              fontStyle: "italic",
-            }}
-          >
-            Aucune dépense enregistrée
-          </div>
-        )}
+        </div>
       </div>
-    </>
-  );
-}
 
-// ─── Monthly Bar Chart ───────────────────────────────────
-
-interface MonthlyChartProps {
-  expenses: Expense[];
-  isLoading: boolean;
-}
-
-export function ExpensesByMonthChart({ expenses, isLoading }: MonthlyChartProps) {
-  const data = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const exp of expenses) {
-      const d = new Date(exp.expenseDate);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      map.set(key, (map.get(key) ?? 0) + exp.amount);
-    }
-    return Array.from(map.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .slice(-6)
-      .map(([month, amount]) => {
-        const [y, m] = month.split("-");
-        const label = new Date(Number(y), Number(m) - 1).toLocaleDateString("fr-DZ", {
-          month: "short",
-          year: "2-digit",
-        });
-        return { month: label, amount: Math.round(amount) };
-      });
-  }, [expenses]);
-
-  if (isLoading) {
-    return (
-      <>
-        <div className="skeleton" style={{ height: 20, width: "60%", borderRadius: 8, marginBottom: 16 }} />
-        <div className="skeleton" style={{ height: 220, borderRadius: 12 }} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <h3
-        style={{
-          fontSize: "var(--text-label-md)",
-          fontWeight: "var(--fw-label-md)",
-          letterSpacing: "var(--ls-label-md)",
-          color: "var(--color-secondary)",
-          marginBottom: 16,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: "var(--color-tertiary)",
-            display: "inline-block",
-            flexShrink: 0,
-          }}
-        />
-        Dépenses par mois
-      </h3>
-      <div style={{ minWidth: 0, width: "100%", height: 240, position: "relative" }}>
-        {data.length > 0 ? (
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={data} barSize={32}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(208,197,175,0.3)" />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: "var(--color-secondary)", fontSize: 11 }}
-                axisLine={{ stroke: "rgba(208,197,175,0.3)" }}
-                tickLine={false}
-              />
+      {/* Revenue vs Expenses */}
+      <div className="glass-card rounded-[var(--radius-xl)] p-6">
+        <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-tertiary)]" />
+          Revenu vs depenses
+        </h3>
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height={256}>
+            <BarChart data={analytics.revenueVsExpenses} barSize={26}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} />
+              <XAxis dataKey="label" tick={{ fill: "var(--color-secondary)", fontSize: 11 }} tickLine={false} axisLine={false} />
               <YAxis
                 tick={{ fill: "var(--color-secondary)", fontSize: 11 }}
-                axisLine={false}
                 tickLine={false}
-                tickFormatter={(v) => `${Math.round(v / 1000)}k`}
+                axisLine={false}
+                tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                  borderColor: "var(--color-outline-variant)",
+                  borderRadius: "10px",
+                  color: "var(--color-on-surface)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  fontSize: "12px",
+                }}
+                formatter={(value: any, name: any) => {
+                  const n = typeof value === "number" ? value : Number(value ?? 0);
+                  return [formatCurrency(n), name === "revenue" ? "Revenu" : "Dépenses"];
+                }}
+              />
+              <Bar dataKey="revenue" fill="var(--color-primary-container)" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="expenses" fill="var(--color-error)" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Net Profit Evolution */}
+      <div className="glass-card rounded-[var(--radius-xl)] p-6">
+        <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-tertiary-container)]" />
+          Evolution du benefice net
+        </h3>
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height={256}>
+            <AreaChart data={analytics.netProfitEvolution}>
+              <defs>
+                <linearGradient id="profitFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--color-tertiary)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--color-tertiary)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} />
+              <XAxis dataKey="label" tick={{ fill: "var(--color-secondary)", fontSize: 11 }} tickLine={false} axisLine={false} />
+              <YAxis
+                tick={{ fill: "var(--color-secondary)", fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
               />
               <Tooltip
                 contentStyle={{
@@ -248,28 +206,13 @@ export function ExpensesByMonthChart({ expenses, isLoading }: MonthlyChartProps)
                 }}
                 formatter={(value: unknown) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [formatCurrency(n), "Dépenses"];
+                  return [formatCurrency(n), "Benefice net"];
                 }}
               />
-              <Bar dataKey="amount" fill="var(--color-primary-container)" radius={[6, 6, 0, 0]} />
-            </BarChart>
+              <Area type="monotone" dataKey="profit" stroke="var(--color-tertiary)" strokeWidth={3} fill="url(#profitFill)" />
+            </AreaChart>
           </ResponsiveContainer>
-        ) : (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-secondary)",
-              fontSize: 14,
-              fontStyle: "italic",
-            }}
-          >
-            Aucune donnée disponible
-          </div>
-        )}
+        </div>
       </div>
     </>
   );

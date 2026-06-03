@@ -1,14 +1,15 @@
 import { formatCurrency } from "@/lib/utils";
-import type { RecentSale, LowStockVariant } from "@/types";
+import type { RecentSale, LowStockVariant, ExpenseAlert } from "@/types";
 
 interface AlertsPanelProps {
   recentSales?: RecentSale[];
   lowStock?: LowStockVariant[];
+  expenseAlerts?: ExpenseAlert[];
   isLoading: boolean;
 }
 
-export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelProps) {
-  if (isLoading || !recentSales || !lowStock) {
+export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }: AlertsPanelProps) {
+  if (isLoading || !recentSales || !lowStock || !expenseAlerts) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {[...Array(3)].map((_, i) => (
@@ -18,7 +19,7 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
     );
   }
 
-  const alertCount = lowStock?.length || 0;
+  const alertCount = (lowStock?.length || 0) + (expenseAlerts?.length || 0);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -59,6 +60,34 @@ export function AlertsPanel({ recentSales, lowStock, isLoading }: AlertsPanelPro
 
       {/* Alerts list */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px", overflowY: "auto" }} className="no-scrollbar">
+        {/* Expense alerts */}
+        {expenseAlerts.slice(0, 3).map((alert, index) => (
+          <div
+            key={`${alert.type}-${index}`}
+            className={alert.severity === "danger" ? "alert-card alert-card-error" : "alert-card alert-card-gold"}
+          >
+            <span className="material-symbols-outlined" style={{ color: "var(--color-primary-container)", flexShrink: 0 }}>
+              warning
+            </span>
+            <div>
+              <p
+                style={{
+                  fontSize: "var(--text-label-md)",
+                  fontWeight: "var(--fw-label-md)",
+                  letterSpacing: "var(--ls-label-md)",
+                  color: "var(--color-on-surface)",
+                  marginBottom: "4px",
+                }}
+              >
+                {alert.title}
+              </p>
+              <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+                {alert.message}
+              </p>
+            </div>
+          </div>
+        ))}
+
         {/* Low stock alerts */}
         {lowStock.slice(0, 3).map((item) => (
           <div key={item.id} className="alert-card alert-card-gold">

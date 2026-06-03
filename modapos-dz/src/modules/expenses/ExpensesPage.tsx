@@ -5,11 +5,17 @@ import { ExpenseKPICards } from "./components/ExpenseKPICards";
 import { ExpenseFilters } from "./components/ExpenseFilters";
 import { ExpenseTable } from "./components/ExpenseTable";
 import { ExpenseFormModal } from "./components/ExpenseFormModal";
-import { ExpenseDistributionChart, ExpensesByMonthChart } from "./components/ExpenseCharts";
+import { ExpenseCharts } from "./components/ExpenseCharts";
 import { ExpenseCategorySidebar } from "./components/ExpenseCategorySidebar";
+import { ExpenseCategoryManager } from "./components/ExpenseCategoryManager";
+import { ExpenseReportPrint } from "./components/ExpenseReportPrint";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatCurrency } from "@/lib/utils";
 import type { Expense, ExpenseFormData } from "@/types";
+import { useSettings } from "@/modules/settings/hooks/useSettings";
+import { EXPENSE_PAYMENT_METHODS } from "@/types";
+import * as XLSX from "xlsx";
+import { toast } from "sonner";
 
 // ─── Export CSV helper ────────────────────────────────────
 
@@ -36,17 +42,25 @@ function exportCSV(data: object[], filename: string) {
 
 // ─── Page ─────────────────────────────────────────────────
 
+type Tab = "list" | "analytics" | "profitability" | "categories";
+
 export function ExpensesPage() {
   const {
     expenses,
     summary,
+    analytics,
+    categories,
     total,
     page,
     pageSize,
     isLoading,
     isSummaryLoading,
+    isAnalyticsLoading,
+    isCategoriesLoading,
     search,
     category,
+    supplier,
+    paymentMethod,
     from,
     to,
     minAmount,
@@ -54,18 +68,33 @@ export function ExpensesPage() {
     sort,
     handleSearch,
     handleCategory,
+    handleSupplier,
+    handlePaymentMethod,
     handleDateRange,
     handleAmountRange,
     handleSort,
     handlePageChange,
     resetFilters,
+    createCategory,
+    updateCategory,
+    archiveCategory,
+    getReportData,
     createExpense,
     updateExpense,
     deleteExpense,
   } = useExpenses();
 
+  const { settings } = useSettings();
+  const [activeTab, setActiveTab] = useState<Tab>("list");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+
+  const tabs = [
+    { id: "list" as const, label: "Dépenses", icon: "payments" },
+    { id: "analytics" as const, label: "Analyses & Insights", icon: "monitoring" },
+    { id: "profitability" as const, label: "Rentabilité", icon: "trending_up" },
+    { id: "categories" as const, label: "Catégories", icon: "category" },
+  ];
 
   const openCreate = useCallback(() => {
     setEditingExpense(null);
@@ -92,21 +121,78 @@ export function ExpensesPage() {
     [editingExpense, createExpense, updateExpense]
   );
 
-  const handleExportCSV = () => {
-    const rows = expenses.map((e) => ({
+  const handleExportCSV = async () => {
+    const report = await getReportData();
+    if (!report || report.expenses.length === 0) {
+      toast.warning("Aucune donnée à exporter");
+      return;
+    }
+    const rows = report.expenses.map((e) => ({
       Date: new Date(e.expenseDate).toLocaleDateString("fr-DZ"),
       Titre: e.title,
       Catégorie: e.category,
       Montant: e.amount,
       Paiement: e.paymentMethod ?? "",
+      Fournisseur: e.supplier ?? "",
       Description: e.description ?? "",
+      Notes: e.notes ?? "",
     }));
     exportCSV(rows, `depenses_modadz_${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
-  const handleExportPDF = () => window.print();
+  const handleExportExcel = async () => {
+    const report = await getReportData();
+    if (!report || report.expenses.length === 0) {
+      toast.warning("Aucune donnée à exporter");
+      return;
+    }
+    const rows = report.expenses.map((e) => ({
+      Date: new Date(e.expenseDate).toLocaleDateString("fr-DZ"),
+      Titre: e.title,
+      Catégorie: e.category,
+      Montant: e.amount,
+      Paiement: e.paymentMethod ?? "",
+      Fournisseur: e.supplier ?? "",
+      Description: e.description ?? "",
+      Notes: e.notes ?? "",
+    }));
 
-  const isEmpty = !isLoading && expenses.length === 0 && !search && !category && !from && !to && !minAmount && !maxAmount;
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
+    XLSX.writeFile(workbook, `depenses_modadz_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
+  const handleExportPDF = () => {
+    const printStyle = document.createElement("style");
+    printStyle.innerHTML = `
+      @media print {
+        @page {
+          size: A4 portrait !important;
+          margin: 15mm !important;
+        }
+        body * {
+          visibility: hidden !important;
+        }
+        #expense-report, #expense-report * {
+          visibility: visible !important;
+        }
+        #expense-report {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          background: white !important;
+          color: black !important;
+        }
+      }
+    `;
+    document.head.appendChild(printStyle);
+    window.print();
+    document.head.removeChild(printStyle);
+  };
+
+  const isEmpty = !isLoading && expenses.length === 0 && !search && !category && !from && !to && !minAmount && !maxAmount && !supplier && !paymentMethod;
 
   return (
     <div
@@ -150,40 +236,68 @@ export function ExpensesPage() {
               fontSize: 16,
               color: "var(--color-on-surface)",
               letterSpacing: "-0.01em",
+              marginRight: 24,
             }}
           >
             Gestion des Dépenses
           </span>
-          {total > 0 && (
-            <span
-              style={{
-                padding: "2px 9px",
-                borderRadius: "var(--radius-full)",
-                background: "rgba(212,175,55,0.12)",
-                color: "var(--color-primary)",
-                fontSize: 11,
-                fontWeight: 700,
-                border: "1px solid rgba(212,175,55,0.25)",
-              }}
-            >
-              {total} dépense{total !== 1 ? "s" : ""}
-            </span>
-          )}
+
+          {/* Underline tabs navigation */}
+          <div style={{ display: "flex", gap: "24px", height: 64, alignItems: "center" }}>
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={{
+                    height: "100%",
+                    padding: "0 8px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    fontFamily: "var(--font-body)",
+                    background: "none",
+                    border: "none",
+                    borderBottom: `3px solid ${isActive ? "var(--color-primary)" : "transparent"}`,
+                    color: isActive ? "var(--color-primary)" : "var(--color-secondary)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    transition: "color 0.2s, border-color 0.2s",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{tab.icon}</span>
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>table_view</span>
-            CSV
-          </button>
-          <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>picture_as_pdf</span>
-            PDF
-          </button>
-          <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-            Nouvelle dépense
-          </button>
+          {activeTab !== "categories" && (
+            <>
+              <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>table_view</span>
+                CSV
+              </button>
+              <button className="btn-border" onClick={handleExportExcel} style={{ gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>grid_on</span>
+                Excel
+              </button>
+              <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>picture_as_pdf</span>
+                PDF
+              </button>
+            </>
+          )}
+          {activeTab === "list" && (
+            <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+              Nouvelle dépense
+            </button>
+          )}
         </div>
       </div>
 
@@ -215,7 +329,10 @@ export function ExpensesPage() {
                 marginBottom: 8,
               }}
             >
-              Gestion des dépenses
+              {activeTab === "list" && "Gestion des dépenses"}
+              {activeTab === "analytics" && "Analyses financières"}
+              {activeTab === "profitability" && "Rentabilité & Performance"}
+              {activeTab === "categories" && "Catégories de dépenses"}
             </h1>
             <p
               style={{
@@ -225,12 +342,15 @@ export function ExpensesPage() {
                 maxWidth: 520,
               }}
             >
-              Suivez toutes les dépenses de votre activité et analysez votre rentabilité.
+              {activeTab === "list" && "Suivez toutes les dépenses de votre activité et analysez votre rentabilité."}
+              {activeTab === "analytics" && "Consultez l'évolution des dépenses mensuelles, leur répartition et bénéfice net."}
+              {activeTab === "profitability" && "Calculez votre bénéfice net et suivez l'évolution de vos taux de marge."}
+              {activeTab === "categories" && "Gérez vos catégories professionnelles et personnalisées de dépenses."}
             </p>
           </div>
 
           {/* Net profit pill */}
-          {summary && (
+          {summary && activeTab !== "categories" && (
             <div
               style={{
                 background:
@@ -309,100 +429,293 @@ export function ExpensesPage() {
         </div>
 
         {/* ── KPI Cards ── */}
-        <ExpenseKPICards summary={summary} isLoading={isSummaryLoading} />
+        {activeTab === "list" && (
+          <ExpenseKPICards summary={summary} isLoading={isSummaryLoading} />
+        )}
 
-        {isEmpty ? (
-          /* ── Empty State ── */
-          <div style={{ marginTop: 40 }}>
-            <EmptyState
-              icon={Receipt}
-              title="Aucune dépense enregistrée"
-              description="Commencez à suivre vos dépenses pour mieux gérer la rentabilité de votre activité."
-              action={
-                <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-                  Ajouter une dépense
-                </button>
-              }
-            />
+        {/* ── Tab Views ── */}
+        {activeTab === "list" && (
+          isEmpty ? (
+            /* ── Empty State ── */
+            <div style={{ marginTop: 40 }}>
+              <EmptyState
+                icon={Receipt}
+                title="Aucune dépense enregistrée"
+                description="Commencez à suivre vos dépenses pour mieux gérer la rentabilité de votre activité."
+                action={
+                  <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+                    Ajouter une dépense
+                  </button>
+                }
+              />
+            </div>
+          ) : (
+            /* ── Content grid (main + sidebar) ── */
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 320px",
+                gap: 24,
+                alignItems: "start",
+              }}
+            >
+              {/* Main column */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0 }}>
+                {/* Filters */}
+                <ExpenseFilters
+                  search={search}
+                  category={category}
+                  supplier={supplier}
+                  paymentMethod={paymentMethod}
+                  from={from}
+                  to={to}
+                  minAmount={minAmount}
+                  maxAmount={maxAmount}
+                  sort={sort}
+                  categories={categories}
+                  paymentMethods={EXPENSE_PAYMENT_METHODS}
+                  onSearch={handleSearch}
+                  onCategory={handleCategory}
+                  onSupplier={handleSupplier}
+                  onPaymentMethod={handlePaymentMethod}
+                  onDateRange={handleDateRange}
+                  onAmountRange={handleAmountRange}
+                  onSort={handleSort}
+                  onReset={resetFilters}
+                  total={total}
+                />
+
+                {/* Table */}
+                <ExpenseTable
+                  expenses={expenses}
+                  isLoading={isLoading}
+                  total={total}
+                  page={page}
+                  pageSize={pageSize}
+                  onEdit={openEdit}
+                  onDelete={deleteExpense}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+
+              {/* Right sidebar */}
+              <div style={{ position: "sticky", top: 96 }}>
+                <ExpenseCategorySidebar
+                  expenses={expenses}
+                  isLoading={isLoading}
+                  onManageCategories={() => setActiveTab("categories")}
+                />
+              </div>
+            </div>
+          )
+        )}
+
+        {activeTab === "analytics" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            {/* Charts Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <ExpenseCharts analytics={analytics} isLoading={isAnalyticsLoading} />
+            </div>
+
+            {/* Insights & Alerts Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              {/* Business Insights */}
+              <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
+                <h3 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)", textTransform: "uppercase" }}>
+                  Analyses Automatiques (Business Insights)
+                </h3>
+                {analytics?.insights && analytics.insights.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {analytics.insights.map((insight, idx) => (
+                      <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 13, color: "var(--color-on-surface)", background: "var(--color-surface-container-low)", padding: 14, borderRadius: "var(--radius-lg)" }}>
+                        <span className="material-symbols-outlined" style={{ color: "var(--color-primary)" }}>info</span>
+                        <span>{insight}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", fontStyle: "italic" }}>
+                    Aucune analyse disponible pour le moment.
+                  </p>
+                )}
+              </div>
+
+              {/* Alerts */}
+              <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
+                <h3 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)", textTransform: "uppercase" }}>
+                  Alertes & Budgets
+                </h3>
+                {analytics?.alerts && analytics.alerts.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {analytics.alerts.map((alert, idx) => {
+                      const severityBg = alert.severity === "danger"
+                        ? "rgba(186,26,26,0.06)"
+                        : alert.severity === "warning"
+                          ? "rgba(212,175,55,0.08)"
+                          : "rgba(2,132,199,0.08)";
+                      const severityBorder = alert.severity === "danger"
+                        ? "1px solid rgba(186,26,26,0.18)"
+                        : alert.severity === "warning"
+                          ? "1px solid rgba(212,175,55,0.2)"
+                          : "1px solid rgba(2,132,199,0.2)";
+                      const severityColor = alert.severity === "danger"
+                        ? "var(--color-error)"
+                        : alert.severity === "warning"
+                          ? "var(--color-primary)"
+                          : "var(--color-info)";
+
+                      return (
+                        <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: severityBg, border: severityBorder, borderLeft: `4px solid ${severityColor}`, padding: 14, borderRadius: "var(--radius-lg)" }}>
+                          <span className="material-symbols-outlined" style={{ color: severityColor }}>warning</span>
+                          <div>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--color-on-surface)", marginBottom: 2 }}>{alert.title}</p>
+                            <p style={{ fontSize: 12, color: "var(--color-secondary)" }}>{alert.message}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 14, borderRadius: "var(--radius-lg)", background: "rgba(39,104,104,0.08)" }}>
+                    <span className="material-symbols-outlined" style={{ color: "var(--color-tertiary)" }}>check_circle</span>
+                    <p style={{ fontSize: 13, color: "var(--color-tertiary)" }}>Tout est sous contrôle. Aucun dépassement de budget ni anomalie détectée.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        ) : (
-          /* ── Content grid (main + sidebar) ── */
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 320px",
-              gap: 24,
-              alignItems: "start",
-            }}
-          >
-            {/* Main column */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0 }}>
-              {/* Filters */}
-              <ExpenseFilters
-                search={search}
-                category={category}
-                from={from}
-                to={to}
-                minAmount={minAmount}
-                maxAmount={maxAmount}
-                sort={sort}
-                onSearch={handleSearch}
-                onCategory={handleCategory}
-                onDateRange={handleDateRange}
-                onAmountRange={handleAmountRange}
-                onSort={handleSort}
-                onReset={resetFilters}
-                total={total}
-              />
+        )}
 
-              {/* Charts */}
-              {expenses.length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                  <div
-                    className="glass-card"
-                    style={{
-                      borderRadius: "var(--radius-xl)",
-                      padding: 24,
-                      minHeight: 320,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <ExpenseDistributionChart expenses={expenses} isLoading={isLoading} />
-                  </div>
-                  <div
-                    className="glass-card"
-                    style={{
-                      borderRadius: "var(--radius-xl)",
-                      padding: 24,
-                      minHeight: 320,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <ExpensesByMonthChart expenses={expenses} isLoading={isLoading} />
-                  </div>
+        {activeTab === "profitability" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+            {/* KPI Summary Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              {/* Total Revenue */}
+              <div className="glass-card animate-fade-in" style={{ borderRadius: "var(--radius-xl)", padding: 28, display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", background: "rgba(39,104,104,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span className="material-symbols-outlined filled" style={{ fontSize: 22, color: "var(--color-tertiary)" }}>payments</span>
                 </div>
-              )}
+                <div>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 700, color: "var(--color-on-surface)", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+                    {analytics?.profitability ? formatCurrency(analytics.profitability.revenue) : "—"}
+                  </p>
+                  <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
+                    Revenus Totaux
+                  </p>
+                </div>
+              </div>
 
-              {/* Table */}
-              <ExpenseTable
-                expenses={expenses}
-                isLoading={isLoading}
-                total={total}
-                page={page}
-                pageSize={pageSize}
-                onEdit={openEdit}
-                onDelete={deleteExpense}
-                onPageChange={handlePageChange}
-              />
+              {/* Total Expenses */}
+              <div className="glass-card animate-fade-in" style={{ borderRadius: "var(--radius-xl)", padding: 28, display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", background: "rgba(186,26,26,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span className="material-symbols-outlined filled" style={{ fontSize: 22, color: "var(--color-error)" }}>receipt_long</span>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 700, color: "var(--color-on-surface)", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+                    {analytics?.profitability ? formatCurrency(analytics.profitability.expenses) : "—"}
+                  </p>
+                  <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
+                    Dépenses Totales
+                  </p>
+                </div>
+              </div>
+
+              {/* Net Profit */}
+              {(() => {
+                const profit = analytics?.profitability?.netProfit ?? 0;
+                const isPositive = profit >= 0;
+                return (
+                  <div className="glass-card animate-fade-in" style={{ borderRadius: "var(--radius-xl)", padding: 28, display: "flex", flexDirection: "column", gap: 16, background: isPositive ? "rgba(39,104,104,0.04)" : "rgba(186,26,26,0.04)", border: isPositive ? "1px solid rgba(39,104,104,0.15)" : "1px solid rgba(186,26,26,0.15)" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", background: isPositive ? "rgba(39,104,104,0.12)" : "rgba(186,26,26,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span className="material-symbols-outlined filled" style={{ fontSize: 22, color: isPositive ? "var(--color-tertiary)" : "var(--color-error)" }}>
+                        {isPositive ? "trending_up" : "trending_down"}
+                      </span>
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 700, color: isPositive ? "var(--color-tertiary)" : "var(--color-error)", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+                        {analytics?.profitability ? formatCurrency(profit) : "—"}
+                      </p>
+                      <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
+                        Bénéfice Net
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Profit Margin */}
+              <div className="glass-card animate-fade-in" style={{ borderRadius: "var(--radius-xl)", padding: 28, display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", background: "rgba(212,175,55,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span className="material-symbols-outlined filled" style={{ fontSize: 22, color: "var(--color-primary)" }}>percent</span>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 700, color: "var(--color-on-surface)", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+                    {analytics?.profitability ? `${analytics.profitability.marginPct}%` : "—"}
+                  </p>
+                  <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
+                    Marge Bénéficiaire
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Right sidebar */}
-            <div style={{ position: "sticky", top: 96 }}>
-              <ExpenseCategorySidebar expenses={expenses} isLoading={isLoading} />
-            </div>
+            {/* Profitability Rating Card */}
+            {analytics?.profitability && (
+              <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 16 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--color-secondary)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  Évaluation de la performance
+                </p>
+
+                {analytics.profitability.status === "excellent" && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-tertiary)" }}>verified</span>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-tertiary)" }}>
+                      🟢 Excellente (&gt;30%)
+                    </span>
+                    <p style={{ fontSize: 14, color: "var(--color-secondary)", maxWidth: 480, lineHeight: 1.6 }}>
+                      Votre rentabilité est exceptionnelle. Le commerce génère d'excellentes marges, ce qui indique une gestion saine et une activité en pleine croissance.
+                    </p>
+                  </div>
+                )}
+
+                {analytics.profitability.status === "moderate" && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-primary)" }}>hourglass_empty</span>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-primary)" }}>
+                      🟡 Modérée (10% - 30%)
+                    </span>
+                    <p style={{ fontSize: 14, color: "var(--color-secondary)", maxWidth: 480, lineHeight: 1.6 }}>
+                      Votre rentabilité est modérée. L'activité génère des bénéfices réguliers, mais il existe des opportunités d'optimisation des coûts ou de revalorisation des prix.
+                    </p>
+                  </div>
+                )}
+
+                {analytics.profitability.status === "low" && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-error)" }}>warning</span>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-error)" }}>
+                      🔴 Faible (&lt;10%)
+                    </span>
+                    <p style={{ fontSize: 14, color: "var(--color-error)", maxWidth: 480, lineHeight: 1.6 }}>
+                      Attention : votre marge bénéficiaire est faible. Il est fortement recommandé d'examiner et de réduire vos charges d'exploitation ou d'augmenter le panier moyen.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "categories" && (
+          <div style={{ maxWidth: 800, margin: "0 auto", width: "100%" }}>
+            <ExpenseCategoryManager
+              categories={categories}
+              isLoading={isCategoriesLoading}
+              onCreate={createCategory}
+              onUpdate={updateCategory}
+              onArchive={archiveCategory}
+            />
           </div>
         )}
       </main>
@@ -413,6 +726,19 @@ export function ExpensesPage() {
         onClose={closeModal}
         onSubmit={handleFormSubmit}
         expense={editingExpense}
+        categories={categories}
+      />
+
+      {/* ── Printable Report (Invisible except in print) ── */}
+      <ExpenseReportPrint
+        storeName={settings?.storeName}
+        storePhone={settings?.storePhone}
+        storeAddress={settings?.storeAddress}
+        rangeLabel={from && to ? `Du ${new Date(from).toLocaleDateString("fr-DZ")} au ${new Date(to).toLocaleDateString("fr-DZ")}` : "Toutes les périodes"}
+        expenses={expenses}
+        totalExpenses={analytics?.profitability?.expenses ?? 0}
+        analytics={analytics}
+        profitability={analytics?.profitability ?? null}
       />
 
       {/* ── Responsive styles ── */}

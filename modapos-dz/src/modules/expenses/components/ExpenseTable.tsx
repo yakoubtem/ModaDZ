@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Expense } from "@/types";
+import { useIPC } from "@/hooks/useIPC";
+import { toast } from "sonner";
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -26,6 +28,21 @@ export function ExpenseTable({
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const totalPages = Math.ceil(total / pageSize);
+  const api = useIPC();
+
+  const handleDownload = async (path?: string | null) => {
+    if (!path) return;
+    try {
+      await api("expenses:downloadReceipt", path);
+    } catch {
+      toast.error("Erreur lors du telechargement");
+    }
+  };
+
+  const handlePreview = (path?: string | null) => {
+    if (!path) return;
+    window.open(`media://${path}`, "_blank");
+  };
 
   if (isLoading && expenses.length === 0) {
     return (
@@ -52,8 +69,10 @@ export function ExpenseTable({
             <th>Titre</th>
             <th>Catégorie</th>
             <th style={{ textAlign: "right" }}>Montant</th>
+            <th>Fournisseur</th>
             <th>Paiement</th>
-            <th>Description</th>
+            <th>Recu</th>
+            <th>Notes</th>
             <th style={{ textAlign: "right" }}>Actions</th>
           </tr>
         </thead>
@@ -119,6 +138,13 @@ export function ExpenseTable({
                 </span>
               </td>
 
+              {/* Supplier */}
+              <td>
+                <span style={{ color: "var(--color-secondary)", fontSize: "var(--text-body-sm)" }}>
+                  {expense.supplier || "—"}
+                </span>
+              </td>
+
               {/* Payment Method */}
               <td>
                 <span style={{ color: "var(--color-secondary)", fontSize: "var(--text-body-sm)" }}>
@@ -126,20 +152,44 @@ export function ExpenseTable({
                 </span>
               </td>
 
-              {/* Description */}
+              {/* Receipt */}
+              <td>
+                {expense.receiptPath ? (
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button
+                      onClick={() => handlePreview(expense.receiptPath)}
+                      className="btn-border"
+                      style={{ padding: "4px 8px", fontSize: 11 }}
+                    >
+                      Voir
+                    </button>
+                    <button
+                      onClick={() => handleDownload(expense.receiptPath)}
+                      className="btn-border"
+                      style={{ padding: "4px 8px", fontSize: 11 }}
+                    >
+                      Telecharger
+                    </button>
+                  </div>
+                ) : (
+                  <span style={{ color: "var(--color-secondary)", fontSize: "var(--text-body-sm)" }}>—</span>
+                )}
+              </td>
+
+              {/* Notes */}
               <td>
                 <span
                   style={{
                     color: "var(--color-secondary)",
                     fontSize: "var(--text-body-sm)",
-                    maxWidth: 200,
+                    maxWidth: 180,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     display: "inline-block",
                   }}
                 >
-                  {expense.description || "—"}
+                  {expense.notes || expense.description || "—"}
                 </span>
               </td>
 
