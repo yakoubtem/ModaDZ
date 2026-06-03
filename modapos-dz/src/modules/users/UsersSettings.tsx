@@ -53,7 +53,7 @@ export function UsersSettings() {
                   <div className="font-medium flex items-center gap-2">
                     {user.name}
                     {user.role === "admin" ? (
-                      <Badge variant="success">Administrateur</Badge>
+                      <Badge variant="primary">Administrateur</Badge>
                     ) : user.role === "manager" ? (
                       <Badge variant="warning">Manager</Badge>
                     ) : (

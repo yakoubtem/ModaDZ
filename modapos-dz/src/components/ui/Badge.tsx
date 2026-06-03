@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "default" | "success" | "warning" | "danger" | "info" | "accent";
+type BadgeVariant = "default" | "success" | "warning" | "danger" | "info" | "accent" | "primary";
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -15,6 +15,7 @@ const variantClasses: Record<BadgeVariant, string> = {
   danger: "bg-[var(--color-danger-subtle)] text-[var(--color-danger)] border border-[var(--color-danger)]/20",
   info: "bg-[var(--color-info-subtle)] text-[var(--color-info)] border border-[var(--color-info)]/20",
   accent: "bg-[var(--color-accent-subtle)] text-[var(--color-accent)] border border-[var(--color-accent-border)]",
+  primary: "bg-[var(--color-accent-subtle)] text-[var(--color-accent)] border border-[var(--color-accent-border)]",
 };
 
 const dotColors: Record<BadgeVariant, string> = {
@@ -24,6 +25,7 @@ const dotColors: Record<BadgeVariant, string> = {
   danger: "bg-[var(--color-danger)]",
   info: "bg-[var(--color-info)]",
   accent: "bg-[var(--color-accent)]",
+  primary: "bg-[var(--color-accent)]",
 };
 
 export function Badge({

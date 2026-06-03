@@ -12,6 +12,7 @@ import type { CustomerWithStats } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/modules/auth/AuthContext";
 
 interface CustomerTableProps {
   customers: CustomerWithStats[];
@@ -44,6 +45,7 @@ export function CustomerTable({
   onViewProfile,
   onPageChange,
 }: CustomerTableProps) {
+  const { can } = useAuth();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
@@ -158,20 +160,22 @@ export function CustomerTable({
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
-              <button
-                onClick={() => setDeleteConfirmId(customer.id)}
-                title="Supprimer"
-                className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+              {can("customers.delete") && (
+                <button
+                  onClick={() => setDeleteConfirmId(customer.id)}
+                  title="Supprimer"
+                  className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           );
         },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [deleteConfirmId, onEdit, onDelete, onViewProfile]
+    [deleteConfirmId, onEdit, onDelete, onViewProfile, can]
   );
 
   const table = useReactTable({
