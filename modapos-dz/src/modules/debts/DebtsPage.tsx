@@ -7,6 +7,7 @@ import { DebtTable } from "./components/DebtTable";
 
 import { CustomerDebtModal } from "./components/CustomerDebtModal";
 import { formatCurrency } from "@/lib/utils";
+import { useAuth } from "@/modules/auth/AuthContext";
 
 // ─── Export CSV helper ────────────────────────────────────
 
@@ -32,6 +33,7 @@ function exportCSV(data: object[], filename: string) {
 // ─── Page ─────────────────────────────────────────────────
 
 export function DebtsPage() {
+  const { can } = useAuth();
   const {
     customers, stats, total, page, pageSize,
     isLoading, isStatsLoading,
@@ -134,16 +136,18 @@ export function DebtsPage() {
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>table_view</span>
-            CSV
-          </button>
-          <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>picture_as_pdf</span>
-            PDF
-          </button>
-        </div>
+        {can("debts.manage") && (
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>table_view</span>
+              CSV
+            </button>
+            <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>picture_as_pdf</span>
+              PDF
+            </button>
+          </div>
+        )}
       </div>
 
       <main
@@ -190,7 +194,7 @@ export function DebtsPage() {
           </div>
 
           {/* Total debt pill */}
-          {stats && stats.totalDebt > 0 && (
+          {can("debts.manage") && stats && stats.totalDebt > 0 && (
             <div
               style={{
                 background: "rgba(186,26,26,0.06)",
@@ -248,7 +252,9 @@ export function DebtsPage() {
         </div>
 
         {/* ── KPI Cards ── */}
-        <DebtKPICards stats={stats} isLoading={isStatsLoading} />
+        {can("debts.manage") && (
+          <DebtKPICards stats={stats} isLoading={isStatsLoading} />
+        )}
 
         {/* ── Filters + Table ── */}
         <DebtFilters

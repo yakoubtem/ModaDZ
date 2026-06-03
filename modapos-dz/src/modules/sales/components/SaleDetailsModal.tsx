@@ -6,6 +6,7 @@ import { useReceiptSettings } from "@/modules/pos/hooks/useReceiptSettings";
 import { Button } from "@/components/ui/Button";
 import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 import { Badge } from "@/components/ui/Badge";
+import { useAuth } from "@/modules/auth/AuthContext";
 
 interface SaleDetailsModalProps {
   sale: Sale | null;
@@ -16,6 +17,7 @@ interface SaleDetailsModalProps {
 
 export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetailsModalProps) {
   const { settings } = useReceiptSettings();
+  const { can } = useAuth();
   const [isRefunding, setIsRefunding] = useState(false);
 
   if (!sale) return null;
@@ -42,7 +44,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
           <Button variant="secondary" onClick={onClose} className="flex-1" disabled={isRefunding}>
             Fermer
           </Button>
-          {sale.status === "completed" && onRefund && (
+          {sale.status === "completed" && onRefund && can("sales.refund") && (
             <Button
               variant="danger"
               onClick={handleRefund}

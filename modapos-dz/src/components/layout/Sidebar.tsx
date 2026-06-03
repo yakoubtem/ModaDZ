@@ -2,20 +2,31 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 const NAV_ITEMS = [
-  { name: "Tableau de bord",  path: "/dashboard", icon: "dashboard" },
-  { name: "Point de vente",   path: "/pos",        icon: "point_of_sale" },
-  { name: "Produits",         path: "/products",   icon: "inventory_2" },
-  { name: "Inventaire",       path: "/inventory",  icon: "warehouse" },
-  { name: "Clients",          path: "/customers",  icon: "group" },
-  { name: "Ventes",           path: "/sales",      icon: "payments" },
-  { name: "Dettes",           path: "/debts",      icon: "account_balance_wallet" },
-  { name: "Dépenses",         path: "/expenses",   icon: "receipt_long" },
-  { name: "Statistiques",     path: "/stats",      icon: "leaderboard" },
-  { name: "Paramètres",       path: "/settings",   icon: "settings" },
+  { name: "Tableau de bord",  path: "/dashboard", icon: "dashboard",              permission: "dashboard.view" },
+  { name: "Point de vente",   path: "/pos",        icon: "point_of_sale",          permission: "pos.use" },
+  { name: "Produits",         path: "/products",   icon: "inventory_2",            permission: "products.view" },
+  { name: "Inventaire",       path: "/inventory",  icon: "warehouse",              permission: "inventory.view" },
+  { name: "Clients",          path: "/customers",  icon: "group",                  permission: "customers.view" },
+  { name: "Ventes",           path: "/sales",      icon: "payments",               permission: "sales.view" },
+  { name: "Dettes",           path: "/debts",      icon: "account_balance_wallet", permission: "debts.view" },
+  { name: "Dépenses",         path: "/expenses",   icon: "receipt_long",           permission: "expenses.view" },
+  { name: "Statistiques",     path: "/stats",      icon: "leaderboard",            permission: "reports.view" },
+  { name: "Utilisateurs",     path: "/users",      icon: "shield",                 permission: "users.manage" },
+  { name: "Paramètres",       path: "/settings",   icon: "settings",               permission: "settings.manage" },
+  { name: "Sauvegardes",      path: "/backups",    icon: "hard_drive",             permission: "backups.manage" },
 ];
 
+const formatRole = (role?: string) => {
+  switch (role) {
+    case "admin": return "Administrateur";
+    case "manager": return "Manager";
+    case "cashier": return "Caissier";
+    default: return role || "Responsable";
+  }
+};
+
 export function Sidebar() {
-  const { logout, user } = useAuth();
+  const { logout, user, can } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -27,14 +38,16 @@ export function Sidebar() {
       </div>
 
       {/* ── CTA ── */}
-      <button
-        className="sidebar-cta"
-        style={{ marginBottom: "32px" }}
-        onClick={() => navigate("/pos")}
-      >
-        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-        Nouvelle transaction
-      </button>
+      {can("pos.use") && (
+        <button
+          className="sidebar-cta"
+          style={{ marginBottom: "32px" }}
+          onClick={() => navigate("/pos")}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
+          Nouvelle transaction
+        </button>
+      )}
 
       {/* ── Navigation ── */}
       <nav
@@ -47,7 +60,7 @@ export function Sidebar() {
           overflowY: "auto",
         }}
       >
-        {NAV_ITEMS.map((item) => (
+        {NAV_ITEMS.filter((item) => can(item.permission)).map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -100,7 +113,7 @@ export function Sidebar() {
                 letterSpacing: "normal",
               }}
             >
-              {user?.role || "Responsable"}
+              {formatRole(user?.role)}
             </span>
           </div>
         </button>

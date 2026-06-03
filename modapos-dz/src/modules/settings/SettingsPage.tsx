@@ -13,7 +13,7 @@ const TABS: { id: Tab; label: string; icon: string; adminOnly?: boolean }[] = [
 ];
 
 export function SettingsPage() {
-  const { user } = useAuth();
+  const { can } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("general");
 
   return (
@@ -79,7 +79,7 @@ export function SettingsPage() {
           {/* Tab underline navigation */}
           <div style={{ display: "flex", gap: "32px", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
             {TABS.map((tab) => {
-              if (tab.adminOnly && user?.role !== "admin") return null;
+              if (tab.adminOnly && !can("users.manage")) return null;
               const isActive = activeTab === tab.id;
               return (
                 <button
@@ -123,7 +123,7 @@ export function SettingsPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-card-gap)" }}>
             {activeTab === "general" && <GeneralSettings />}
             {activeTab === "backup" && <BackupSettings />}
-            {activeTab === "users" && user?.role === "admin" && <UsersSettings />}
+            {activeTab === "users" && can("users.manage") && <UsersSettings />}
           </div>
 
           {/* Right column — sticky actions + tip */}

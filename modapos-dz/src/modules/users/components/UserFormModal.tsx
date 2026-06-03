@@ -238,7 +238,11 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
                 }
               >
                 <option value="cashier">
-                  Caissier — accès POS uniquement
+                  Caissier — accès POS et clients
+                </option>
+
+                <option value="manager">
+                  Manager — gestion boutique
                 </option>
 
                 <option value="admin">
@@ -248,9 +252,9 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
 
               <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-3">
                 <p className="text-xs leading-relaxed text-zinc-400">
-                  Les administrateurs peuvent gérer les
-                  utilisateurs, paramètres, sauvegardes et
-                  toutes les opérations critiques du système.
+                  {formData.role === "admin" && "Les administrateurs ont un accès complet au système, aux utilisateurs, paramètres et sauvegardes."}
+                  {formData.role === "manager" && "Les managers gèrent le catalogue, les stocks, les dettes et les dépenses, mais n'ont pas accès à la configuration système."}
+                  {formData.role === "cashier" && "Les caissiers sont limités aux ventes journalières (POS), à la sélection des clients et à la réception des paiements."}
                 </p>
               </div>
             </div>

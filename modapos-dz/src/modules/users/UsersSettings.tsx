@@ -54,6 +54,8 @@ export function UsersSettings() {
                     {user.name}
                     {user.role === "admin" ? (
                       <Badge variant="success">Administrateur</Badge>
+                    ) : user.role === "manager" ? (
+                      <Badge variant="warning">Manager</Badge>
                     ) : (
                       <Badge variant="default">Caissier</Badge>
                     )}

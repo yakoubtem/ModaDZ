@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import type { User } from "@/types";
+import { hasPermission } from "@/lib/permissions";
 
 interface AuthContextValue {
   user: User | null;
   login: (user: User) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  can: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -30,9 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("modadz_user");
   }, []);
 
+  const can = useCallback((permission: string) => {
+    return hasPermission(user?.role, permission);
+  }, [user?.role]);
+
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user }}
+      value={{ user, login, logout, isAuthenticated: !!user, can }}
     >
       {children}
     </AuthContext.Provider>

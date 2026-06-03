@@ -14,6 +14,7 @@ import { SkeletonTable } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/modules/auth/AuthContext";
 
 interface ProductTableProps {
   products: Product[];
@@ -78,6 +79,7 @@ export function ProductTable({
   onDelete,
   onPageChange,
 }: ProductTableProps) {
+  const { can } = useAuth();
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const totalPages = Math.ceil(total / pageSize);
   const from = (page - 1) * pageSize + 1;
@@ -203,13 +205,15 @@ export function ProductTable({
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
-                    <button
-                      onClick={() => setDeleteConfirmId(product.id)}
-                      className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
-                      title="Supprimer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {can("products.delete") && (
+                      <button
+                        onClick={() => setDeleteConfirmId(product.id)}
+                        className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </>
                 )}
               </div>

@@ -11,6 +11,9 @@ import { StatsPage } from "@/modules/statistics/StatsPage";
 import { SettingsPage } from "@/modules/settings/SettingsPage";
 import { DebtsPage } from "@/modules/debts/DebtsPage";
 import { ExpensesPage } from "@/modules/expenses/ExpensesPage";
+import { UsersPage } from "@/modules/users/UsersPage";
+import { BackupsPage } from "@/modules/settings/BackupsPage";
+import { AccessDenied } from "@/components/AccessDenied";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -18,11 +21,28 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
+function PermissionGuard({ permission, children }: { permission: string; children: React.ReactNode }) {
+  const { can } = useAuth();
+  return can(permission) ? <>{children}</> : <Navigate to="/access-denied" replace />;
+}
+
+function IndexRedirect() {
+  const { can } = useAuth();
+  if (can("dashboard.view")) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  if (can("pos.use")) {
+    return <Navigate to="/pos" replace />;
+  }
+  return <Navigate to="/access-denied" replace />;
+}
+
 export default function App() {
   return (
     <Routes>
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/access-denied" element={<AccessDenied />} />
 
       {/* Protected — all inside AppLayout */}
       <Route
@@ -33,17 +53,19 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard"  element={<DashboardPage />} />
-        <Route path="pos"        element={<POSPage />} />
-        <Route path="products"   element={<ProductsPage />} />
-        <Route path="inventory"  element={<InventoryPage />} />
-        <Route path="customers"  element={<CustomersPage />} />
-        <Route path="sales"      element={<SalesPage />} />
-        <Route path="debts"      element={<DebtsPage />} />
-        <Route path="expenses"   element={<ExpensesPage />} />
-        <Route path="stats"      element={<StatsPage />} />
-        <Route path="settings"   element={<SettingsPage />} />
+        <Route index element={<IndexRedirect />} />
+        <Route path="dashboard"  element={<PermissionGuard permission="dashboard.view"><DashboardPage /></PermissionGuard>} />
+        <Route path="pos"        element={<PermissionGuard permission="pos.use"><POSPage /></PermissionGuard>} />
+        <Route path="products"   element={<PermissionGuard permission="products.view"><ProductsPage /></PermissionGuard>} />
+        <Route path="inventory"  element={<PermissionGuard permission="inventory.view"><InventoryPage /></PermissionGuard>} />
+        <Route path="customers"  element={<PermissionGuard permission="customers.view"><CustomersPage /></PermissionGuard>} />
+        <Route path="sales"      element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
+        <Route path="debts"      element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />
+        <Route path="expenses"   element={<PermissionGuard permission="expenses.view"><ExpensesPage /></PermissionGuard>} />
+        <Route path="stats"      element={<PermissionGuard permission="reports.view"><StatsPage /></PermissionGuard>} />
+        <Route path="users"      element={<PermissionGuard permission="users.manage"><UsersPage /></PermissionGuard>} />
+        <Route path="settings"   element={<PermissionGuard permission="settings.manage"><SettingsPage /></PermissionGuard>} />
+        <Route path="backups"    element={<PermissionGuard permission="backups.manage"><BackupsPage /></PermissionGuard>} />
       </Route>
 
       {/* Catch-all */}

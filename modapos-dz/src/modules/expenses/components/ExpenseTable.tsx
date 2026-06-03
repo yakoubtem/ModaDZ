@@ -3,6 +3,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Expense } from "@/types";
 import { useIPC } from "@/hooks/useIPC";
 import { toast } from "sonner";
+import { useAuth } from "@/modules/auth/AuthContext";
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -25,6 +26,7 @@ export function ExpenseTable({
   onDelete,
   onPageChange,
 }: ExpenseTableProps) {
+  const { can } = useAuth();
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const totalPages = Math.ceil(total / pageSize);
@@ -226,54 +228,56 @@ export function ExpenseTable({
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
                   </button>
 
-                  {deleteConfirm === expense.id ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(expense.id);
-                        setDeleteConfirm(null);
-                      }}
-                      style={{
-                        height: 32,
-                        padding: "0 12px",
-                        borderRadius: "var(--radius-md)",
-                        border: "1px solid rgba(186,26,26,0.3)",
-                        background: "rgba(186,26,26,0.08)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        color: "var(--color-error)",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        gap: 4,
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check</span>
-                      Confirmer
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteConfirm(expense.id);
-                      }}
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: "var(--radius-md)",
-                        border: "1px solid rgba(186,26,26,0.2)",
-                        background: "rgba(186,26,26,0.04)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        color: "var(--color-error)",
-                      }}
-                      title="Supprimer"
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
-                    </button>
+                  {can("expenses.delete") && (
+                    deleteConfirm === expense.id ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(expense.id);
+                          setDeleteConfirm(null);
+                        }}
+                        style={{
+                          height: 32,
+                          padding: "0 12px",
+                          borderRadius: "var(--radius-md)",
+                          border: "1px solid rgba(186,26,26,0.3)",
+                          background: "rgba(186,26,26,0.08)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          color: "var(--color-error)",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          gap: 4,
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check</span>
+                        Confirmer
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteConfirm(expense.id);
+                        }}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "var(--radius-md)",
+                          border: "1px solid rgba(186,26,26,0.2)",
+                          background: "rgba(186,26,26,0.04)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          color: "var(--color-error)",
+                        }}
+                        title="Supprimer"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                      </button>
+                    )
                   )}
                 </div>
               </td>
