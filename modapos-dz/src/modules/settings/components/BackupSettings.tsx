@@ -1,53 +1,183 @@
 import { useBackups } from "../hooks/useBackups";
-import { Button } from "@/components/ui/Button";
 
 export function BackupSettings() {
   const { backups, isLoading, createBackup, restoreBackup, exportBackup } = useBackups();
 
   return (
-    <div className="space-y-6">
-      <div className="bg-[var(--color-bg-elevated)] p-6 rounded-lg border border-[var(--color-border)] flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-medium">Créer une sauvegarde</h3>
-          <p className="text-sm text-[var(--color-text-secondary)]">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Create backup card */}
+      <div
+        style={{
+          background: "var(--color-surface-container-low)",
+          padding: 28,
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid rgba(208,197,175,0.3)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 24,
+          flexWrap: "wrap",
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 240 }}>
+          <h3
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-display)",
+              marginBottom: 6,
+            }}
+          >
+            Créer une sauvegarde
+          </h3>
+          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", lineHeight: "var(--lh-body-sm)" }}>
             Il est recommandé de sauvegarder vos données régulièrement pour éviter toute perte en cas de panne de l'appareil.
           </p>
         </div>
-        <Button onClick={() => createBackup()} variant="primary">
+        <button className="btn-primary" onClick={() => createBackup()} style={{ flexShrink: 0 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>backup</span>
           Nouvelle sauvegarde
-        </Button>
+        </button>
       </div>
 
-      <div className="bg-[var(--color-bg-elevated)] rounded-lg border border-[var(--color-border)] overflow-hidden">
-        <div className="p-4 border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
-          <h3 className="font-medium text-[var(--color-text-primary)]">Historique des sauvegardes</h3>
+      {/* Backup history */}
+      <div
+        style={{
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid rgba(208,197,175,0.3)",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: "16px 24px",
+            borderBottom: "1px solid rgba(208,197,175,0.3)",
+            background: "rgba(245,243,238,0.7)",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-display)",
+            }}
+          >
+            Historique des sauvegardes
+          </h3>
         </div>
-        
+
         {isLoading ? (
-          <div className="p-6 text-center text-[var(--color-text-muted)]">Chargement...</div>
-        ) : backups.length === 0 ? (
-          <div className="p-6 text-center text-[var(--color-text-muted)]">Aucune sauvegarde trouvée.</div>
-        ) : (
-          <div className="divide-y divide-[var(--color-border)]">
-            {backups.map((backup) => (
-              <div key={backup.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{backup.filename}</div>
-                  <div className="text-xs text-[var(--color-text-secondary)] mt-1">
-                    Date: {new Date(backup.createdAt).toLocaleString()} • Taille: {(backup.size / 1024).toFixed(2)} KB
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => exportBackup(backup.id, backup.filename)}>
-                    Exporter (ZIP)
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => restoreBackup(backup.id, backup.filename)}>
-                    Restaurer
-                  </Button>
-                </div>
-              </div>
+          <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="skeleton" style={{ height: 52, borderRadius: 8 }} />
             ))}
           </div>
+        ) : backups.length === 0 ? (
+          <div
+            style={{
+              padding: "64px 24px",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline)", opacity: 0.5 }}>
+              cloud_off
+            </span>
+            <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
+              Aucune sauvegarde trouvée.
+            </p>
+          </div>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
+            <thead>
+              <tr style={{ background: "rgba(245,243,238,0.4)", borderBottom: "1px solid rgba(208,197,175,0.2)" }}>
+                {["Fichier", "Date", "Taille", "Actions"].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: "14px 20px",
+                      textAlign: "left",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--color-secondary)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {backups.map((backup) => (
+                <tr
+                  key={backup.id}
+                  style={{
+                    borderBottom: "1px solid rgba(208,197,175,0.15)",
+                    transition: "background 0.1s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(212,175,55,0.04)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  {/* Filename */}
+                  <td style={{ padding: "14px 20px", fontWeight: 500, color: "var(--color-on-surface)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--color-secondary)" }}>
+                        description
+                      </span>
+                      {backup.filename}
+                    </div>
+                  </td>
+
+                  {/* Date */}
+                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)" }}>
+                    {new Date(backup.createdAt).toLocaleString("fr-FR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </td>
+
+                  {/* Size */}
+                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)", fontVariantNumeric: "tabular-nums" }}>
+                    {(backup.size / 1024).toFixed(2)} KB
+                  </td>
+
+                  {/* Actions */}
+                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
+                      <button
+                        className="btn-border"
+                        onClick={() => exportBackup(backup.id, backup.filename)}
+                        style={{ padding: "6px 14px", fontSize: 12, height: 36, gap: 6 }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span>
+                        Exporter
+                      </button>
+                      <button
+                        className="btn-border"
+                        onClick={() => restoreBackup(backup.id, backup.filename)}
+                        style={{ padding: "6px 14px", fontSize: 12, height: 36, gap: 6 }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>restore</span>
+                        Restaurer
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>

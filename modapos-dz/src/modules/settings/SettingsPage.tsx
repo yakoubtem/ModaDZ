@@ -52,7 +52,7 @@ export function SettingsPage() {
         style={{
           flex: 1,
           padding: "var(--space-container)",
-          maxWidth: 1080,
+          maxWidth: 1440,
           width: "100%",
           margin: "0 auto",
           display: "flex",
