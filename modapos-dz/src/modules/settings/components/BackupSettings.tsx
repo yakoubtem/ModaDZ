@@ -38,10 +38,10 @@ export function BackupSettings() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => exportBackup(backup.id)}>
+                  <Button variant="outline" size="sm" onClick={() => exportBackup(backup.id, backup.filename)}>
                     Exporter (ZIP)
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => restoreBackup(backup.id)}>
+                  <Button variant="outline" size="sm" onClick={() => restoreBackup(backup.id, backup.filename)}>
                     Restaurer
                   </Button>
                 </div>

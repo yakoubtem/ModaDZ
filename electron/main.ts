@@ -147,12 +147,20 @@ app.whenReady().then(() => {
   // Serve files from app.getPath('userData') via media:// protocol
   // e.g. media://images/photo.jpg → {userData}/images/photo.jpg
   protocol.handle("media", (request) => {
-    const rawPath = request.url.slice("media://".length);
-    const filePath = path.join(
-      app.getPath("userData"),
-      decodeURIComponent(rawPath)
-    );
-    return net.fetch(pathToFileURL(filePath).href);
+    try {
+      const rawPath = request.url.slice("media://".length);
+      const filePath = path.join(
+        app.getPath("userData"),
+        decodeURIComponent(rawPath)
+      );
+      if (!fs.existsSync(filePath)) {
+        return new Response("Not Found", { status: 404 });
+      }
+      return net.fetch(pathToFileURL(filePath).href);
+    } catch (err) {
+      console.error("Error serving media:", err);
+      return new Response("Internal Error", { status: 500 });
+    }
   });
 
   createWindow();

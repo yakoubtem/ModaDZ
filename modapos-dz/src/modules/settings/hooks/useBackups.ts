@@ -34,10 +34,10 @@ export function useBackups() {
     }
   }, [invoke, user, fetchBackups]);
 
-  const restoreBackup = useCallback(async (id: number) => {
+  const restoreBackup = useCallback(async (id: number, filename?: string) => {
     if (!user?.id) return false;
     try {
-      await invoke("backups:restore", { currentUserId: user.id, id });
+      await invoke("backups:restore", { currentUserId: user.id, id, filename });
       // In a real app we might want to tell the user the app needs to restart
       alert("Sauvegarde restaurée avec succès. Veuillez relancer l'application pour appliquer les changements.");
       return true;
@@ -47,10 +47,10 @@ export function useBackups() {
     }
   }, [invoke, user]);
 
-  const exportBackup = useCallback(async (id: number) => {
+  const exportBackup = useCallback(async (id: number, filename?: string) => {
     if (!user?.id) return false;
     try {
-      const res = await invoke("backups:exportZip", { currentUserId: user.id, id });
+      const res = await invoke("backups:exportZip", { currentUserId: user.id, id, filename });
       if (res) alert("Export réussi !");
       return !!res;
     } catch (err: any) {

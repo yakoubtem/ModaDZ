@@ -12,6 +12,48 @@ async function requireAdmin(userId?: number) {
   }
 }
 
+async function syncBackupsWithDatabase(backupDir: string) {
+  try {
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+      return;
+    }
+    const files = fs.readdirSync(backupDir);
+    const dbBackups = await prisma.backup.findMany();
+    const dbBackupNames = new Set(dbBackups.map((b) => b.filename));
+    const diskBackupNames = new Set<string>();
+
+    for (const file of files) {
+      const match = file.match(/^backup_(\d+)\.db$/);
+      if (match) {
+        diskBackupNames.add(file);
+        if (!dbBackupNames.has(file)) {
+          const timestamp = parseInt(match[1]);
+          const filePath = path.join(backupDir, file);
+          const stat = fs.statSync(filePath);
+          await prisma.backup.create({
+            data: {
+              filename: file,
+              size: stat.size,
+              type: "manual",
+              createdAt: new Date(timestamp),
+            },
+          });
+        }
+      }
+    }
+
+    // Clean up records in DB that don't exist on disk anymore
+    for (const dbBackup of dbBackups) {
+      if (!diskBackupNames.has(dbBackup.filename)) {
+        await prisma.backup.delete({ where: { id: dbBackup.id } });
+      }
+    }
+  } catch (syncErr) {
+    console.error("Failed to sync backups with database:", syncErr);
+  }
+}
+
 export function registerBackupHandlers(ipcMain: IpcMain) {
   const isDev = process.env.NODE_ENV === "development";
   const dbPath = isDev
@@ -25,6 +67,7 @@ export function registerBackupHandlers(ipcMain: IpcMain) {
 
   ipcMain.handle("backups:getAll", async (_e, params: { currentUserId?: number }) => {
     await requireAdmin(params.currentUserId);
+    await syncBackupsWithDatabase(backupDir);
     return prisma.backup.findMany({ orderBy: { createdAt: "desc" } });
   });
 
@@ -50,12 +93,28 @@ export function registerBackupHandlers(ipcMain: IpcMain) {
     }
   );
 
-  ipcMain.handle("backups:restore", async (_e, params: { currentUserId?: number; id: number }) => {
+  ipcMain.handle("backups:restore", async (_e, params: { currentUserId?: number; id: number; filename?: string }) => {
     await requireAdmin(params.currentUserId);
-    const backup = await prisma.backup.findUnique({ where: { id: params.id } });
-    if (!backup) throw new Error("Sauvegarde introuvable");
+    let filename = params.filename;
 
-    const source = path.join(backupDir, backup.filename);
+    if (!filename) {
+      const backup = await prisma.backup.findUnique({ where: { id: Number(params.id) } });
+      if (backup) {
+        filename = backup.filename;
+      }
+    }
+
+    if (!filename) {
+      await syncBackupsWithDatabase(backupDir);
+      const backup = await prisma.backup.findUnique({ where: { id: Number(params.id) } });
+      if (backup) {
+        filename = backup.filename;
+      }
+    }
+
+    if (!filename) throw new Error("Sauvegarde introuvable");
+
+    const source = path.join(backupDir, filename);
     if (!fs.existsSync(source)) throw new Error("Fichier de sauvegarde manquant");
 
     // Copy to DB path
@@ -65,17 +124,33 @@ export function registerBackupHandlers(ipcMain: IpcMain) {
     return true; // The UI should probably trigger a reload
   });
 
-  ipcMain.handle("backups:exportZip", async (_e, params: { currentUserId?: number; id: number }) => {
+  ipcMain.handle("backups:exportZip", async (_e, params: { currentUserId?: number; id: number; filename?: string }) => {
     await requireAdmin(params.currentUserId);
-    const backup = await prisma.backup.findUnique({ where: { id: params.id } });
-    if (!backup) throw new Error("Sauvegarde introuvable");
+    let filename = params.filename;
 
-    const source = path.join(backupDir, backup.filename);
+    if (!filename) {
+      const backup = await prisma.backup.findUnique({ where: { id: Number(params.id) } });
+      if (backup) {
+        filename = backup.filename;
+      }
+    }
+
+    if (!filename) {
+      await syncBackupsWithDatabase(backupDir);
+      const backup = await prisma.backup.findUnique({ where: { id: Number(params.id) } });
+      if (backup) {
+        filename = backup.filename;
+      }
+    }
+
+    if (!filename) throw new Error("Sauvegarde introuvable");
+
+    const source = path.join(backupDir, filename);
     if (!fs.existsSync(source)) throw new Error("Fichier de sauvegarde manquant");
 
     const { canceled, filePath } = await dialog.showSaveDialog({
       title: "Exporter la sauvegarde",
-      defaultPath: `ModaDZ_Backup_${backup.filename.replace(".db", "")}.zip`,
+      defaultPath: `ModaDZ_Backup_${filename.replace(".db", "")}.zip`,
       filters: [{ name: "Fichiers ZIP", extensions: ["zip"] }],
     });
 

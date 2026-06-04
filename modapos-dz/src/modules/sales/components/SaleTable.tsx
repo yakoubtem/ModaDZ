@@ -43,7 +43,8 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       header: "Date",
       cell: (info) => formatDate(info.getValue()),
     }),
-    columnHelper.accessor("customer.name", {
+    columnHelper.accessor((row) => row.customer?.name, {
+      id: "customerName",
       header: "Client",
       cell: (info) => {
         const name = info.getValue();
