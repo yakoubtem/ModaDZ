@@ -26,8 +26,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={fieldId}
           rows={3}
           className={cn(
-            "w-full px-3 py-2 bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
-            "rounded-[var(--radius-md)] text-sm text-[var(--color-text-primary)]",
+            "w-full px-4 py-3 bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
+            "rounded-[var(--radius-lg)] text-[14px] text-[var(--color-text-primary)]",
             "placeholder:text-[var(--color-text-muted)] resize-none",
             "transition-all duration-150 shadow-[var(--shadow-xs)]",
             "hover:border-[var(--color-border-strong)]",

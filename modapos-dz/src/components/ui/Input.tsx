@@ -25,7 +25,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <span className="absolute left-3 text-[var(--color-text-muted)] flex items-center pointer-events-none">
+            <span className="absolute left-4 text-[var(--color-text-muted)] flex items-center pointer-events-none">
               {leftIcon}
             </span>
           )}
@@ -33,22 +33,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              "flex w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
-              "px-3 py-2 text-[13px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
+              "flex w-full rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
+              "px-4 py-3 min-h-[44px] text-[14px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
               "file:border-0 file:bg-transparent file:text-[13px] file:font-medium",
               "placeholder:text-[var(--color-text-muted)]",
               "focus-visible:outline-none focus-visible:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/20",
               "hover:border-[var(--color-border-strong)] transition-all duration-200",
               "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[var(--color-bg-elevated)]",
               error && "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-[var(--color-danger)]/10",
-              leftIcon ? "pl-9" : "pl-3",
-              rightIcon ? "pr-9" : "pr-3",
+              leftIcon ? "pl-11" : "pl-4",
+              rightIcon ? "pr-11" : "pr-4",
               className
             )}
             {...props}
           />
           {rightIcon && (
-            <span className="absolute right-3 text-[var(--color-text-muted)] flex items-center pointer-events-none">
+            <span className="absolute right-4 text-[var(--color-text-muted)] flex items-center pointer-events-none">
               {rightIcon}
             </span>
           )}
