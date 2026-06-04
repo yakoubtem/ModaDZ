@@ -7,11 +7,9 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { Pencil, Trash2, Eye, Phone, Mail, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Pencil, Trash2, Eye, Phone, Mail } from "lucide-react";
 import type { CustomerWithStats } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 interface CustomerTableProps {
@@ -24,14 +22,6 @@ interface CustomerTableProps {
   onDelete: (customer: CustomerWithStats) => void;
   onViewProfile: (id: number) => void;
   onPageChange: (page: number) => void;
-}
-
-// ─── Sort icon helper ─────────────────────────────────────
-function SortIcon({ direction }: { direction: "asc" | "desc" | false }) {
-  if (!direction) return <ChevronsUpDown className="w-3 h-3 ml-1 text-[var(--color-text-muted)]" />;
-  return direction === "asc"
-    ? <ChevronUp className="w-3 h-3 ml-1 text-[var(--color-accent)]" />
-    : <ChevronDown className="w-3 h-3 ml-1 text-[var(--color-accent)]" />;
 }
 
 export function CustomerTable({
@@ -56,19 +46,19 @@ export function CustomerTable({
         header: "Client",
         cell: ({ row }) => (
           <div>
-            <p className="text-sm font-medium text-[var(--color-text-primary)]">
+            <p style={{ fontSize: 14, fontWeight: 500, color: "var(--color-on-surface)" }}>
               {row.original.name}
             </p>
-            <div className="flex gap-3 mt-0.5">
+            <div style={{ display: "flex", gap: 12, marginTop: 2 }}>
               {row.original.phone && (
-                <span className="flex items-center gap-1 text-xs text-[var(--color-text-muted)]">
-                  <Phone className="w-2.5 h-2.5" />
+                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-secondary)" }}>
+                  <Phone style={{ width: 10, height: 10 }} />
                   {row.original.phone}
                 </span>
               )}
               {row.original.email && (
-                <span className="flex items-center gap-1 text-xs text-[var(--color-text-muted)]">
-                  <Mail className="w-2.5 h-2.5" />
+                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-secondary)" }}>
+                  <Mail style={{ width: 10, height: 10 }} />
                   {row.original.email}
                 </span>
               )}
@@ -80,7 +70,7 @@ export function CustomerTable({
         accessorKey: "totalOrders",
         header: "Commandes",
         cell: ({ getValue }) => (
-          <span className="text-sm tabular-nums text-[var(--color-text-primary)]">
+          <span style={{ fontSize: 14, fontVariantNumeric: "tabular-nums", color: "var(--color-on-surface)" }}>
             {getValue() as number}
           </span>
         ),
@@ -89,7 +79,7 @@ export function CustomerTable({
         accessorKey: "totalSpent",
         header: "Total dépensé",
         cell: ({ getValue }) => (
-          <span className="text-sm font-semibold tabular-nums text-[var(--color-text-primary)]">
+          <span style={{ fontSize: 14, fontWeight: 600, fontVariantNumeric: "tabular-nums", color: "var(--color-on-surface)" }}>
             {formatCurrency(getValue() as number)}
           </span>
         ),
@@ -100,9 +90,23 @@ export function CustomerTable({
         cell: ({ getValue }) => {
           const debt = getValue() as number;
           return debt > 0 ? (
-            <Badge variant="danger">{formatCurrency(debt)}</Badge>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "4px 12px",
+                borderRadius: "999px",
+                fontSize: 12,
+                fontWeight: 700,
+                background: "rgba(220,38,38,0.1)",
+                color: "#dc2626",
+                border: "1px solid rgba(220,38,38,0.3)",
+              }}
+            >
+              {formatCurrency(debt)}
+            </span>
           ) : (
-            <span className="text-xs text-[var(--color-text-muted)]">—</span>
+            <span style={{ color: "var(--color-outline)", fontSize: 12 }}>—</span>
           );
         },
       },
@@ -112,7 +116,7 @@ export function CustomerTable({
         cell: ({ getValue }) => {
           const d = getValue() as string | undefined;
           return (
-            <span className="text-xs text-[var(--color-text-muted)]">
+            <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>
               {d ? formatDate(d) : "—"}
             </span>
           );
@@ -125,19 +129,26 @@ export function CustomerTable({
           const customer = row.original;
           if (deleteConfirmId === customer.id) {
             return (
-              <div className="flex items-center gap-1">
+              <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
                 <button
-                  onClick={() => {
-                    onDelete(customer);
-                    setDeleteConfirmId(null);
-                  }}
-                  className="px-2 py-1 text-xs font-medium text-[var(--color-danger)] bg-[var(--color-danger-subtle)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger)]/20 transition-colors"
+                  onClick={() => { onDelete(customer); setDeleteConfirmId(null); }}
+                  className="btn-primary"
+                  style={{ padding: "6px 14px", fontSize: 12, height: 36, background: "var(--color-error)" }}
                 >
                   Oui
                 </button>
                 <button
                   onClick={() => setDeleteConfirmId(null)}
-                  className="px-2 py-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                  style={{
+                    height: 36,
+                    padding: "0 12px",
+                    background: "none",
+                    border: "1px solid rgba(208,197,175,0.3)",
+                    borderRadius: "var(--radius-md)",
+                    cursor: "pointer",
+                    color: "var(--color-secondary)",
+                    fontSize: 12,
+                  }}
                 >
                   Non
                 </button>
@@ -145,28 +156,61 @@ export function CustomerTable({
             );
           }
           return (
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
               <button
                 onClick={() => onViewProfile(customer.id)}
                 title="Voir le profil"
-                className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent-subtle)] transition-colors"
+                style={{
+                  width: 36, height: 36,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  borderRadius: "var(--radius-md)",
+                  background: "none",
+                  border: "1px solid rgba(208,197,175,0.2)",
+                  cursor: "pointer",
+                  color: "var(--color-secondary)",
+                  transition: "all 0.15s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-primary)"; e.currentTarget.style.background = "rgba(212,175,55,0.08)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-secondary)"; e.currentTarget.style.background = "none"; }}
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye style={{ width: 14, height: 14 }} />
               </button>
               <button
                 onClick={() => onEdit(customer)}
                 title="Modifier"
-                className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
+                style={{
+                  width: 36, height: 36,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  borderRadius: "var(--radius-md)",
+                  background: "none",
+                  border: "1px solid rgba(208,197,175,0.2)",
+                  cursor: "pointer",
+                  color: "var(--color-secondary)",
+                  transition: "all 0.15s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-on-surface)"; e.currentTarget.style.background = "rgba(208,197,175,0.15)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-secondary)"; e.currentTarget.style.background = "none"; }}
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <Pencil style={{ width: 14, height: 14 }} />
               </button>
               {can("customers.delete") && (
                 <button
                   onClick={() => setDeleteConfirmId(customer.id)}
                   title="Supprimer"
-                  className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] transition-colors"
+                  style={{
+                    width: 36, height: 36,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    borderRadius: "var(--radius-md)",
+                    background: "none",
+                    border: "1px solid rgba(208,197,175,0.2)",
+                    cursor: "pointer",
+                    color: "var(--color-secondary)",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-error)"; e.currentTarget.style.background = "rgba(220,38,38,0.06)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-secondary)"; e.currentTarget.style.background = "none"; }}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 style={{ width: 14, height: 14 }} />
                 </button>
               )}
             </div>
@@ -195,23 +239,30 @@ export function CustomerTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)] overflow-hidden">
-        <div className="divide-y divide-[var(--color-border)]">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex gap-4 px-5 py-4">
-              <div className="h-4 bg-[var(--color-bg-subtle)] rounded animate-pulse w-40" />
-              <div className="h-4 bg-[var(--color-bg-subtle)] rounded animate-pulse w-16 ml-auto" />
-            </div>
-          ))}
-        </div>
+      <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="skeleton" style={{ height: 52, borderRadius: 8 }} />
+        ))}
       </div>
     );
   }
 
   if (customers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)] border-dashed">
-        <p className="text-sm text-[var(--color-text-secondary)]">
+      <div
+        style={{
+          padding: "64px 24px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline)", opacity: 0.5 }}>
+          people
+        </span>
+        <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
           Aucun client trouvé
         </p>
       </div>
@@ -219,44 +270,51 @@ export function CustomerTable({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] overflow-hidden">
-        {/* Header */}
-        <table className="w-full">
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
           <thead>
             {table.getHeaderGroups().map((hg) => (
               <tr
                 key={hg.id}
-                className="border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]"
+                style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}
               >
                 {hg.headers.map((header) => (
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className={cn(
-                      "px-5 py-3 text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide text-left select-none",
-                      header.column.getCanSort() && "cursor-pointer hover:text-[var(--color-text-secondary)]"
-                    )}
+                    style={{
+                      padding: "14px 20px",
+                      textAlign: "left",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--color-secondary)",
+                      whiteSpace: "nowrap",
+                      cursor: header.column.getCanSort() ? "pointer" : "default",
+                      userSelect: "none",
+                    }}
                   >
-                    <span className="flex items-center">
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {header.column.getCanSort() && (
-                        <SortIcon direction={header.column.getIsSorted()} />
-                      )}
-                    </span>
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-[var(--color-border)]">
+          <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="group bg-[var(--color-bg-surface)] hover:bg-[var(--color-accent-subtle)]/40 transition-colors"
+                style={{
+                  borderBottom: "1px solid rgba(208,197,175,0.15)",
+                  transition: "background 0.1s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(212,175,55,0.04)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-5 py-3">
+                  <td key={cell.id} style={{ padding: "14px 20px" }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -266,27 +324,41 @@ export function CustomerTable({
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination footer */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-1">
-          <p className="text-xs text-[var(--color-text-muted)]">
-            Affichage de{" "}
-            <span className="text-[var(--color-text-secondary)]">{from}–{to}</span>{" "}
-            sur{" "}
-            <span className="text-[var(--color-text-secondary)]">{total}</span>{" "}
-            clients
+        <div
+          style={{
+            padding: "16px 24px",
+            borderTop: "1px solid rgba(208,197,175,0.3)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: "rgba(245,243,238,0.3)",
+          }}
+        >
+          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+            Affichage de {from}–{to} sur {total} clients
           </p>
-          <div className="flex items-center gap-1">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => onPageChange(p)}
-                className={cn(
-                  "w-8 h-8 text-xs font-medium rounded-[var(--radius-sm)] transition-colors",
-                  p === page
-                    ? "bg-[var(--color-accent)] text-white"
-                    : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)]"
-                )}
+                style={{
+                  width: 36,
+                  height: 36,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 12,
+                  fontWeight: p === page ? 700 : 500,
+                  borderRadius: "var(--radius-md)",
+                  border: "none",
+                  cursor: "pointer",
+                  background: p === page ? "var(--color-primary)" : "transparent",
+                  color: p === page ? "white" : "var(--color-secondary)",
+                  transition: "all 0.15s ease",
+                }}
               >
                 {p}
               </button>

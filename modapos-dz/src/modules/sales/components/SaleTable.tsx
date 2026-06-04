@@ -7,9 +7,6 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { SaleSummary } from "@/types";
 import { FileText, Eye, FileSearch } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 
 const columnHelper = createColumnHelper<SaleSummary>();
@@ -32,8 +29,8 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const val = info.getValue() || `-`;
         return (
-          <div className="flex items-center gap-2.5 font-mono text-xs font-medium text-[var(--color-text-primary)]">
-            <FileText className="w-4 h-4 text-[var(--color-text-muted)]" />
+          <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "monospace", fontSize: 12, fontWeight: 500, color: "var(--color-on-surface)" }}>
+            <FileText style={{ width: 16, height: 16, color: "var(--color-secondary)", flexShrink: 0 }} />
             {val}
           </div>
         );
@@ -42,7 +39,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
     columnHelper.accessor("createdAt", {
       header: "Date",
       cell: (info) => (
-        <span className="text-[var(--color-text-secondary)] font-medium">
+        <span style={{ color: "var(--color-secondary)", fontWeight: 500, fontSize: 14 }}>
           {formatDate(info.getValue())}
         </span>
       ),
@@ -53,11 +50,11 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const name = info.getValue();
         return name ? (
-          <span className="font-semibold text-[var(--color-text-primary)]">
+          <span style={{ fontWeight: 600, color: "var(--color-on-surface)", fontSize: 14 }}>
             {name}
           </span>
         ) : (
-          <span className="text-[var(--color-text-muted)] italic font-normal">Passager</span>
+          <span style={{ color: "var(--color-secondary)", fontStyle: "italic", fontWeight: 400, fontSize: 14 }}>Passager</span>
         );
       },
     }),
@@ -66,13 +63,13 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const items = info.getValue();
         const totalItems = items.reduce((acc, curr) => acc + curr.quantity, 0);
-        return <span className="text-[var(--color-text-secondary)] font-medium">{totalItems} art.</span>;
+        return <span style={{ color: "var(--color-secondary)", fontWeight: 500, fontSize: 14 }}>{totalItems} art.</span>;
       },
     }),
     columnHelper.accessor("total", {
       header: "Total",
       cell: (info) => (
-        <span className="font-bold text-[var(--color-text-primary)]">
+        <span style={{ fontWeight: 700, color: "var(--color-on-surface)", fontSize: 14, fontVariantNumeric: "tabular-nums" }}>
           {formatCurrency(info.getValue())}
         </span>
       ),
@@ -83,7 +80,19 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
         const method = info.getValue();
         const label = PAYMENT_METHOD_LABELS[method] || method;
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-subtle)] text-[11px] font-semibold text-[var(--color-text-secondary)] border border-[var(--color-border)]/60">
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "3px 10px",
+              borderRadius: "var(--radius-md)",
+              background: "rgba(245,243,238,0.7)",
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--color-secondary)",
+              border: "1px solid rgba(208,197,175,0.3)",
+            }}
+          >
             {label}
           </span>
         );
@@ -104,28 +113,58 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       header: "Statut",
       cell: (info) => {
         const status = info.getValue();
-        if (status === "completed") {
-          return <Badge variant="success" dot>Complétée</Badge>;
-        }
-        if (status === "refunded") {
-          return <Badge variant="warning" dot>Remboursée</Badge>;
-        }
-        return <Badge variant="default" dot>{status}</Badge>;
+        const config = status === "completed"
+          ? { bg: "rgba(34,197,94,0.1)", color: "#16a34a", border: "rgba(34,197,94,0.3)", label: "Complétée" }
+          : status === "refunded"
+          ? { bg: "rgba(245,158,11,0.1)", color: "#f59e0b", border: "rgba(245,158,11,0.3)", label: "Remboursée" }
+          : { bg: "rgba(208,197,175,0.1)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: status };
+        return (
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "4px 12px",
+              borderRadius: "999px",
+              fontSize: 12,
+              fontWeight: 700,
+              background: config.bg,
+              color: config.color,
+              border: `1px solid ${config.border}`,
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: config.color }} />
+            {config.label}
+          </span>
+        );
       },
     }),
     columnHelper.display({
       id: "actions",
       header: "",
       cell: (info) => (
-        <div className="flex items-center justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+          <button
             onClick={() => onView(info.row.original.id)}
             title="Voir les détails"
+            style={{
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "var(--radius-md)",
+              background: "none",
+              border: "1px solid rgba(208,197,175,0.2)",
+              cursor: "pointer",
+              color: "var(--color-secondary)",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-primary)"; e.currentTarget.style.background = "rgba(212,175,55,0.08)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-secondary)"; e.currentTarget.style.background = "none"; }}
           >
-            <Eye className="w-4 h-4 text-[var(--color-text-secondary)]" />
-          </Button>
+            <Eye style={{ width: 16, height: 16 }} />
+          </button>
         </div>
       ),
     }),
@@ -138,16 +177,28 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
   });
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-[var(--color-text-secondary)]">
-          <thead className="bg-[var(--color-bg-subtle)] border-b border-[var(--color-border)] text-[var(--color-text-muted)] uppercase text-[10px]">
+    <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
+          <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr
+                key={headerGroup.id}
+                style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}
+              >
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-4 font-semibold whitespace-nowrap tracking-wider text-[11px] text-[var(--color-text-muted)]"
+                    style={{
+                      padding: "14px 20px",
+                      textAlign: "left",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--color-secondary)",
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -160,26 +211,47 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-[var(--color-border)]">
+          <tbody>
             {table.getRowModel().rows.length === 0 ? (
               <tr>
                 <td colSpan={columns.length}>
-                  <EmptyState
-                    variant="search"
-                    icon={FileSearch}
-                    title="Aucune vente trouvée"
-                    description="Aucune vente ne correspond à vos critères de recherche."
-                  />
+                  <div
+                    style={{
+                      padding: "64px 24px",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 12,
+                    }}
+                  >
+                    <FileSearch style={{ width: 48, height: 48, color: "var(--color-outline)", opacity: 0.5 }} />
+                    <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
+                      Aucune vente ne correspond à vos critères de recherche.
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-[var(--color-accent-subtle)]/40 transition-colors duration-100"
+                  style={{
+                    borderBottom: "1px solid rgba(208,197,175,0.15)",
+                    transition: "background 0.1s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(212,175,55,0.04)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-6 py-5 whitespace-nowrap align-middle">
+                    <td
+                      key={cell.id}
+                      style={{
+                        padding: "14px 20px",
+                        whiteSpace: "nowrap",
+                        verticalAlign: "middle",
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

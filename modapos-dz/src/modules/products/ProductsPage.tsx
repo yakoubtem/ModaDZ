@@ -129,15 +129,11 @@ export function ProductsPage() {
               justifyContent: "space-between",
               alignItems: "center",
               background: "rgba(255,255,255,0.5)",
+              flexWrap: "wrap",
+              gap: 12,
             }}
           >
-            <div style={{ position: "relative", width: 384 }}>
-              <span
-                className="material-symbols-outlined"
-                style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--color-secondary)", fontSize: 22, pointerEvents: "none" }}
-              >
-                search
-              </span>
+            <div style={{ flex: 1, minWidth: 300 }}>
               <ProductSearchBar
                 onSearch={handleSearch}
                 onCategoryChange={handleCategoryFilter}
@@ -147,11 +143,11 @@ export function ProductsPage() {
               />
             </div>
             <div style={{ display: "flex", gap: "8px" }}>
-              <button className="btn-border">
+              <button className="btn-border" style={{ height: 44 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>filter_list</span>
                 Filtres
               </button>
-              <button className="btn-border">
+              <button className="btn-border" style={{ height: 44 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
                 Exporter
               </button>

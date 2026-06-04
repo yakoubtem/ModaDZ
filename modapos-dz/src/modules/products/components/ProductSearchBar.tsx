@@ -1,8 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Search, X, SlidersHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import type { Category } from "@/types";
 
 interface ProductSearchBarProps {
@@ -42,59 +38,92 @@ export function ProductSearchBar({
   const hasFilters = localValue || categoryId;
 
   return (
-    <div className="flex items-center gap-3">
+    <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
       {/* Search input */}
-      <div className="relative flex items-center flex-1 max-w-sm">
-        <Input
+      <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
+        <input
+          type="text"
           placeholder="Rechercher par nom ou SKU..."
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
-          leftIcon={<Search className="w-4 h-4" />}
-          className="h-9"
+          style={{
+            width: "100%",
+            height: 44,
+            paddingLeft: 48,
+            paddingRight: localValue ? 36 : 16,
+            background: "var(--color-surface)",
+            border: "1px solid rgba(208,197,175,0.3)",
+            borderRadius: "var(--radius-lg)",
+            fontSize: "var(--text-body-sm)",
+            fontFamily: "var(--font-body)",
+            color: "var(--color-on-surface)",
+            outline: "none",
+          }}
         />
         {localValue && (
           <button
             onClick={handleClear}
-            className="absolute right-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
             aria-label="Effacer"
+            style={{
+              position: "absolute",
+              right: 10,
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--color-secondary)",
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            <X className="w-3.5 h-3.5" />
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
           </button>
         )}
       </div>
 
       {/* Category filter */}
-      <div className="w-44">
-        <Select
-          value={categoryId?.toString() ?? ""}
-          onChange={(e) =>
-            onCategoryChange(e.target.value ? parseInt(e.target.value) : undefined)
-          }
-        >
-          <option value="">Toutes catégories</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
-      </div>
+      <select
+        value={categoryId?.toString() ?? ""}
+        onChange={(e) =>
+          onCategoryChange(e.target.value ? parseInt(e.target.value) : undefined)
+        }
+        style={{
+          height: 44,
+          padding: "0 16px",
+          background: "var(--color-surface)",
+          border: "1px solid rgba(208,197,175,0.3)",
+          borderRadius: "var(--radius-lg)",
+          fontSize: "var(--text-body-sm)",
+          fontFamily: "var(--font-body)",
+          color: "var(--color-on-surface)",
+          outline: "none",
+          minWidth: 160,
+          cursor: "pointer",
+        }}
+      >
+        <option value="">Toutes catégories</option>
+        {categories.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
+        ))}
+      </select>
 
       {/* Clear filters */}
       {hasFilters && (
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={() => {
             setLocalValue("");
             onSearch("");
             onCategoryChange(undefined);
           }}
-          className="text-[var(--color-text-muted)] gap-1.5"
+          className="btn-border"
+          style={{ padding: "8px 14px", fontSize: 12, height: 44, gap: 6 }}
         >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>filter_list_off</span>
           Effacer
-        </Button>
+        </button>
       )}
     </div>
   );
