@@ -32,8 +32,8 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const val = info.getValue() || `-`;
         return (
-          <div className="flex items-center gap-2 font-mono text-xs text-[var(--color-text-primary)]">
-            <FileText className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
+          <div className="flex items-center gap-2.5 font-mono text-xs font-medium text-[var(--color-text-primary)]">
+            <FileText className="w-4 h-4 text-[var(--color-text-muted)]" />
             {val}
           </div>
         );
@@ -41,7 +41,11 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
     }),
     columnHelper.accessor("createdAt", {
       header: "Date",
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => (
+        <span className="text-[var(--color-text-secondary)] font-medium">
+          {formatDate(info.getValue())}
+        </span>
+      ),
     }),
     columnHelper.accessor((row) => row.customer?.name, {
       id: "customerName",
@@ -49,11 +53,11 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const name = info.getValue();
         return name ? (
-          <span className="font-medium text-[var(--color-text-primary)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">
             {name}
           </span>
         ) : (
-          <span className="text-[var(--color-text-muted)] italic">Passager</span>
+          <span className="text-[var(--color-text-muted)] italic font-normal">Passager</span>
         );
       },
     }),
@@ -62,7 +66,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const items = info.getValue();
         const totalItems = items.reduce((acc, curr) => acc + curr.quantity, 0);
-        return <span>{totalItems} art.</span>;
+        return <span className="text-[var(--color-text-secondary)] font-medium">{totalItems} art.</span>;
       },
     }),
     columnHelper.accessor("total", {
@@ -74,10 +78,15 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       ),
     }),
     columnHelper.accessor("paymentMethod", {
-      header: "Paiement",
+      header: "Moyen",
       cell: (info) => {
         const method = info.getValue();
-        return PAYMENT_METHOD_LABELS[method] || method;
+        const label = PAYMENT_METHOD_LABELS[method] || method;
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-subtle)] text-[11px] font-semibold text-[var(--color-text-secondary)] border border-[var(--color-border)]/60">
+            {label}
+          </span>
+        );
       },
     }),
     columnHelper.display({
@@ -96,12 +105,12 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const status = info.getValue();
         if (status === "completed") {
-          return <Badge variant="success">Complétée</Badge>;
+          return <Badge variant="success" dot>Complétée</Badge>;
         }
         if (status === "refunded") {
-          return <Badge variant="warning">Remboursée</Badge>;
+          return <Badge variant="warning" dot>Remboursée</Badge>;
         }
-        return <Badge variant="default">{status}</Badge>;
+        return <Badge variant="default" dot>{status}</Badge>;
       },
     }),
     columnHelper.display({
@@ -129,8 +138,8 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
   });
 
   return (
-    <div className="w-full bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)] border border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden flex flex-col">
-      <div className="overflow-x-auto flex-1">
+    <div className="w-full flex flex-col">
+      <div className="overflow-x-auto">
         <table className="w-full text-left text-sm text-[var(--color-text-secondary)]">
           <thead className="bg-[var(--color-bg-subtle)] border-b border-[var(--color-border)] text-[var(--color-text-muted)] uppercase text-[10px]">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -138,7 +147,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-5 py-3 font-semibold whitespace-nowrap tracking-wide"
+                    className="px-6 py-4 font-semibold whitespace-nowrap tracking-wider text-[11px] text-[var(--color-text-muted)]"
                   >
                     {header.isPlaceholder
                       ? null
@@ -170,7 +179,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
                   className="hover:bg-[var(--color-accent-subtle)]/40 transition-colors duration-100"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-5 py-3 whitespace-nowrap">
+                    <td key={cell.id} className="px-6 py-5 whitespace-nowrap align-middle">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

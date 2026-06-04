@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import type { SalesFilters } from "@/types";
@@ -8,7 +8,6 @@ interface SaleFiltersProps {
   filters: SalesFilters;
   onChange: (f: Partial<SalesFilters>) => void;
   onReset: () => void;
-  total: number;
 }
 
 const PAYMENT_OPTIONS = [
@@ -41,10 +40,10 @@ function TabFilter({
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            "px-3 py-1.5 text-xs font-medium rounded-[var(--radius-sm)] transition-all duration-150",
+            "px-3.5 py-1.5 text-xs font-semibold rounded-[var(--radius-sm)] transition-all duration-150 cursor-pointer",
             value === opt.value
               ? "bg-[var(--color-accent)] text-white shadow-sm"
-              : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+              : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)]/40"
           )}
         >
           {opt.label}
@@ -57,65 +56,106 @@ function TabFilter({
 const hasActiveFilters = (f: SalesFilters) =>
   f.search || f.paymentMethod || f.status || f.from || f.to;
 
-export function SaleFilters({ filters, onChange, onReset, total }: SaleFiltersProps) {
+export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
   return (
-    <div className="space-y-3">
-      {/* Row 1: Search + Date range */}
-      <div className="flex items-center gap-3">
-        <Input
-          placeholder="Rechercher par N° reçu ou nom client…"
-          value={filters.search}
-          onChange={(e) => onChange({ search: e.target.value })}
-          className="flex-1"
-        />
-
-        <div className="flex items-center gap-2 shrink-0">
-          <input
-            type="date"
-            value={filters.from}
-            onChange={(e) => onChange({ from: e.target.value })}
-            className={cn(
-              "h-9 px-3 text-sm rounded-[var(--radius-md)]",
-              "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-              "text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-accent)]"
-            )}
-          />
-          <span className="text-xs text-[var(--color-text-muted)]">→</span>
-          <input
-            type="date"
-            value={filters.to}
-            onChange={(e) => onChange({ to: e.target.value })}
-            className={cn(
-              "h-9 px-3 text-sm rounded-[var(--radius-md)]",
-              "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-              "text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-accent)]"
-            )}
+    <div 
+      className="glass-panel" 
+      style={{ 
+        padding: "24px 32px", 
+        borderRadius: "var(--radius-xl)", 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "20px" 
+      }}
+    >
+      {/* Row 1: Search + Date Pickers */}
+      <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", width: "100%" }}>
+        <div style={{ flex: 1, minWidth: "280px" }}>
+          <Input
+            placeholder="Rechercher par N° reçu ou nom client…"
+            value={filters.search}
+            onChange={(e) => onChange({ search: e.target.value })}
+            leftIcon={<Search className="w-4 h-4 text-[var(--color-text-muted)]" />}
+            className="w-full"
           />
         </div>
 
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Date de début
+            </span>
+            <input
+              type="date"
+              value={filters.from}
+              onChange={(e) => onChange({ from: e.target.value })}
+              className={cn(
+                "rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
+                "px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
+                "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
+                "hover:border-[var(--color-border-strong)] transition-all duration-200 h-[38px] min-w-[140px]"
+              )}
+            />
+          </div>
+          <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-text-muted)", marginTop: "16px" }}>→</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Date de fin
+            </span>
+            <input
+              type="date"
+              value={filters.to}
+              onChange={(e) => onChange({ to: e.target.value })}
+              className={cn(
+                "rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
+                "px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
+                "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
+                "hover:border-[var(--color-border-strong)] transition-all duration-200 h-[38px] min-w-[140px]"
+              )}
+            />
+          </div>
+        </div>
+
         {hasActiveFilters(filters) && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="gap-1.5 shrink-0">
-            <X className="w-3.5 h-3.5" />
-            Effacer
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onReset} 
+            className="gap-1.5 shrink-0" 
+            style={{ height: "38px", marginTop: "16px", padding: "0 16px" }}
+          >
+            <X className="w-4 h-4" />
+            Réinitialiser
           </Button>
         )}
       </div>
 
-      {/* Row 2: Payment + Status tabs + result count */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <TabFilter
-          options={PAYMENT_OPTIONS}
-          value={filters.paymentMethod}
-          onChange={(v) => onChange({ paymentMethod: v })}
-        />
-        <TabFilter
-          options={STATUS_OPTIONS}
-          value={filters.status}
-          onChange={(v) => onChange({ status: v })}
-        />
-        <span className="text-xs text-[var(--color-text-muted)] ml-auto">
-          {total} vente{total !== 1 ? "s" : ""}
-        </span>
+      {/* Subtle Divider */}
+      <div style={{ height: "1px", background: "rgba(208,197,175,0.15)", width: "100%" }} />
+
+      {/* Row 2: Status chips & Payment method chips */}
+      <div style={{ display: "flex", alignItems: "center", gap: "32px", flexWrap: "wrap", width: "100%" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Moyen de Paiement
+          </span>
+          <TabFilter
+            options={PAYMENT_OPTIONS}
+            value={filters.paymentMethod}
+            onChange={(v) => onChange({ paymentMethod: v })}
+          />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Statut de la Vente
+          </span>
+          <TabFilter
+            options={STATUS_OPTIONS}
+            value={filters.status}
+            onChange={(v) => onChange({ status: v })}
+          />
+        </div>
       </div>
     </div>
   );

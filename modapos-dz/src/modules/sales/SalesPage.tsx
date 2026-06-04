@@ -28,66 +28,91 @@ export function SalesPage() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar title="Ventes" description="Historique de toutes vos transactions." />
 
-      <main style={{ padding: "var(--space-container)", maxWidth: 1440, margin: "0 auto", width: "100%" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      <main style={{ padding: "40px var(--space-container) 80px", maxWidth: 1600, margin: "0 auto", width: "100%" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
           {/* Filters */}
           <SaleFiltersComponent
              filters={filters}
              onChange={setFilters}
              onReset={resetFilters}
-             total={total}
           />
 
-          {/* Table container */}
-          <div
-            className="glass-panel"
-            style={{ borderRadius: "var(--radius-xl)", overflow: "hidden" }}
-          >
-            {isLoading && sales.length === 0 ? (
-              <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="skeleton" style={{ height: 48, borderRadius: 8 }} />
-                ))}
+          {/* Table container & header */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 4px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--color-text-primary)" }}>
+                  Liste des transactions
+                </h3>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "9999px",
+                    background: "var(--color-bg-subtle)",
+                    border: "1px solid var(--color-border)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "var(--color-text-secondary)",
+                    padding: "2px 8px"
+                  }}
+                >
+                  {total} transaction{total !== 1 ? "s" : ""}
+                </span>
               </div>
-            ) : (
-              <SaleTable sales={sales} onView={openDetail} />
-            )}
+            </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div
-                style={{
-                  padding: "16px 24px",
-                  borderTop: "1px solid rgba(208,197,175,0.3)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  background: "rgba(245,243,238,0.3)",
-                }}
-              >
-                <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                  Affichage de {(page - 1) * pageSize + 1} à {Math.min(page * pageSize, total)} sur {total} ventes
-                </p>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button
-                    className="btn-border"
-                    onClick={() => handlePageChange(Math.max(1, page - 1))}
-                    disabled={page === 1}
-                    style={{ opacity: page === 1 ? 0.4 : 1 }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_left</span>
-                  </button>
-                  <button
-                    className="btn-border"
-                    onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-                    disabled={page === totalPages}
-                    style={{ opacity: page === totalPages ? 0.4 : 1 }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_right</span>
-                  </button>
+            <div
+              className="glass-panel"
+              style={{ borderRadius: "var(--radius-xl)", overflow: "hidden" }}
+            >
+              {isLoading && sales.length === 0 ? (
+                <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="skeleton" style={{ height: 56, borderRadius: 8 }} />
+                  ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <SaleTable sales={sales} onView={openDetail} />
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div
+                  style={{
+                    padding: "18px 28px",
+                    borderTop: "1px solid rgba(208,197,175,0.25)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "rgba(245,243,238,0.25)",
+                  }}
+                >
+                  <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", fontWeight: 500 }}>
+                    Affichage de {(page - 1) * pageSize + 1} à {Math.min(page * pageSize, total)} sur {total} ventes
+                  </p>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      className="btn-border"
+                      onClick={() => handlePageChange(Math.max(1, page - 1))}
+                      disabled={page === 1}
+                      style={{ opacity: page === 1 ? 0.4 : 1, height: "36px", padding: "0 12px" }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_left</span>
+                    </button>
+                    <button
+                      className="btn-border"
+                      onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
+                      disabled={page === totalPages}
+                      style={{ opacity: page === totalPages ? 0.4 : 1, height: "36px", padding: "0 12px" }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
