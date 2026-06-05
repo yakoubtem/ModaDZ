@@ -366,16 +366,19 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   onFocus={() =>
                     customerResults.length > 0 && setShowCustomerDropdown(true)
                   }
-                  className={cn(
-                    "w-full h-11 pl-11 pr-11 text-[14px]",
-                    "bg-[var(--color-bg-surface)] border",
-                    missingCustomer
-                      ? "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-2 focus:ring-[var(--color-danger)]/10"
-                      : "border-[var(--color-border)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20",
-                    "rounded-[var(--radius-lg)] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
-                    "placeholder:text-[var(--color-text-muted)]",
-                    "hover:border-[var(--color-border-strong)] transition-all duration-200 outline-none"
-                  )}
+                  style={{
+                    width: "100%",
+                    height: "54px",
+                    background: "#f2ede4",
+                    border: missingCustomer ? "1.5px solid var(--color-danger)" : "none",
+                    borderRadius: "var(--radius-lg)",
+                    padding: selectedCustomer ? "16px 48px 16px 48px" : "16px 16px 16px 48px",
+                    fontSize: "var(--text-body-md)",
+                    fontFamily: "var(--font-body)",
+                    color: "var(--color-on-surface)",
+                    outline: "none",
+                    boxShadow: "var(--shadow-xs)",
+                  }}
                 />
                 {selectedCustomer && (
                   <button
