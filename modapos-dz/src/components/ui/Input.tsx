@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, forwardRef, type ReactNode } from "react";
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +10,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, hint, leftIcon, rightIcon, className, id, ...props }, ref) => {
+  (
+    {
+      label,
+      error,
+      hint,
+      leftIcon,
+      rightIcon,
+      className,
+      id,
+      ...props
+    },
+    ref
+  ) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
@@ -18,48 +30,73 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-xs font-semibold text-[var(--color-text-secondary)] tracking-wide"
+            className="text-xs font-semibold tracking-wide text-[var(--color-text-secondary)]"
           >
             {label}
           </label>
         )}
-        <div className="relative flex items-center">
+
+        <div className="relative">
           {leftIcon && (
-            <span className="absolute left-4 text-[var(--color-text-muted)] flex items-center pointer-events-none">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">
               {leftIcon}
             </span>
           )}
+
           <input
             ref={ref}
             id={inputId}
             className={cn(
-              "flex w-full rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
-              "py-3 min-h-[44px] text-[14px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
-              "file:border-0 file:bg-transparent file:text-[13px] file:font-medium",
+              "w-full min-h-[44px]",
+              "rounded-[var(--radius-lg)]",
+              "border border-[var(--color-border)]",
+              "bg-[var(--color-bg-surface)]",
+              "px-4 py-3",
+              "text-sm text-[var(--color-text-primary)]",
+              "shadow-[var(--shadow-xs)]",
               "placeholder:text-[var(--color-text-muted)]",
-              "focus-visible:outline-none focus-visible:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/20",
-              "hover:border-[var(--color-border-strong)] transition-all duration-200",
-              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[var(--color-bg-elevated)]",
-              error && "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-[var(--color-danger)]/10",
-              leftIcon ? "pl-11" : "pl-4",
-              rightIcon ? "pr-11" : "pr-4",
+              "transition-all duration-200",
+
+              "focus-visible:outline-none",
+              "focus-visible:border-[var(--color-accent)]",
+              "focus-visible:ring-2",
+              "focus-visible:ring-[var(--color-accent)]/20",
+
+              "hover:border-[var(--color-border-strong)]",
+
+              "disabled:cursor-not-allowed",
+              "disabled:opacity-50",
+              "disabled:bg-[var(--color-bg-elevated)]",
+
+              leftIcon ? "pl-12" : "",
+              rightIcon ? "pr-12" : "",
+
+              error &&
+              "border-[var(--color-danger)] focus-visible:border-[var(--color-danger)] focus-visible:ring-[var(--color-danger)]/20",
+
               className
             )}
             {...props}
           />
+
           {rightIcon && (
-            <span className="absolute right-4 text-[var(--color-text-muted)] flex items-center pointer-events-none">
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">
               {rightIcon}
             </span>
           )}
         </div>
+
         {error && (
-          <p className="text-xs text-[var(--color-danger)] flex items-center gap-1">
-            <span>⚠</span> {error}
+          <p className="flex items-center gap-1 text-xs text-[var(--color-danger)]">
+            <span>⚠</span>
+            {error}
           </p>
         )}
+
         {hint && !error && (
-          <p className="text-xs text-[var(--color-text-muted)]">{hint}</p>
+          <p className="text-xs text-[var(--color-text-muted)]">
+            {hint}
+          </p>
         )}
       </div>
     );
