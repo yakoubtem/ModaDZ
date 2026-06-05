@@ -345,7 +345,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 Client{hasDebt ? " (requis pour la dette)" : " (optionnel)"}
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                   <UserCircle
                     className={cn(
                       "w-4 h-4",
@@ -367,22 +367,22 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     customerResults.length > 0 && setShowCustomerDropdown(true)
                   }
                   className={cn(
-                    "w-full h-9 pl-9 pr-8 text-sm",
-                    "bg-[var(--color-bg-elevated)] border",
+                    "w-full h-11 pl-11 pr-11 text-[14px]",
+                    "bg-[var(--color-bg-surface)] border",
                     missingCustomer
-                      ? "border-[var(--color-danger)]"
-                      : "border-[var(--color-border)]",
-                    "rounded-[var(--radius-md)] text-[var(--color-text-primary)]",
+                      ? "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-2 focus:ring-[var(--color-danger)]/10"
+                      : "border-[var(--color-border)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20",
+                    "rounded-[var(--radius-lg)] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
                     "placeholder:text-[var(--color-text-muted)]",
-                    "focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+                    "hover:border-[var(--color-border-strong)] transition-all duration-200 outline-none"
                   )}
                 />
                 {selectedCustomer && (
                   <button
                     onClick={clearCustomer}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors cursor-pointer"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
                 {/* Dropdown */}

@@ -79,7 +79,7 @@ export function CustomerFormModal({
           ? "Modifiez les informations du client."
           : "Ajoutez un nouveau client à votre base."
       }
-      size="sm"
+      size="md"
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
@@ -95,7 +95,7 @@ export function CustomerFormModal({
         </>
       }
     >
-      <div className="space-y-4">
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <Input
           label="Nom complet"
           placeholder="ex: Ahmed Belkacem"

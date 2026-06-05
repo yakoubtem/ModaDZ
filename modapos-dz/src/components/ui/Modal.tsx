@@ -18,10 +18,10 @@ interface ModalProps {
 }
 
 const sizeClasses = {
-  sm: "max-w-sm",
-  md: "max-w-md",
-  lg: "max-w-lg",
-  xl: "max-w-2xl",
+  sm: "max-w-[480px]",
+  md: "max-w-[560px]",
+  lg: "max-w-[680px]",
+  xl: "max-w-[800px]",
 };
 
 export function Modal({
@@ -68,19 +68,35 @@ export function Modal({
         className={cn(
           "relative w-full animate-scale-in flex flex-col",
           "bg-[var(--color-bg-surface)] border border-[var(--color-border)]",
-          "rounded-[var(--radius-xl)] shadow-[var(--shadow-xl)]",
+          "rounded-[var(--radius-2xl)] shadow-[var(--shadow-xl)]",
           "max-h-[calc(100dvh-2rem)]",
           sizeClasses[size]
         )}
       >
         {/* Header */}
         {(title || description) && (
-          <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-4 border-b border-[var(--color-border)] shrink-0">
-            <div className="min-w-0">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 16,
+              padding: "28px 32px 20px",
+              borderBottom: "1px solid rgba(208,197,175,0.3)",
+              flexShrink: 0,
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
               {title && (
                 <h2
                   id={titleId}
-                  className="text-base font-semibold text-[var(--color-text-primary)] leading-snug"
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 600,
+                    color: "var(--color-on-surface)",
+                    fontFamily: "var(--font-display)",
+                    lineHeight: 1.3,
+                  }}
                 >
                   {title}
                 </h2>
@@ -88,7 +104,12 @@ export function Modal({
               {description && (
                 <p
                   id={descId}
-                  className="mt-0.5 text-sm text-[var(--color-text-secondary)]"
+                  style={{
+                    marginTop: 6,
+                    fontSize: "var(--text-body-sm)",
+                    color: "var(--color-secondary)",
+                    lineHeight: "var(--lh-body-sm)",
+                  }}
                 >
                   {description}
                 </p>
@@ -108,8 +129,10 @@ export function Modal({
 
         {/* Body */}
         <div
+          style={{
+            padding: "28px 32px",
+          }}
           className={cn(
-            "px-6 py-5",
             scrollable
               ? "overflow-y-auto flex-1 min-h-0"
               : "overflow-visible"
@@ -120,7 +143,17 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-[var(--color-border)] shrink-0">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 12,
+              padding: "20px 32px",
+              borderTop: "1px solid rgba(208,197,175,0.3)",
+              flexShrink: 0,
+            }}
+          >
             {footer}
           </div>
         )}

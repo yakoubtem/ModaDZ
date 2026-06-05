@@ -94,9 +94,9 @@ export function CategoryManager({
       description="Organisez vos produits avec des catégories claires et structurées."
       size="md"
     >
-      <div className="space-y-8">
+      <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
         {/* CREATE SECTION */}
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50/70 p-5">
+        <div style={{ borderRadius: 16, border: "1px solid rgba(208,197,175,0.3)", background: "rgba(245,243,238,0.5)", padding: 24 }}>
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-neutral-900">
               Nouvelle catégorie
@@ -107,7 +107,7 @@ export function CategoryManager({
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <Input
               placeholder="Ex: Sneakers, Accessoires, Vestes..."
               value={newName}
@@ -162,7 +162,7 @@ export function CategoryManager({
               </p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 420, overflowY: "auto", paddingRight: 4 }}>
               {categories.map((cat) => (
                 <div
                   key={cat.id}

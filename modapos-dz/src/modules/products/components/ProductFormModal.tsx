@@ -122,11 +122,11 @@ export function ProductFormModal({
         </>
       }
     >
-      <div className="space-y-6">
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {/* Row 1: Product info + Image */}
-        <div className="grid grid-cols-5 gap-5">
+        <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 24 }}>
           {/* Left: product details */}
-          <div className="col-span-3 space-y-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <Input
               label="Nom du produit"
               placeholder="ex: T-shirt col rond"
@@ -137,7 +137,7 @@ export function ProductFormModal({
               })}
             />
 
-            <div className="grid grid-cols-2 gap-3">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <Input
                 label="SKU"
                 placeholder="ex: TSH-12345"
@@ -181,7 +181,7 @@ export function ProductFormModal({
           </div>
 
           {/* Right: image upload */}
-          <div className="col-span-2">
+          <div>
             <ImageUpload
               value={imagePath}
               onChange={(path) => setValue("imagePath", path)}
@@ -191,7 +191,7 @@ export function ProductFormModal({
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[var(--color-border)]" />
+        <div style={{ height: 1, background: "rgba(208,197,175,0.3)" }} />
 
         {/* Row 2: Variants */}
         <VariantEditor

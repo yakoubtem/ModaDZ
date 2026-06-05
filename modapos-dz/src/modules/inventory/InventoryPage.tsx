@@ -185,7 +185,7 @@ export function InventoryPage() {
             }}
           >
             {/* Search */}
-            <div style={{ position: "relative", width: 360 }}>
+            <div style={{ position: "relative", flex: 1, minWidth: 240, maxWidth: 480 }}>
               <span
                 className="material-symbols-outlined"
                 style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--color-secondary)", fontSize: 22, pointerEvents: "none" }}
@@ -199,7 +199,7 @@ export function InventoryPage() {
                 placeholder="Rechercher par produit, SKU ou code-barres…"
                 style={{
                   width: "100%",
-                  height: 44,
+                  height: 48,
                   paddingLeft: 48,
                   paddingRight: 16,
                   background: "var(--color-surface)",

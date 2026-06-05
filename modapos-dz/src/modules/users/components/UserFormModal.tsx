@@ -87,7 +87,7 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
         </div>
 
         {/* Header */}
-        <div className="relative px-7 pt-7 pb-5 border-b border-white/10">
+        <div className="relative" style={{ padding: "32px 32px 24px" }}>
           <div className="flex items-start gap-4">
             <div
               className={cn(
@@ -122,15 +122,17 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="relative px-7 py-6"
+          className="relative"
+          style={{ padding: "28px 32px" }}
         >
-          <div className="space-y-5">
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             {/* Name */}
             <div
               className={cn(
                 "rounded-2xl border border-white/10",
-                "bg-white/[0.03] p-4 backdrop-blur-xl"
+                "bg-white/[0.03] backdrop-blur-xl"
               )}
+              style={{ padding: 20 }}
             >
               <div className="mb-3 flex items-center gap-2">
                 <User2 className="h-4 w-4 text-amber-300" />
@@ -158,8 +160,9 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
             <div
               className={cn(
                 "rounded-2xl border border-white/10",
-                "bg-white/[0.03] p-4 backdrop-blur-xl"
+                "bg-white/[0.03] backdrop-blur-xl"
               )}
+              style={{ padding: 20 }}
             >
               <div className="mb-3 flex items-center gap-2">
                 <KeyRound className="h-4 w-4 text-amber-300" />
@@ -169,7 +172,7 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <Input
                   label="Nom d'utilisateur"
                   placeholder="Ex: yakoub_admin"
@@ -216,80 +219,81 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
             <div
               className={cn(
                 "rounded-2xl border border-white/10",
-                "bg-white/[0.03] p-4 backdrop-blur-xl"
+                "bg-white/[0.03] backdrop-blur-xl"
               )}
+              style={{ padding: 20 }}
             >
-              <div className="mb-3 flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-amber-300" />
+            <div className="mb-3 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-amber-300" />
 
-                <p className="text-sm font-medium text-zinc-200">
-                  Permissions & rôle
-                </p>
-              </div>
+              <p className="text-sm font-medium text-zinc-200">
+                Permissions & rôle
+              </p>
+            </div>
 
-              <Select
-                label="Rôle utilisateur"
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    role: e.target.value,
-                  })
-                }
-              >
-                <option value="cashier">
-                  Caissier — accès POS et clients
-                </option>
+            <Select
+              label="Rôle utilisateur"
+              value={formData.role}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  role: e.target.value,
+                })
+              }
+            >
+              <option value="cashier">
+                Caissier — accès POS et clients
+              </option>
 
-                <option value="manager">
-                  Manager — gestion boutique
-                </option>
+              <option value="manager">
+                Manager — gestion boutique
+              </option>
 
-                <option value="admin">
-                  Administrateur — accès complet
-                </option>
-              </Select>
+              <option value="admin">
+                Administrateur — accès complet
+              </option>
+            </Select>
 
-              <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-3">
-                <p className="text-xs leading-relaxed text-zinc-400">
-                  {formData.role === "admin" && "Les administrateurs ont un accès complet au système, aux utilisateurs, paramètres et sauvegardes."}
-                  {formData.role === "manager" && "Les managers gèrent le catalogue, les stocks, les dettes et les dépenses, mais n'ont pas accès à la configuration système."}
-                  {formData.role === "cashier" && "Les caissiers sont limités aux ventes journalières (POS), à la sélection des clients et à la réception des paiements."}
-                </p>
-              </div>
+            <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-3">
+              <p className="text-xs leading-relaxed text-zinc-400">
+                {formData.role === "admin" && "Les administrateurs ont un accès complet au système, aux utilisateurs, paramètres et sauvegardes."}
+                {formData.role === "manager" && "Les managers gèrent le catalogue, les stocks, les dettes et les dépenses, mais n'ont pas accès à la configuration système."}
+                {formData.role === "cashier" && "Les caissiers sont limités aux ventes journalières (POS), à la sélection des clients et à la réception des paiements."}
+              </p>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="mt-7 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="min-w-[120px]"
-            >
-              Annuler
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className={cn(
-                "min-w-[160px]",
-                "bg-gradient-to-r from-amber-400 to-yellow-500",
-                "text-black hover:opacity-90"
-              )}
-            >
-              {isSubmitting
-                ? "Enregistrement..."
-                : user
-                  ? "Mettre à jour"
-                  : "Créer l'utilisateur"}
-            </Button>
-          </div>
-        </form>
       </div>
-    </Modal>
+
+      {/* Footer */}
+      <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12 }}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClose}
+          disabled={isSubmitting}
+          className="min-w-[120px]"
+        >
+          Annuler
+        </Button>
+
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className={cn(
+            "min-w-[160px]",
+            "bg-gradient-to-r from-amber-400 to-yellow-500",
+            "text-black hover:opacity-90"
+          )}
+        >
+          {isSubmitting
+            ? "Enregistrement..."
+            : user
+              ? "Mettre à jour"
+              : "Créer l'utilisateur"}
+        </Button>
+      </div>
+    </form>
+      </div >
+    </Modal >
   );
 }

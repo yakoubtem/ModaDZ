@@ -134,8 +134,8 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
         </>
       }
     >
-      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-        <div className="grid grid-cols-3 gap-4">
+      <form onSubmit={handleSubmit(onFormSubmit)} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
           <Input
             label="Titre *"
             placeholder="Ex: Loyer du mois"
@@ -160,7 +160,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
           <Select
             label="Categorie *"
             error={errors.category?.message}
@@ -189,7 +189,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
           </Select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <Textarea label="Description" rows={3} {...register("description")} />
           <Textarea label="Notes" rows={3} {...register("notes")} />
         </div>

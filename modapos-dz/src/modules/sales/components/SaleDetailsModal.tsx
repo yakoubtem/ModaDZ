@@ -38,7 +38,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
       isOpen={isOpen}
       onClose={onClose}
       title={`Détails de la vente ${sale.receiptNumber}`}
-      size="sm"
+      size="md"
       footer={
         <div className="flex gap-2 w-full">
           <Button variant="secondary" onClick={onClose} className="flex-1" disabled={isRefunding}>

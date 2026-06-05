@@ -41,6 +41,20 @@ export function ProductSearchBar({
     <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
       {/* Search input */}
       <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: "absolute",
+            left: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: "var(--color-secondary)",
+            fontSize: 20,
+            pointerEvents: "none",
+          }}
+        >
+          search
+        </span>
         <input
           type="text"
           placeholder="Rechercher par nom ou SKU..."
@@ -48,7 +62,7 @@ export function ProductSearchBar({
           onChange={(e) => setLocalValue(e.target.value)}
           style={{
             width: "100%",
-            height: 44,
+            height: 48,
             paddingLeft: 48,
             paddingRight: localValue ? 36 : 16,
             background: "var(--color-surface)",
@@ -89,7 +103,7 @@ export function ProductSearchBar({
           onCategoryChange(e.target.value ? parseInt(e.target.value) : undefined)
         }
         style={{
-          height: 44,
+          height: 48,
           padding: "0 16px",
           background: "var(--color-surface)",
           border: "1px solid rgba(208,197,175,0.3)",
@@ -119,7 +133,7 @@ export function ProductSearchBar({
             onCategoryChange(undefined);
           }}
           className="btn-border"
-          style={{ padding: "8px 14px", fontSize: 12, height: 44, gap: 6 }}
+          style={{ padding: "8px 14px", fontSize: 12, height: 48, gap: 6 }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>filter_list_off</span>
           Effacer

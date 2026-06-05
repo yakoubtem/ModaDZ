@@ -34,7 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             className={cn(
               "flex w-full rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
-              "px-4 py-3 min-h-[44px] text-[14px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
+              "py-3 min-h-[44px] text-[14px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
               "file:border-0 file:bg-transparent file:text-[13px] file:font-medium",
               "placeholder:text-[var(--color-text-muted)]",
               "focus-visible:outline-none focus-visible:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/20",

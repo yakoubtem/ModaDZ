@@ -1,8 +1,4 @@
-import { X, Search } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 import type { SalesFilters } from "@/types";
-import { cn } from "@/lib/utils";
 
 interface SaleFiltersProps {
   filters: SalesFilters;
@@ -34,21 +30,44 @@ function TabFilter({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-1">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          onClick={() => onChange(opt.value)}
-          className={cn(
-            "px-3.5 py-1.5 text-xs font-semibold rounded-[var(--radius-sm)] transition-all duration-150 cursor-pointer",
-            value === opt.value
-              ? "bg-[var(--color-accent)] text-white shadow-sm"
-              : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)]/40"
-          )}
-        >
-          {opt.label}
-        </button>
-      ))}
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+      {options.map((opt) => {
+        const isActive = value === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              padding: "6px 14px",
+              borderRadius: "var(--radius-full)",
+              border: isActive
+                ? "1.5px solid var(--color-primary-container)"
+                : "1.5px solid rgba(208,197,175,0.4)",
+              background: isActive
+                ? "var(--color-accent-subtle)"
+                : "transparent",
+              color: isActive
+                ? "var(--color-primary)"
+                : "var(--color-secondary)",
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-label-sm)",
+              fontWeight: isActive ? 700 : 500,
+              letterSpacing: "0.03em",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {isActive && (
+              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>check</span>
+            )}
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -58,86 +77,163 @@ const hasActiveFilters = (f: SalesFilters) =>
 
 export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
   return (
-    <div 
-      className="glass-panel" 
-      style={{ 
-        padding: "24px 32px", 
-        borderRadius: "var(--radius-xl)", 
-        display: "flex", 
-        flexDirection: "column", 
-        gap: "20px" 
+    <div
+      style={{
+        background: "rgba(255,255,255,0.85)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid rgba(208,197,175,0.3)",
+        borderRadius: "var(--radius-xl)",
+        boxShadow: "var(--shadow-card)",
+        marginBottom: 16,
+        overflow: "hidden",
       }}
     >
-      {/* Row 1: Search + Date Pickers */}
-      <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", width: "100%" }}>
-        <div style={{ flex: 1, minWidth: "280px" }}>
-          <Input
-            placeholder="Rechercher par N° reçu ou nom client…"
+      {/* Top row: search + date pickers */}
+      <div
+        style={{
+          display: "flex",
+          gap: 0,
+          alignItems: "stretch",
+          borderBottom: "1px solid rgba(208,197,175,0.2)",
+          flexWrap: "wrap",
+        }}
+      >
+        {/* Search */}
+        <div
+          style={{
+            flex: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "16px 20px",
+            minWidth: "300px",
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 20, color: "var(--color-outline)", flexShrink: 0 }}
+          >
+            search
+          </span>
+          <input
+            type="text"
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
-            leftIcon={<Search className="w-4 h-4 text-[var(--color-text-muted)]" />}
-            className="w-full"
+            placeholder="Rechercher par N° reçu ou nom client…"
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: "var(--text-body-md)",
+              fontFamily: "var(--font-body)",
+              color: "var(--color-on-surface)",
+            }}
           />
+          {filters.search && (
+            <button
+              onClick={() => onChange({ search: "" })}
+              style={{
+                background: "var(--color-surface-container-high)",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--color-secondary)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 4,
+                borderRadius: "var(--radius-full)",
+                flexShrink: 0,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+            </button>
+          )}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Date de début
-            </span>
-            <input
-              type="date"
-              value={filters.from}
-              onChange={(e) => onChange({ from: e.target.value })}
-              className={cn(
-                "rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
-                "px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
-                "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
-                "hover:border-[var(--color-border-strong)] transition-all duration-200 h-[38px] min-w-[140px]"
-              )}
-            />
-          </div>
-          <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-text-muted)", marginTop: "16px" }}>→</span>
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Date de fin
-            </span>
-            <input
-              type="date"
-              value={filters.to}
-              onChange={(e) => onChange({ to: e.target.value })}
-              className={cn(
-                "rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-surface)]",
-                "px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] shadow-[var(--shadow-xs)]",
-                "focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/15",
-                "hover:border-[var(--color-border-strong)] transition-all duration-200 h-[38px] min-w-[140px]"
-              )}
-            />
-          </div>
-        </div>
+        {/* Divider */}
+        <div style={{ width: 1, background: "rgba(208,197,175,0.2)", flexShrink: 0 }} />
 
-        {hasActiveFilters(filters) && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onReset} 
-            className="gap-1.5 shrink-0" 
-            style={{ height: "38px", marginTop: "16px", padding: "0 16px" }}
-          >
-            <X className="w-4 h-4" />
-            Réinitialiser
-          </Button>
-        )}
+        {/* Date Pickers */}
+        <div
+          style={{
+            flex: 3,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "12px 20px",
+            minWidth: "320px",
+          }}
+        >
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", flexShrink: 0 }}>
+            Période
+          </span>
+          <input
+            type="date"
+            value={filters.from}
+            onChange={(e) => onChange({ from: e.target.value })}
+            style={{
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: "var(--text-body-sm)",
+              fontFamily: "var(--font-body)",
+              color: "var(--color-on-surface)",
+              cursor: "pointer",
+            }}
+          />
+          <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-text-muted)" }}>→</span>
+          <input
+            type="date"
+            value={filters.to}
+            onChange={(e) => onChange({ to: e.target.value })}
+            style={{
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: "var(--text-body-sm)",
+              fontFamily: "var(--font-body)",
+              color: "var(--color-on-surface)",
+              cursor: "pointer",
+            }}
+          />
+          {hasActiveFilters(filters) && (
+            <button
+              onClick={onReset}
+              style={{
+                marginLeft: "auto",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--color-error)",
+                fontSize: "var(--text-label-sm)",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>filter_list_off</span>
+              Effacer
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Subtle Divider */}
-      <div style={{ height: "1px", background: "rgba(208,197,175,0.15)", width: "100%" }} />
-
       {/* Row 2: Status chips & Payment method chips */}
-      <div style={{ display: "flex", alignItems: "center", gap: "32px", flexWrap: "wrap", width: "100%" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Moyen de Paiement
+      <div
+        style={{
+          display: "flex",
+          gap: "32px",
+          padding: "12px 20px",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+            Paiement
           </span>
           <TabFilter
             options={PAYMENT_OPTIONS}
@@ -146,9 +242,9 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
           />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Statut de la Vente
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+            Statut
           </span>
           <TabFilter
             options={STATUS_OPTIONS}
