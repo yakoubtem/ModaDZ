@@ -10,6 +10,7 @@ import {
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { Badge } from "@/components/ui/Badge";
 
 interface ProductTableProps {
   products: Product[];
@@ -74,7 +75,7 @@ function StockSummary({ variants }: { variants: Product["variants"] }) {
         {variants.length} variante{variants.length !== 1 ? "s" : ""}
       </span>
       {lowStock.length > 0 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#f59e0b" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-warning)" }}>
           <AlertTriangle style={{ width: 12, height: 12 }} />
           {lowStock.length} stock bas
         </div>
@@ -187,21 +188,9 @@ export function ProductTable({
                 {/* Category */}
                 <td style={{ padding: "14px 20px" }}>
                   {product.category ? (
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        padding: "2px 10px",
-                        borderRadius: "999px",
-                        fontSize: 11,
-                        fontWeight: 600,
-                        background: "rgba(212,175,55,0.1)",
-                        color: "var(--color-primary-container)",
-                        border: "1px solid rgba(212,175,55,0.2)",
-                      }}
-                    >
+                    <Badge variant="accent">
                       {product.category.name}
-                    </span>
+                    </Badge>
                   ) : (
                     <span style={{ color: "var(--color-outline)", fontStyle: "italic", fontSize: 12 }}>—</span>
                   )}
@@ -219,30 +208,9 @@ export function ProductTable({
 
                 {/* Status */}
                 <td style={{ padding: "14px 20px" }}>
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 4,
-                      padding: "4px 12px",
-                      borderRadius: "999px",
-                      fontSize: 12,
-                      fontWeight: 700,
-                      background: product.isActive ? "rgba(34,197,94,0.1)" : "rgba(220,38,38,0.1)",
-                      color: product.isActive ? "#16a34a" : "#dc2626",
-                      border: `1px solid ${product.isActive ? "rgba(34,197,94,0.3)" : "rgba(220,38,38,0.3)"}`,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: "50%",
-                        background: product.isActive ? "#16a34a" : "#dc2626",
-                      }}
-                    />
+                  <Badge variant={product.isActive ? "success" : "danger"} dot>
                     {product.isActive ? "Actif" : "Inactif"}
-                  </span>
+                  </Badge>
                 </td>
 
                 {/* Actions */}

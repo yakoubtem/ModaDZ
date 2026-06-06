@@ -114,9 +114,9 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       cell: (info) => {
         const status = info.getValue();
         const config = status === "completed"
-          ? { bg: "rgba(34,197,94,0.1)", color: "#16a34a", border: "rgba(34,197,94,0.3)", label: "Complétée" }
+          ? { bg: "var(--color-success-subtle, rgba(77,139,139,0.08))", color: "var(--color-success, var(--color-tertiary))", border: "rgba(77,139,139,0.2)", label: "Complétée" }
           : status === "refunded"
-          ? { bg: "rgba(245,158,11,0.1)", color: "#f59e0b", border: "rgba(245,158,11,0.3)", label: "Remboursée" }
+          ? { bg: "var(--color-danger-subtle, rgba(186,26,26,0.06))", color: "var(--color-danger, var(--color-error))", border: "rgba(186,26,26,0.18)", label: "Remboursée" }
           : { bg: "rgba(208,197,175,0.1)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: status };
         return (
           <span

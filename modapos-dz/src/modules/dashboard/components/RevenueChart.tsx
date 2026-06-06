@@ -45,7 +45,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             width: 8,
             height: 8,
             borderRadius: "50%",
-            background: "var(--color-primary-container)",
+            background: "var(--color-primary)",
             display: "inline-block",
             flexShrink: 0,
           }}
@@ -57,8 +57,8 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-primary-container)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--color-primary-container)" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
               </linearGradient>
             </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} strokeOpacity={0.65} />
@@ -88,11 +88,11 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#ffffff",
-                borderColor: "var(--color-outline-variant)",
+                backgroundColor: "var(--color-surface-container-lowest)",
+                borderColor: "var(--color-border)",
                 borderRadius: "10px",
                 color: "var(--color-on-surface)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                boxShadow: "var(--shadow-card)",
                 fontSize: "12px",
                 padding: "8px 12px",
               }}
@@ -102,7 +102,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="var(--color-primary-container)"
+              stroke="var(--color-primary)"
               strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorRevenue)"

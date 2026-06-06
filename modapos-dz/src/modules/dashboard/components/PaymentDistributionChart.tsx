@@ -16,8 +16,8 @@ interface PaymentDistributionChartProps {
 
 const COLORS = {
   cash: "var(--color-tertiary)",
-  card: "var(--color-primary-container)",
-  transfer: "#f59e0b",
+  card: "var(--color-primary)",
+  transfer: "var(--color-secondary)",
 };
 
 const LABELS: Record<string, string> = {
@@ -64,7 +64,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
             width: 8,
             height: 8,
             borderRadius: "50%",
-            background: "#f59e0b",
+            background: "var(--color-primary)",
             display: "inline-block",
             flexShrink: 0,
           }}
@@ -90,11 +90,11 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#ffffff",
-                  borderColor: "var(--color-outline-variant)",
+                  backgroundColor: "var(--color-surface-container-lowest)",
+                  borderColor: "var(--color-border)",
                   borderRadius: "10px",
                   color: "var(--color-on-surface)",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  boxShadow: "var(--shadow-card)",
                   fontSize: "12px",
                 }}
                 formatter={(value: unknown) => {

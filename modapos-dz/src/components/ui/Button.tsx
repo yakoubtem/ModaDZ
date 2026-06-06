@@ -12,11 +12,11 @@ const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary:
     "bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] active:scale-[0.98] active:shadow-[var(--shadow-xs)]",
   secondary:
-    "bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-elevated)] hover:border-[var(--color-border-strong)] shadow-[var(--shadow-xs)] active:scale-[0.98]",
+    "bg-[var(--color-secondary)] text-white hover:bg-neutral-800 shadow-[var(--shadow-xs)] active:scale-[0.98]",
   ghost:
-    "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:scale-[0.98]",
+    "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-overlay)] hover:text-[var(--color-text-primary)] active:scale-[0.98]",
   outline:
-    "bg-transparent text-[var(--color-accent)] border border-[var(--color-accent-border)] hover:bg-[var(--color-accent-subtle)] active:scale-[0.98]",
+    "bg-[var(--color-background)] text-[var(--color-text-primary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-elevated)] active:scale-[0.98]",
   danger:
     "bg-[var(--color-danger-subtle)] text-[var(--color-danger)] border border-[var(--color-danger)]/20 hover:bg-[var(--color-danger)]/10 hover:border-[var(--color-danger)]/30 active:scale-[0.98]",
   success:

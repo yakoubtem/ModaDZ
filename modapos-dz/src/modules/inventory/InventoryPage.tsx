@@ -3,6 +3,7 @@ import { TopBar } from "@/components/layout/AppLayout";
 import { useIPC } from "@/hooks/useIPC";
 import { formatCurrency } from "@/lib/utils";
 import { toastSuccess, toastError } from "@/components/ui/toast";
+import { Badge } from "@/components/ui/Badge";
 
 interface InventoryVariant {
   id: number;
@@ -252,7 +253,7 @@ export function InventoryPage() {
                   {tab.count > 0 && (
                     <span
                       style={{
-                        background: tab.value === "out" && tab.count > 0 ? "var(--color-error)" : tab.value === "low" && tab.count > 0 ? "#f59e0b" : "var(--color-outline-variant)",
+                        background: tab.value === "out" && tab.count > 0 ? "var(--color-error)" : tab.value === "low" && tab.count > 0 ? "var(--color-warning)" : "var(--color-outline-variant)",
                         color: tab.count > 0 && tab.value !== "all" ? "white" : "var(--color-secondary)",
                         borderRadius: "999px",
                         fontSize: 10,
@@ -330,9 +331,11 @@ export function InventoryPage() {
                         key={variant.id}
                         style={{
                           borderBottom: "1px solid rgba(208,197,175,0.15)",
-                          background: isOut ? "rgba(220,38,38,0.03)" : isLow ? "rgba(245,158,11,0.03)" : "transparent",
+                          background: isOut ? "rgba(186, 26, 26, 0.03)" : isLow ? "rgba(212, 175, 55, 0.03)" : "transparent",
                           transition: "background 0.1s",
                         }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(212, 175, 55, 0.06)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = isOut ? "rgba(186, 26, 26, 0.03)" : isLow ? "rgba(212, 175, 55, 0.03)" : "transparent")}
                       >
                         {/* Product name */}
                         <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500 }}>
@@ -357,21 +360,9 @@ export function InventoryPage() {
                         {/* Category */}
                         <td style={{ padding: "14px 20px" }}>
                           {variant.product.category ? (
-                            <span
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                padding: "2px 10px",
-                                borderRadius: "999px",
-                                fontSize: 11,
-                                fontWeight: 600,
-                                background: "rgba(212,175,55,0.1)",
-                                color: "var(--color-primary-container)",
-                                border: "1px solid rgba(212,175,55,0.2)",
-                              }}
-                            >
+                            <Badge variant="accent">
                               {variant.product.category.name}
-                            </span>
+                            </Badge>
                           ) : (
                             <span style={{ color: "var(--color-outline)", fontStyle: "italic" }}>—</span>
                           )}
@@ -384,29 +375,14 @@ export function InventoryPage() {
 
                         {/* Stock badge */}
                         <td style={{ padding: "14px 20px" }}>
-                          <span
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 4,
-                              padding: "4px 12px",
-                              borderRadius: "999px",
-                              fontSize: 12,
-                              fontWeight: 700,
-                              background: isOut
-                                ? "rgba(220,38,38,0.1)"
-                                : isLow
-                                ? "rgba(245,158,11,0.1)"
-                                : "rgba(34,197,94,0.1)",
-                              color: isOut ? "#dc2626" : isLow ? "#f59e0b" : "#16a34a",
-                              border: `1px solid ${isOut ? "rgba(220,38,38,0.3)" : isLow ? "rgba(245,158,11,0.3)" : "rgba(34,197,94,0.3)"}`,
-                              fontVariantNumeric: "tabular-nums",
-                            }}
+                          <Badge
+                            variant={isOut ? "danger" : isLow ? "warning" : "success"}
+                            style={{ fontVariantNumeric: "tabular-nums", padding: "4px 12px" }}
                           >
                             {isOut && <span className="material-symbols-outlined" style={{ fontSize: 14 }}>block</span>}
                             {isLow && <span className="material-symbols-outlined" style={{ fontSize: 14 }}>warning</span>}
                             {variant.stock} unité{variant.stock !== 1 ? "s" : ""}
-                          </span>
+                          </Badge>
                         </td>
 
                         {/* Actions */}

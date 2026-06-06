@@ -23,11 +23,11 @@ const CONFIG: Record<
   },
   partial: {
     label: "Partiellement payée",
-    dot: "🟠",
+    dot: "🟡",
     style: {
-      background: "rgba(180,83,9,0.08)",
+      background: "var(--color-warning-subtle, rgba(212,175,55,0.08))",
       color: "var(--color-warning)",
-      border: "1px solid rgba(180,83,9,0.2)",
+      border: "1px solid rgba(212,175,55,0.2)",
     },
   },
   unpaid: {

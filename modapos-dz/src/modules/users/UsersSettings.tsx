@@ -118,7 +118,7 @@ export function UsersSettings() {
                       const config = user.role === "admin"
                         ? { bg: "rgba(212,175,55,0.12)", color: "var(--color-primary)", border: "rgba(212,175,55,0.25)", label: "Administrateur" }
                         : user.role === "manager"
-                        ? { bg: "rgba(245,158,11,0.1)", color: "#f59e0b", border: "rgba(245,158,11,0.3)", label: "Manager" }
+                        ? { bg: "rgba(77,139,139,0.12)", color: "var(--color-tertiary)", border: "rgba(77,139,139,0.25)", label: "Manager" }
                         : { bg: "rgba(208,197,175,0.15)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: "Caissier" };
                       return (
                         <span

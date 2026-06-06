@@ -36,7 +36,7 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
             gap: 8,
           }}
         >
-          <Trophy className="w-4 h-4" style={{ color: "#f59e0b" }} />
+          <Trophy className="w-4 h-4" style={{ color: "var(--color-primary)" }} />
           Meilleures ventes (30j)
         </h3>
         <p
@@ -58,8 +58,8 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
           </p>
         ) : (
           products.map((product, idx) => {
-            const rankBg = idx === 0 ? "#fffbeb" : idx === 1 ? "#f8fafc" : idx === 2 ? "#fff7ed" : "var(--color-surface-container)";
-            const rankText = idx === 0 ? "#d97706" : idx === 1 ? "#64748b" : idx === 2 ? "#f97316" : "var(--color-outline)";
+            const rankBg = idx === 0 ? "var(--color-primary-container)" : idx === 1 ? "var(--color-secondary-container)" : idx === 2 ? "var(--color-tertiary-container)" : "var(--color-surface-container)";
+            const rankText = idx === 0 ? "var(--color-primary)" : idx === 1 ? "var(--color-secondary)" : idx === 2 ? "var(--color-tertiary)" : "var(--color-outline)";
             return (
               <div
                 key={product.id}
