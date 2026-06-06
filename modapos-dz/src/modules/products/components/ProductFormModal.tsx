@@ -107,6 +107,7 @@ export function ProductFormModal({
           : "Remplissez les informations pour créer un nouveau produit."
       }
       size="xl"
+      scrollable
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
