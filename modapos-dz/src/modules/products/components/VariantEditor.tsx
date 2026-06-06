@@ -79,24 +79,24 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
 
       {/* Variants table */}
       {fields.length > 0 ? (
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--color-bg-surface)]">
+        <div className="rounded-[var(--radius-lg)] border-[1.5px] border-[rgba(208,197,175,0.3)] overflow-hidden bg-transparent">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 bg-[var(--color-bg-subtle)] border-b border-[var(--color-border)]">
+          <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2.5 bg-[rgba(208,197,175,0.1)] border-b-[1.5px] border-[rgba(208,197,175,0.2)]">
             {["Taille", "Couleur", "Stock", "Code-barres", ""].map((h) => (
-              <span key={h} className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
+              <span key={h} className="text-xs font-semibold text-[var(--color-secondary)] uppercase tracking-wider">
                 {h}
               </span>
             ))}
           </div>
 
           {/* Rows */}
-          <div className="divide-y divide-[var(--color-border)]">
+          <div className="divide-y divide-[rgba(208,197,175,0.15)]">
             {fields.map((field, idx) => (
               <div
                 key={field.id}
                 className={cn(
                   "grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2 items-center",
-                  "bg-[var(--color-bg-surface)] hover:bg-[var(--color-bg-elevated)] transition-colors"
+                  "bg-transparent hover:bg-[rgba(208,197,175,0.04)] transition-colors"
                 )}
               >
                 {/* Size */}
@@ -106,9 +106,9 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                   list="size-datalist"
                   className={cn(
                     "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
-                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
-                    "focus:outline-none focus:border-[var(--color-accent)]",
+                    "bg-[var(--color-sand)] border border-[rgba(208,197,175,0.3)]",
+                    "text-[var(--color-on-surface)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-tertiary)] focus:ring-2 focus:ring-[rgba(39,104,104,0.12)]",
                     errors.variants?.[idx]?.size && "border-[var(--color-danger)]"
                   )}
                 />
@@ -121,9 +121,9 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                     list="color-datalist"
                     className={cn(
                       "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
-                      "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                      "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
-                      "focus:outline-none focus:border-[var(--color-accent)]",
+                      "bg-[var(--color-sand)] border border-[rgba(208,197,175,0.3)]",
+                      "text-[var(--color-on-surface)] placeholder:text-[var(--color-text-muted)]",
+                      "focus:outline-none focus:border-[var(--color-tertiary)] focus:ring-2 focus:ring-[rgba(39,104,104,0.12)]",
                       errors.variants?.[idx]?.color && "border-[var(--color-danger)]"
                     )}
                   />
@@ -141,9 +141,9 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                   placeholder="0"
                   className={cn(
                     "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm text-center",
-                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
-                    "focus:outline-none focus:border-[var(--color-accent)]",
+                    "bg-[var(--color-sand)] border border-[rgba(208,197,175,0.3)]",
+                    "text-[var(--color-on-surface)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-tertiary)] focus:ring-2 focus:ring-[rgba(39,104,104,0.12)]",
                     errors.variants?.[idx]?.stock && "border-[var(--color-danger)]"
                   )}
                 />
@@ -154,9 +154,9 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                   placeholder="Code-barres (optionnel)"
                   className={cn(
                     "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm font-mono",
-                    "bg-[var(--color-bg-elevated)] border border-[var(--color-border)]",
-                    "text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]",
-                    "focus:outline-none focus:border-[var(--color-accent)]"
+                    "bg-[var(--color-sand)] border border-[rgba(208,197,175,0.3)]",
+                    "text-[var(--color-on-surface)] placeholder:text-[var(--color-text-muted)]",
+                    "focus:outline-none focus:border-[var(--color-tertiary)] focus:ring-2 focus:ring-[rgba(39,104,104,0.12)]"
                   )}
                 />
 

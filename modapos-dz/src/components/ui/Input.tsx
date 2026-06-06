@@ -1,5 +1,4 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -26,11 +25,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
-      <div className="flex flex-col gap-1.5">
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {label && (
           <label
             htmlFor={inputId}
-            className="text-xs font-semibold tracking-wide text-[var(--color-text-secondary)]"
+            style={{
+              display: "block",
+              fontSize: "var(--text-label-md)",
+              fontWeight: 700,
+              color: "var(--color-on-surface-variant)",
+              marginBottom: 10,
+              letterSpacing: "0.02em",
+            }}
           >
             {label}
           </label>
@@ -46,36 +52,33 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={cn(
-              "w-full min-h-[44px]",
-              "rounded-[var(--radius-lg)]",
-              "border border-[var(--color-border)]",
-              "bg-[var(--color-bg-surface)]",
-              "px-4 py-3",
-              "text-sm text-[var(--color-text-primary)]",
-              "shadow-[var(--shadow-xs)]",
-              "placeholder:text-[var(--color-text-muted)]",
-              "transition-all duration-200",
-
-              "focus-visible:outline-none",
-              "focus-visible:border-[var(--color-accent)]",
-              "focus-visible:ring-2",
-              "focus-visible:ring-[var(--color-accent)]/20",
-
-              "hover:border-[var(--color-border-strong)]",
-
-              "disabled:cursor-not-allowed",
-              "disabled:opacity-50",
-              "disabled:bg-[var(--color-bg-elevated)]",
-
-              leftIcon ? "pl-12" : "",
-              rightIcon ? "pr-12" : "",
-
-              error &&
-              "border-[var(--color-danger)] focus-visible:border-[var(--color-danger)] focus-visible:ring-[var(--color-danger)]/20",
-
-              className
-            )}
+            style={{
+              width: "100%",
+              minHeight: "44px",
+              background: "var(--color-sand)",
+              border: error
+                ? "1.5px solid var(--color-danger)"
+                : "1.5px solid rgba(208,197,175,0.3)",
+              borderRadius: "var(--radius-lg)",
+              paddingTop: "14px",
+              paddingBottom: "14px",
+              paddingLeft: leftIcon ? "48px" : "16px",
+              paddingRight: rightIcon ? "48px" : "16px",
+              fontSize: "var(--text-body-sm)",
+              fontFamily: "var(--font-body)",
+              color: "var(--color-on-surface)",
+              outline: "none",
+              transition: "border-color 0.15s, box-shadow 0.15s",
+            }}
+            className={className}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-tertiary)";
+              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(39,104,104,0.12)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = error ? "var(--color-danger)" : "rgba(208,197,175,0.3)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
             {...props}
           />
 
@@ -87,14 +90,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p className="flex items-center gap-1 text-xs text-[var(--color-danger)]">
+          <p className="flex items-center gap-1 text-xs text-[var(--color-danger)] mt-1.5">
             <span>⚠</span>
             {error}
           </p>
         )}
 
         {hint && !error && (
-          <p className="text-xs text-[var(--color-text-muted)]">
+          <p className="text-xs text-[var(--color-text-muted)] mt-1.5">
             {hint}
           </p>
         )}

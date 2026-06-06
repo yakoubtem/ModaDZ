@@ -35,32 +35,32 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
   );
 
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <span className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide">
+    <div className={cn("flex flex-col", className)}>
+      <span className="block text-[length:var(--text-label-md)] font-bold text-[var(--color-on-surface-variant)] tracking-[0.02em] mb-[10px]">
         Image produit
       </span>
 
       {value ? (
         // Image preview
-        <div className="relative group rounded-[var(--radius-lg)] overflow-hidden border border-[var(--color-border)] aspect-square bg-[var(--color-bg-elevated)]">
+        <div className="relative group rounded-[var(--radius-lg)] overflow-hidden border-[1.5px] border-[rgba(208,197,175,0.3)] aspect-square bg-[var(--color-sand)]">
           <img
             src={`media://${value}`}
             alt="Aperçu produit"
             className="w-full h-full object-cover"
           />
           {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-[var(--color-bg-subtle)]/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
             <button
               type="button"
               onClick={handleSelect}
-              className="px-3 py-1.5 bg-[var(--color-accent)] text-white text-xs font-medium rounded-[var(--radius-sm)] hover:bg-[var(--color-accent-hover)] transition-colors"
+              className="px-3 py-1.5 bg-[var(--color-tertiary)] text-white text-xs font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-tertiary)]/90 transition-colors"
             >
               Changer
             </button>
             <button
               type="button"
               onClick={handleRemove}
-              className="px-3 py-1.5 bg-[var(--color-danger-subtle)] text-[var(--color-danger)] text-xs font-medium rounded-[var(--radius-sm)] hover:bg-[var(--color-danger)]/30 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-[var(--radius-md)] hover:bg-red-700 transition-colors flex items-center gap-1"
             >
               <X className="w-3 h-3" />
               Supprimer
@@ -75,9 +75,9 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
           disabled={isLoading}
           className={cn(
             "aspect-square flex flex-col items-center justify-center gap-3",
-            "rounded-[var(--radius-lg)] border-2 border-dashed border-[var(--color-border)]",
-            "bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]",
-            "hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent-subtle)]",
+            "rounded-[var(--radius-lg)] border-[1.5px] border-dashed border-[rgba(208,197,175,0.4)]",
+            "bg-[var(--color-sand)] text-[var(--color-secondary)]",
+            "hover:border-[var(--color-tertiary)] hover:text-[var(--color-tertiary)] hover:bg-[rgba(39,104,104,0.04)]",
             "transition-all duration-200 cursor-pointer group"
           )}
         >
