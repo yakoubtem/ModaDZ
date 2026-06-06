@@ -80,6 +80,7 @@ export function CustomerFormModal({
           : "Ajoutez un nouveau client à votre base."
       }
       size="md"
+      scrollable
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>

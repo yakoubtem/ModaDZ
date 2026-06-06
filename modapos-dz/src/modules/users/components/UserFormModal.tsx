@@ -78,6 +78,7 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
       isOpen={true}
       onClose={onClose}
       size="md"
+      scrollable
     >
       <div className="relative overflow-hidden">
         {/* Background */}
