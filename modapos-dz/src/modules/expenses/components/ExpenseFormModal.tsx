@@ -135,13 +135,15 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
       }
     >
       <form onSubmit={handleSubmit(onFormSubmit)} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-          <Input
-            label="Titre *"
-            placeholder="Ex: Loyer du mois"
-            error={errors.title?.message}
-            {...register("title", { required: "Le titre est requis" })}
-          />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ gridColumn: "span 2" }}>
+            <Input
+              label="Titre *"
+              placeholder="Ex: Loyer du mois"
+              error={errors.title?.message}
+              {...register("title", { required: "Le titre est requis" })}
+            />
+          </div>
           <Input
             label="Montant (DA) *"
             type="number"
@@ -153,14 +155,6 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
               validate: (v) => v > 0 || "Le montant doit etre superieur a 0",
             })}
           />
-          <Input
-            label="Fournisseur"
-            placeholder="Ex: Sonelgaz"
-            {...register("supplier")}
-          />
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
           <Select
             label="Categorie *"
             error={errors.category?.message}
@@ -174,10 +168,9 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
             ))}
           </Select>
           <Input
-            label="Date *"
-            type="date"
-            error={errors.expenseDate?.message}
-            {...register("expenseDate", { required: "La date est requise" })}
+            label="Fournisseur"
+            placeholder="Ex: Sonelgaz"
+            {...register("supplier")}
           />
           <Select label="Mode de paiement" {...register("paymentMethod")}>
             <option value="">Aucun</option>
@@ -187,6 +180,14 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
               </option>
             ))}
           </Select>
+          <div style={{ gridColumn: "span 2" }}>
+            <Input
+              label="Date *"
+              type="date"
+              error={errors.expenseDate?.message}
+              {...register("expenseDate", { required: "La date est requise" })}
+            />
+          </div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>

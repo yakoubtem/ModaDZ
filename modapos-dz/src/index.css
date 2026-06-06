@@ -141,14 +141,15 @@
 
   /* ── Mapped background/border/text variables for Tailwind components ── */
   --color-bg-base: var(--color-background);
-  --color-bg-surface: var(--color-surface-container-lowest); /* #ffffff (White background for modals) */
+  --color-bg-surface: var(--color-surface-container-lowest);
+  /* #ffffff (White background for modals) */
   --color-bg-elevated: var(--color-surface-container-low);
   --color-bg-overlay: rgba(79, 70, 53, 0.08);
   --color-bg-subtle: var(--color-surface-container);
-  
+
   --color-border: var(--color-outline-variant);
   --color-border-strong: var(--color-outline);
-  
+
   --color-text-primary: var(--color-on-surface);
   --color-text-secondary: var(--color-secondary);
   --color-text-muted: var(--color-outline);
@@ -1123,8 +1124,13 @@ select {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1234,5 +1240,19 @@ select {
 @media print {
   body[data-print-width="58mm"] #receipt-print-root {
     font-size: 9px !important;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   PRINT-ONLY HELPER
+   ─────────────────────────────────────────────────────────────────── */
+
+.print-only {
+  display: none !important;
+}
+
+@media print {
+  .print-only {
+    display: block !important;
   }
 }
