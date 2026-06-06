@@ -1,0 +1,26 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "getting-started",
+    "installation",
+    "authentication",
+    "user-roles",
+    "dashboard",
+    "pos",
+    "products",
+    "inventory",
+    "customers",
+    "sales",
+    "debt-management",
+    "expenses",
+    "reports-exports",
+    "user-management",
+    "backup-restore",
+    "settings",
+    "faq",
+    "troubleshooting",
+    "architecture",
+    "changelog"
+  ]
+}

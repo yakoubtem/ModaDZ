@@ -1,0 +1,55 @@
+---
+title: Dépannage
+description: Guide de résolution des problèmes matériels et logiciels courants de votre système POS.
+---
+
+# Résolution des Problèmes (Dépannage)
+
+Si vous rencontrez un dysfonctionnement avec votre matériel de caisse ou l'application ModaDZ, consultez ce guide pour identifier et résoudre le problème rapidement.
+
+---
+
+## 1. L'Imprimante Thermique n'Imprime Pas
+
+### Le ticket sort complètement blanc
+- **Cause fréquente** : Le rouleau de papier thermique a été inséré à l'envers. Le papier thermique possède une seule face sensible à la chaleur.
+- **Solution** : Ouvrez le capot de l'imprimante, sortez la bobine, retournez-la pour que le papier se déroule par le bas vers l'avant, puis refermez le capot. Réessayez d'imprimer.
+
+### Rien ne sort et le voyant rouge (Error/Paper) clignote
+- **Cause fréquente** : Il n'y a plus de papier ou le capot est mal fermé.
+- **Solution** : Remettez une bobine neuve de largeur adaptée (80mm ou 58mm) et appuyez fermement sur le capot pour le clipser.
+
+### L'imprimante fait un bip mais n'imprime rien
+- **Cause fréquente** : L'imprimante n'est pas sélectionnée ou le pilote s'est bloqué dans Windows.
+- **Solution** :
+  1. Éteignez puis rallumez l'imprimante thermique.
+  2. Allez dans **Paramètres > Impression** de ModaDZ et vérifiez si l'imprimante sélectionnée correspond bien au périphérique actif.
+  3. Lancez un test d'impression. Si cela persiste, redémarrez le PC de caisse.
+
+---
+
+## 2. Le Lecteur de Codes-barres (Douchette) ne fonctionne pas
+
+### Le lecteur s'allume (laser visible) mais rien ne s'ajoute au panier
+- **Cause fréquente** : Le curseur de saisie dans le logiciel n'est pas positionné au bon endroit.
+- **Solution** : Cliquez n'importe où sur l'écran ou appuyez sur `F1` pour forcer la mise au point sur le champ de saisie automatique du POS, puis scannez à nouveau.
+
+### Le lecteur insère les chiffres mais ne valide pas (pas de retour chariot)
+- **Cause fréquente** : Le scanner a perdu sa configuration d'origine ("Carriage Return").
+- **Solution** : Prenez le manuel utilisateur papier de votre douchette et scannez le code-barres de configuration intitulé **"Add CR"**, **"Add Enter Suffix"** ou **"Reset Factory Defaults"**.
+
+### Le lecteur écrit des caractères bizarres à la place des chiffres
+- **Cause fréquente** : La langue du clavier de la douchette ne correspond pas à celle de votre ordinateur (ex: douchette configurée en QWERTY et ordinateur en AZERTY).
+- **Solution** : Scannez le code-barres de configuration de langue correspondant à la langue de votre clavier (généralement **"French Keyboard Layout"** dans le manuel de la douchette).
+
+---
+
+## 3. L'Application est Lente ou Bloquée
+
+### L'écran reste figé sur un chargement
+- **Cause fréquente** : Problème d'accès à la base de données locale ou de synchronisation réseau.
+- **Solution** : 
+  1. Fermez l'application de force (Alt + F4 ou via le Gestionnaire des tâches).
+  2. Vérifiez que votre ordinateur est correctement connecté au réseau si vous utilisez la version cloud.
+  3. Relancez ModaDZ.
+  4. Si le problème persiste, appliquez la procédure de [Restauration de Base de Données](/docs/backup-restore) avec la sauvegarde de la veille.

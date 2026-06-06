@@ -1,0 +1,56 @@
+---
+title: Gestion des Dettes
+description: Suivre les ardoises clients (crédits), enregistrer les remboursements et gérer les rappels.
+---
+
+# Gestion des Dettes Clients
+
+La vente à crédit (« crédit de confiance » ou « ardoise ») est une pratique courante dans de nombreux commerces de détail. ModaDZ intègre un module dédié pour suivre ces dettes de manière professionnelle, évitant ainsi les oublis et les cahiers de compte mal tenus.
+
+---
+
+## Comment Enregistrer une Dette ?
+
+Une dette s'enregistre directement lors du passage en caisse (POS) :
+
+1. Saisissez les articles dans le panier.
+2. Associez obligatoirement un **client** enregistré à la vente (les dettes ne peuvent pas être affectées à un client anonyme).
+3. Cliquez sur **Payer**.
+4. Sélectionnez le mode de paiement **Dette** (ou saisissez un paiement mixte, ex: *5 000 DA en espèces et 2 000 DA en dette*).
+5. Validez la vente. Le ticket de caisse imprimé mentionnera le reste à payer ainsi que le solde total dû par le client.
+
+<Callout type="info">
+  La dette est instantanément ajoutée au compte du client et imputée sur son historique financier.
+</Callout>
+
+---
+
+## Suivi des Comptes Clients débiteurs
+
+Pour consulter l'ensemble des clients qui vous doivent de l'argent :
+- Allez dans **Dettes > Clients Débiteurs**.
+- Vous visualisez la liste complète des clients ayant un solde négatif, classés par montant dû (les plus grosses dettes en premier).
+- Une barre de recherche rapide permet de retrouver un client par son nom ou son numéro de téléphone.
+
+En cliquant sur la fiche d'un client débiteur, vous accédez à :
+- **Son solde total actuel** (ex: *18 500 DA*).
+- **L'historique détaillé** : La liste chronologique de toutes ses ventes à crédit et de tous les remboursements qu'il a déjà effectués.
+
+---
+
+## Enregistrer un Remboursement (Versement)
+
+Lorsqu'un client vient régler tout ou partie de sa dette :
+
+1. Rendez-vous dans **Dettes > Enregistrer un Versement**.
+2. Recherchez et sélectionnez le client.
+3. Saisissez le montant du versement effectué (ex: *5 000 DA*).
+4. Sélectionnez la caisse de réception (généralement la caisse principale active).
+5. (Optionnel) Ajoutez une note (ex: *Paiement par chèque ou par un proche*).
+6. Cliquez sur **Valider le versement**.
+
+### Ticket de Versement
+Dès validation du remboursement, ModaDZ propose d'imprimer un **ticket de reçu de versement** pour le client. Ce ticket comporte :
+- Le montant remboursé aujourd'hui.
+- La date et l'heure.
+- Le nouveau solde restant dû par le client (ex: si la dette était de 15 000 DA et le versement de 5 000 DA, le ticket affichera *Nouveau solde : 10 000 DA*).

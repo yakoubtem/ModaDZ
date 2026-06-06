@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+
+:root {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* ModaDZ Color Palette (Light Mode) */
+  --background: hsl(48 30% 96%); /* Cream/Neutral: #F9F7F2 */
+  --foreground: hsl(0 0% 10%);    /* Dark/Secondary: #1A1A1A */
+  
+  --primary: hsl(47 64% 53%);     /* Gold/Primary: #D4AF37 */
+  --primary-foreground: hsl(0 0% 100%);
+  
+  --muted: hsl(48 20% 91%);
+  --muted-foreground: hsl(0 0% 40%);
+  
+  --border: hsl(180 29% 42%);     /* Slate/Tertiary: #4D8B8B */
+  --ring: hsl(47 64% 53%);
+  
+  --card: hsl(48 30% 98%);
+  --card-foreground: hsl(0 0% 10%);
+
+  --popover: hsl(48 30% 98%);
+  --popover-foreground: hsl(0 0% 10%);
+}
+
+.dark {
+  /* ModaDZ Color Palette (Dark Mode) */
+  --background: hsl(0 0% 8%);     /* Very dark: #141414 */
+  --foreground: hsl(48 30% 96%);  /* Cream/Neutral: #F9F7F2 */
+  
+  --primary: hsl(47 64% 53%);     /* Gold/Primary: #D4AF37 */
+  --primary-foreground: hsl(0 0% 10%);
+  
+  --muted: hsl(0 0% 15%);
+  --muted-foreground: hsl(0 0% 65%);
+  
+  --border: hsl(180 29% 25%);     /* Darker Slate/Tertiary */
+  --ring: hsl(47 64% 53%);
+  
+  --card: hsl(0 0% 11%);
+  --card-foreground: hsl(48 30% 96%);
+
+  --popover: hsl(0 0% 11%);
+  --popover-foreground: hsl(48 30% 96%);
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Bind Fumadocs colors to our custom system variables */
+  --color-fd-primary: var(--primary);
+  --color-fd-primary-foreground: var(--primary-foreground);
+  --color-fd-background: var(--background);
+  --color-fd-foreground: var(--foreground);
+  --color-fd-muted: var(--muted);
+  --color-fd-muted-foreground: var(--muted-foreground);
+  --color-fd-border: var(--border);
+  --color-fd-ring: var(--ring);
+  --color-fd-card: var(--card);
+  --color-fd-card-foreground: var(--card-foreground);
+  --color-fd-popover: var(--popover);
+  --color-fd-popover-foreground: var(--popover-foreground);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

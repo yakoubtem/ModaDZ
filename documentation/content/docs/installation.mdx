@@ -1,0 +1,57 @@
+---
+title: Installation
+description: Prérequis système et installation du matériel (imprimantes de tickets, douchettes codes-barres).
+---
+
+# Guide d'Installation
+
+Pour fonctionner de manière optimale dans votre commerce de détail, le logiciel ModaDZ nécessite quelques configurations matérielles de base.
+
+## Prérequis Système
+
+L'application de point de vente ModaDZ est compatible avec les environnements suivants :
+- **Système d'exploitation** : Windows 10 ou 11 (64-bit conseillé) ou navigateur moderne (Google Chrome, Microsoft Edge) pour la version cloud.
+- **Mémoire RAM** : 4 Go minimum (8 Go recommandés).
+- **Processeur** : Intel Core i3 ou équivalent.
+- **Connexion Internet** : Recommandée pour la synchronisation cloud et les sauvegardes automatiques. Fonctionne également hors ligne pour le POS.
+
+---
+
+## Configuration du Matériel POS
+
+ModaDZ est compatible avec la majorité des périphériques de caisse standards (Plug & Play).
+
+### 1. Lecteur de Code-barres (Douchette)
+- Reliez votre douchette de lecture de code-barres en **USB** ou connectez-la en **Bluetooth**.
+- Aucun pilote spécifique n'est nécessaire. La douchette doit simplement être configurée en mode **Émulation Clavier** (mode par défaut) avec un retour chariot automatique (`Enter` après chaque scan).
+
+### 2. Imprimante de Tickets Thermiques (Ticket de Caisse)
+ModaDZ prend en charge les imprimantes de tickets de caisse standard de format **80mm** (recommandé) ou **58mm**.
+
+<Steps>
+  <Step>
+    #### Branchement physique
+    Connectez l'imprimante thermique au secteur et à un port USB libre de votre PC de caisse. Insérez une bobine de papier thermique dans le bon sens.
+  </Step>
+  <Step>
+    #### Installation des pilotes (Drivers)
+    Téléchargez et installez le pilote officiel du fabricant de votre imprimante (ex: *Xprinter, Epson, Bixolon*). Assurez-vous que l'imprimante apparaît bien dans la liste des périphériques Windows sous **Paramètres > Périphériques et imprimantes**.
+  </Step>
+  <Step>
+    #### Sélection de l'imprimante dans ModaDZ
+    Ouvrez l'application ModaDZ, allez dans **Paramètres > Impression** :
+    - Cochez l'option **Activer l'impression thermique**.
+    - Sélectionnez le nom de votre imprimante dans la liste déroulante.
+    - Choisissez la largeur de votre papier (**80mm** ou **58mm**).
+    - Cliquez sur **Imprimer un ticket test** pour valider le bon fonctionnement.
+  </Step>
+</Steps>
+
+<Callout type="info">
+  **Ouverture du tiroir-caisse** : Si vous possédez un tiroir-caisse connecté en RJ11 derrière l'imprimante thermique, cochez l'option **Ouvrir le tiroir à l'encaissement** dans le panneau d'impression de ModaDZ.
+</Callout>
+
+### 3. Imprimante d'Étiquettes Codes-barres
+Si vous étiquetez vos propres vêtements ou produits sans codes-barres d'origine :
+- ModaDZ prend en charge les imprimantes d'étiquettes thermiques directes (ex: *Xprinter 365B, Zebra ZD220*).
+- Configurez le format de vos étiquettes dans ModaDZ (ex: *50mm x 30mm*) pour imprimer vos étiquettes de prix et de tailles directement depuis l'application.

@@ -1,0 +1,47 @@
+---
+title: Sauvegarde & Restauration
+description: Protégez les données de votre boutique en effectuant des sauvegardes régulières et apprenez à restaurer votre base de données.
+---
+
+# Sauvegarde et Restauration de Données
+
+Les données de votre magasin (catalogue de produits, historique des ventes, dettes clients, dépenses) sont précieuses. Une panne de disque dur, un vol de PC de caisse ou une fausse manipulation peuvent paralyser votre activité.
+
+ModaDZ intègre des fonctions avancées de sauvegarde pour sécuriser vos informations.
+
+---
+
+## Les Types de Sauvegardes
+
+### 1. Sauvegarde Locale Manuelle
+Vous pouvez générer une copie complète de votre base de données sur votre ordinateur à tout moment :
+1. Allez dans **Paramètres > Base de données**.
+2. Dans la section "Sauvegarde", cliquez sur **Créer une sauvegarde locale**.
+3. Choisissez le dossier de destination (nous vous conseillons fortement d'utiliser une **clé USB** externe ou un disque dur externe).
+4. Un fichier compressé contenant vos données est créé (ex: `modadz_backup_2026_06_06.sqlite`).
+
+### 2. Sauvegarde Automatique
+ModaDZ effectue automatiquement une sauvegarde silencieuse en arrière-plan :
+- **À chaque fermeture de caisse** journalière.
+- **Toutes les 24 heures** de manière programmée.
+- Les fichiers de sauvegarde automatique sont conservés localement dans le dossier `C:\ModaDZ\Backups\Auto\`.
+
+### 3. Synchronisation Cloud (Optionnel)
+Si vous avez souscrit à l'offre Cloud ModaDZ, vos données sont chiffrées et synchronisées en temps réel sur des serveurs sécurisés. En cas de sinistre physique dans votre boutique, vous pouvez récupérer l'intégralité de vos données instantanément sur un nouveau terminal de caisse.
+
+---
+
+## Restauration de Données
+
+<Callout type="danger">
+  **ATTENTION** : La restauration d'une sauvegarde écrase et remplace la base de données actuelle de votre logiciel. Toutes les transactions saisies après la date de cette sauvegarde seront définitivement perdues.
+</Callout>
+
+Pour restaurer vos données sur un nouveau PC ou après un incident :
+
+1. Allez dans **Paramètres > Base de données**.
+2. Cliquez sur le bouton **Restaurer une sauvegarde**.
+3. Sélectionnez le fichier de sauvegarde (ex: `.sqlite` ou `.zip`) depuis votre clé USB ou votre ordinateur.
+4. Pour valider cette opération critique, saisissez le **mot de passe administrateur**.
+5. Cliquez sur **Confirmer la restauration**.
+6. L'application redémarre automatiquement pour charger les données restaurées.

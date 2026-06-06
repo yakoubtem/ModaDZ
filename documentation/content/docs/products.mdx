@@ -1,0 +1,54 @@
+---
+title: Produits
+description: Comment ajouter, éditer et catégoriser vos articles et gérer les déclinaisons de tailles et couleurs.
+---
+
+# Gestion des Produits
+
+Le module **Produits** vous permet de cataloguer l'intégralité des articles vendus dans votre magasin. ModaDZ gère nativement les spécificités du secteur de la mode (vêtements et chaussures) comme les grilles de tailles et les coloris.
+
+---
+
+## Création d'une Fiche Produit
+
+Pour ajouter un nouvel article dans votre catalogue, rendez-vous dans **Produits > Ajouter** et renseignez les informations suivantes :
+
+### 1. Informations de base
+- **Nom de l'article** : Un nom clair et descriptif (ex: *Jean Slim Homme*).
+- **Catégorie** : Classez votre produit (ex: *Pantalons, T-shirts, Accessoires*) pour simplifier les recherches et filtrer vos rapports de vente.
+- **Marque / Fournisseur** (optionnel) : Pour regrouper vos articles par fabricant.
+
+### 2. Tarification et Marges
+- **Prix d'Achat** : Le coût d'acquisition unitaire de l'article auprès de votre fournisseur.
+- **Prix de Vente** : Le prix proposé aux clients dans votre boutique.
+- **Mise à jour automatique de la marge** : ModaDZ calcule et affiche en temps réel le pourcentage de marge brute commerciale sur l'article (ex: *Marge de 45%*).
+
+### 3. Codes-barres
+- **Scan de l'étiquette** : Positionnez votre curseur dans le champ "Code-barres" et scannez le code existant sur l'étiquette du vêtement.
+- **Génération automatique** : Si l'article n'a pas de code-barres (ex: *fabrication locale*), cliquez sur **Générer**. ModaDZ va attribuer un code-barres unique que vous pourrez imprimer plus tard.
+
+---
+
+## Déclinaisons (Tailles et Couleurs)
+
+Les vêtements et chaussures se déclinent presque toujours en plusieurs variantes. Au lieu de créer une fiche produit par taille, ModaDZ vous permet de regrouper les variantes sous une même fiche :
+
+- **Tailles** : Cochez les tailles disponibles pour le modèle (ex: *S, M, L, XL* ou *38, 39, 40, 41*).
+- **Couleurs** : Ajoutez les coloris disponibles (ex: *Bleu Marine, Noir, Blanc*).
+- **Génération de la grille** : ModaDZ génère automatiquement les lignes de stock pour chaque combinaison (ex: *Jean Slim Homme - Taille M - Bleu Marine*). Vous pourrez ainsi suivre les stocks de chaque variante de façon indépendante.
+
+<Callout type="info">
+  Chaque variante générée possède son propre code-barres spécifique, permettant au caissier de scanner la bonne taille lors du passage en caisse.
+</Callout>
+
+---
+
+## Importation en Masse via Excel
+
+Si vous possédez déjà une base de données sous Excel ou si vous changez de logiciel, vous pouvez importer tout votre catalogue d'un coup :
+
+1. Allez dans **Produits > Importer**.
+2. Téléchargez le **modèle de fichier Excel (.xlsx)** fourni par ModaDZ.
+3. Remplissez les colonnes en respectant les en-têtes (Nom, Code-barres, Prix d'achat, Prix de vente, Stock initial, Taille, Couleur).
+4. Déposez le fichier sur la zone de téléversement et cliquez sur **Lancer l'importation**.
+5. ModaDZ valide le format et intègre instantanément tous vos produits.

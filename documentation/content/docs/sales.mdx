@@ -1,0 +1,50 @@
+---
+title: Ventes
+description: Consulter l'historique des ventes, réimprimer des tickets et traiter les retours d'articles.
+---
+
+# Historique des Ventes & Retours
+
+Le module **Ventes** centralise toutes les transactions validées sur votre terminal de caisse. C'est l'outil indispensable pour effectuer des vérifications de caisse ou gérer les réclamations des clients.
+
+---
+
+## Consulter l'Historique des Ventes
+
+Allez dans le menu **Ventes > Historique** :
+- **Filtres de recherche** : Vous pouvez filtrer la liste par date, par caissier, par client, par mode de paiement ou directement en saisissant le numéro du ticket de caisse.
+- **Détails de vente** : En cliquant sur une ligne de transaction, vous ouvrez le détail complet de la vente :
+  - Nom du caissier qui a validé la vente.
+  - Articles achetés avec leurs déclinaisons précises.
+  - Mode de règlement (Liquide, Carte, Dette).
+  - Remise éventuelle appliquée.
+
+### Réimpression de Ticket
+Si un client a perdu son ticket de caisse ou demande un duplicata :
+1. Recherchez la vente dans l'historique.
+2. Cliquez sur le bouton **Imprimer le duplicata**.
+3. Le ticket est réédité sur votre imprimante thermique avec la mention "DUPLICATA".
+
+---
+
+## Gestion des Retours & Échanges
+
+ModaDZ facilite le traitement des retours d'articles de mode (erreur de taille, cadeau qui ne plaît pas, etc.).
+
+### 1. Effectuer un Retour d'Article
+1. Dans l'onglet **Ventes**, recherchez la vente d'origine (idéalement en scannant le code-barres imprimé sur le ticket client).
+2. Cliquez sur **Faire un retour / Échange**.
+3. Sélectionnez le ou les articles retournés par le client.
+4. Indiquez le motif du retour (ex: *Taille inadaptée*).
+5. Choisissez le mode de compensation :
+   - **Remboursement direct** : Rendu d'espèces (diminue le montant liquide disponible dans le tiroir de la session de caisse active).
+   - **Bon d'achat / Avoir** : Émission d'un bon d'achat utilisable lors de son prochain passage (conseillé pour garder la trésorerie dans la boutique).
+   - **Échange immédiat** : Le client choisit directement un autre article de valeur équivalente ou supérieure.
+
+<Callout type="info">
+  **Impact Stock** : Lorsque vous validez un retour, ModaDZ vous propose de réintégrer automatiquement le produit retourné dans le stock de la boutique (sauf si le produit est déclaré "défectueux").
+</Callout>
+
+<Callout type="warning">
+  **Règles de sécurité pour les retours** : Pour éviter que des caissiers ne simulent de faux retours pour prélever de l'argent dans la caisse, le bouton "Valider le retour" peut être bloqué par un mot de passe gérant dans les paramètres de sécurité.
+</Callout>

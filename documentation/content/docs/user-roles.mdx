@@ -1,0 +1,60 @@
+---
+title: Rôles & Permissions
+description: Comprendre la gestion des utilisateurs, les niveaux d'accès et les autorisations système de ModaDZ.
+---
+
+# Rôles Utilisateurs
+
+ModaDZ intègre un système robuste de contrôle d'accès basé sur les rôles. Cela permet de déléguer des tâches à vos employés tout en protégeant les données sensibles de votre commerce (comme les marges bénéficiaires ou la base de données).
+
+Le système propose trois rôles prédéfinis :
+
+1. **Administrateur (Admin)**
+2. **Gérant (Manager)**
+3. **Caissier (Cashier)**
+
+---
+
+## Matrice des Permissions
+
+Voici le tableau comparatif des autorisations par rôle :
+
+| Fonctionnalité / Action | Administrateur | Gérant | Caissier |
+| :--- | :---: | :---: | :---: |
+| **Enregistrer des Ventes (POS)** | ✅ Oui | ✅ Oui | ✅ Oui |
+| **Modifier les prix au POS** | ✅ Oui | ✅ Oui | ❌ Non (1) |
+| **Appliquer des Remises / Rabaiss** | ✅ Oui | ✅ Oui | ⚠️ Restreint (2) |
+| **Ajouter / Modifier des Produits** | ✅ Oui | ✅ Oui | ❌ Non |
+| **Supprimer des Produits** | ✅ Oui | ❌ Non | ❌ Non |
+| **Ajuster le Stock (Inventaire)** | ✅ Oui | ✅ Oui | ❌ Non |
+| **Gérer les Dettes (Crédits)** | ✅ Oui | ✅ Oui | ⚠️ Lecture seule |
+| **Enregistrer des Dépenses** | ✅ Oui | ✅ Oui | ❌ Non |
+| **Consulter les Rapports Financiers** | ✅ Oui | ✅ Oui | ❌ Non |
+| **Créer / Modifier des Utilisateurs** | ✅ Oui | ❌ Non | ❌ Non |
+| **Sauvegarde / Restauration BD** | ✅ Oui | ❌ Non | ❌ Non |
+| **Accéder aux Paramètres Généraux** | ✅ Oui | ❌ Non | ❌ Non |
+
+*(1) La modification manuelle du prix d'un produit lors d'une vente est réservée aux gérants et administrateurs.*  
+*(2) Le caissier peut appliquer des remises uniquement si cette option est explicitement activée dans les paramètres caissiers par l'administrateur.*
+
+---
+
+## Détail des Rôles
+
+### 1. Administrateur (Admin)
+L'administrateur a un accès complet à l'ensemble du système sans aucune restriction. C'est généralement le propriétaire du magasin. Il est le seul à pouvoir :
+- Créer ou supprimer des comptes utilisateurs.
+- Restaurer des sauvegardes ou réinitialiser le système.
+- Configurer les paramètres globaux (nom de la boutique, intégration de l'imprimante, taux de taxe).
+
+### 2. Gérant (Manager)
+Le gérant est responsable des opérations quotidiennes de la boutique. Il gère les articles, supervise les ventes et analyse les performances. Il peut :
+- Superviser toutes les sessions de caisse actives.
+- Enregistrer les dépenses quotidiennes (facture d'électricité, loyer, fournitures).
+- Consulter le tableau de bord financier et exporter les rapports de vente.
+
+### 3. Caissier (Caissier)
+L'accès du caissier est strictement restreint à la caisse de vente. L'interface est simplifiée pour minimiser les erreurs :
+- Il peut uniquement faire des encaissements, enregistrer des retours de produits (si autorisés) et imprimer les tickets.
+- À la fin de son service, il effectue sa fermeture de caisse en déclarant l'argent en liquide présent.
+- Il n'a aucun accès aux chiffres d'affaires globaux, aux prix d'achat des produits ou aux outils de configuration.

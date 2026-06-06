@@ -1,0 +1,68 @@
+---
+title: Gestion de Stock
+description: Suivi des niveaux de stock, alertes de rupture, ajustements de stocks et inventaires de contrôle.
+---
+
+# Inventaire et Suivi des Stocks
+
+La maîtrise de vos stocks est essentielle pour éviter de perdre des ventes en raison de ruptures, ou d'immobiliser de la trésorerie dans des articles à faible rotation. ModaDZ automatise le calcul de vos stocks en temps réel.
+
+---
+
+## Fonctionnement du Stock dans ModaDZ
+
+Chaque vente validée sur le POS déduit automatiquement la quantité correspondante du stock de la variante concernée.
+À l'inverse, l'enregistrement d'une livraison fournisseur ou d'un retour client réintègre automatiquement les pièces dans votre stock disponible.
+
+---
+
+## Alertes de Stock Minimum
+
+Pour éviter les ruptures de stock sur vos articles les plus populaires :
+- Lors de la création d'un produit, renseignez le champ **Seuil d'Alerte** (ex: *5 unités*).
+- Lorsque le stock d'un produit descend en dessous de ce seuil, une notification s'affiche sur le tableau de bord.
+- Vous pouvez exporter la liste des **Produits en Rupture** depuis le menu Stock en un clic pour préparer votre bon de commande fournisseur.
+
+---
+
+## Ajustements et Pertes
+
+Il arrive que le stock théorique affiché dans le logiciel ne corresponde pas au stock physique réel (vol, article endommagé, erreur de saisie). Vous devez alors effectuer un ajustement de stock :
+
+1. Allez dans **Stock > Ajustements**.
+2. Cliquez sur **Nouvel Ajustement**.
+3. Recherchez l'article concerné.
+4. Saisissez la quantité à ajouter ou retirer (ex: *-1* pour une perte).
+5. Sélectionnez le motif de l'ajustement :
+   - *Vol / Démarque inconnue*
+   - *Article endommagé / Défaut de fabrication*
+   - *Don / Utilisation personnelle*
+   - *Correction d'erreur de saisie*
+6. Enregistrez. Le stock théorique est corrigé et la valeur financière de la perte est comptabilisée dans vos rapports d'ajustements.
+
+<Callout type="warning">
+  **Sécurité** : Les ajustements de stock modifient la valeur de vos actifs. Seuls les gérants et les administrateurs ont le droit d'effectuer ou de valider un ajustement de stock.
+</Callout>
+
+---
+
+## Réaliser un Inventaire Physique (Audit)
+
+Nous vous conseillons de faire un inventaire de contrôle au moins une fois par mois ou par trimestre :
+
+<Steps>
+  <Step>
+    ### Préparer l'inventaire
+    Dans le module **Stock**, cliquez sur **Lancer un Inventaire**. Cela fige temporairement la valeur théorique de vos stocks pour l'audit. Vous pouvez filtrer par catégorie (ex: uniquement les *Chaussures*).
+  </Step>
+
+  <Step>
+    ### Scanner les articles physiques
+    Parcourez vos rayons et votre réserve avec un lecteur de codes-barres ou une douchette sans fil connectée, et scannez chaque article présent. ModaDZ comptabilise les scans au fur et à mesure.
+  </Step>
+
+  <Step>
+    ### Comparer et Valider
+    ModaDZ génère un rapport comparatif montrant les écarts (surplus ou manque). Relisez attentivement la liste, puis cliquez sur **Appliquer la Clôture d'Inventaire**. Le logiciel mettra à jour tous les stocks pour correspondre exactement à votre comptage physique.
+  </Step>
+</Steps>

@@ -1,0 +1,84 @@
+---
+title: Point de Vente (POS)
+description: Guide complet d'utilisation de l'écran d'encaissement et de facturation rapide de ModaDZ.
+---
+
+# L'Écran de Vente (POS)
+
+L'interface de Point de Vente (POS) de ModaDZ a été optimisée pour garantir une vitesse d'exécution maximale en caisse. Cet écran est principalement conçu pour être utilisé au clavier, à la souris ou sur un écran tactile.
+
+---
+
+## Vue d'ensemble du POS
+
+L'écran se compose de trois zones principales :
+1. **La barre de recherche et scan** (en haut) : pour ajouter les produits.
+2. **Le panier de vente** (au centre) : récapitule les articles, tailles, quantités et prix.
+3. **Le panneau d'encaissement** (à droite) : pour gérer les remises, sélectionner le client et procéder au paiement.
+
+<ScreenshotGallery 
+  screenshots={[
+    { src: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=60", alt: "Écran de caisse ModaDZ", caption: "Interface principale du Point de Vente (POS) ModaDZ" }
+  ]} 
+/>
+
+---
+
+## Cycle d'une Vente : Étape par Étape
+
+<Steps>
+  <Step>
+    ### Scanner ou Sélectionner les Produits
+    - **Par Scan** : Pointez votre lecteur de code-barres sur l'étiquette de l'article. Le produit s'ajoute instantanément au panier avec sa taille et sa couleur par défaut.
+    - **Recherche Manuelle** : Si le code-barres est illisible, tapez le nom du produit ou sa référence dans la barre de recherche (`F1`), puis sélectionnez-le dans la liste.
+  </Step>
+
+  <Step>
+    ### Ajuster le Panier
+    - **Quantités** : Cliquez sur les boutons `+` ou `-` dans le panier pour modifier la quantité, ou double-cliquez sur le chiffre pour saisir manuellement une quantité importante.
+    - **Taille/Couleur** : Si un article possède des variantes, cliquez sur l'étiquette de taille (ex: *M, L, XL*) pour sélectionner la déclinaison souhaitée.
+    - **Raccourci Suppression** : Cliquez sur l'icône de corbeille pour retirer un article du panier.
+  </Step>
+
+  <Step>
+    ### Assigner un Client (Facultatif)
+    Par défaut, la vente est attribuée au client générique "Client de Passage".
+    - Si le client souhaite comptabiliser ses points de fidélité ou enregistrer la vente **à crédit (Dette)**, recherchez son nom dans le champ "Associer un client" ou cliquez sur le bouton `+` pour créer une fiche client à la volée.
+  </Step>
+
+  <Step>
+    ### Encaisser et Valider
+    Cliquez sur le bouton **Payer (Espace)** pour ouvrir le tiroir virtuel des paiements.
+  </Step>
+</Steps>
+
+---
+
+## Méthodes de Paiement et Validation
+
+ModaDZ prend en charge trois modes de paiement majeurs :
+
+### 1. Espèces (Liquide)
+Saisissez le montant donné par le client. ModaDZ calcule automatiquement la monnaie exacte à lui rendre. 
+- *Raccourci* : Des boutons d'accès rapide (1000 DA, 2000 DA) permettent de saisir instantanément les billets courants en Algérie.
+
+### 2. Carte Bancaire (CIB / Dahabia)
+Sélectionnez cette option si le paiement est effectué sur votre terminal de paiement électronique (TPE). ModaDZ enregistre la transaction et l'identifiant pour la comptabilité.
+
+### 3. Dette (Crédit Client)
+Cette option est accessible uniquement si un client spécifique a été associé au panier.
+- La vente est validée sans encaissement financier immédiat.
+- Le solde dû est automatiquement ajouté à l'ardoise (fiche de dettes) du client.
+
+<Callout type="warning">
+  **Alerte Solde Limite** : Si le client a dépassé son plafond de crédit autorisé (défini dans sa fiche), ModaDZ refusera de valider la vente à crédit. Le gérant devra entrer son mot de passe pour outrepasser cette restriction.
+</Callout>
+
+---
+
+## Mettre une Vente en Attente
+
+Si un client à la caisse souhaite ajouter un autre article alors que son panier est déjà saisi, vous pouvez mettre son panier en attente pour servir le client suivant :
+- Cliquez sur **Mettre en attente (F4)**. Le panier est vidé et sauvegardé.
+- Servez les autres clients.
+- Pour reprendre, cliquez sur **Récupérer (F4)** et sélectionnez le panier sauvegardé dans la liste.

@@ -1,0 +1,53 @@
+---
+title: Authentification
+description: Guide sur la connexion sécurisée, la gestion des sessions de caisse et la réinitialisation de mot de passe.
+---
+
+# Authentification & Sessions
+
+Pour garantir la sécurité de vos données financières et l'imputabilité des transactions, chaque utilisateur (administrateur, gérant ou caissier) doit se connecter avec ses propres identifiants personnels.
+
+## Processus de Connexion
+
+1. Lancez l'application ModaDZ.
+2. Sur l'écran de verrouillage, sélectionnez votre profil ou saisissez votre **nom d'utilisateur** (ou e-mail).
+3. Saisissez votre **mot de passe** ou votre **code PIN à 4 chiffres** (si configuré pour les caissiers).
+4. Cliquez sur **Se connecter**.
+
+<Callout type="info">
+  **Code PIN rapide** : Les caissiers peuvent utiliser un code PIN à 4 chiffres (ex: `1234`) défini par l'administrateur, ce qui accélère la reconnexion entre deux clients.
+</Callout>
+
+---
+
+## Sessions de Caisse (Ouverture et Fermeture)
+
+Chaque journée de vente commence par l'ouverture d'une session de caisse et se termine par sa clôture. Cela permet de détecter facilement les écarts entre les ventes enregistrées et l'argent liquide réellement présent dans le tiroir.
+
+### Ouverture de Caisse
+Lors de votre première vente de la journée, ModaDZ vous demande d'ouvrir la caisse :
+- Indiquez le montant précis de votre **fond de caisse** (l'argent liquide laissé dans le tiroir pour rendre la monnaie).
+- Validez. L'heure d'ouverture et l'identité de l'opérateur sont enregistrées.
+
+### Fermeture de Caisse (Clôture journalière)
+À la fin de la journée ou lors d'un changement de quart d'équipe :
+1. Accédez à l'option **Fermer la Caisse** dans le menu utilisateur.
+2. Saisissez le montant d'argent liquide réellement présent dans le tiroir-caisse (comptage physique).
+3. ModaDZ affiche automatiquement :
+   - Le montant attendu (fond de caisse + ventes en liquide - dépenses de caisse).
+   - Le montant réel saisi.
+   - La différence (écart de caisse positif ou négatif).
+4. Imprimez le **Rapport X** (intermédiaire) ou le **Rapport Z** (fermeture définitive) et validez la clôture.
+
+<Callout type="danger">
+  Une fois la caisse fermée, aucune modification de transaction passée n'est autorisée. Toute vente ultérieure ouvrira une nouvelle session de caisse.
+</Callout>
+
+---
+
+## Verrouillage Automatique
+
+Pour éviter qu'un client ou un tiers n'utilise votre caisse en votre absence :
+- Configurez le délai de verrouillage automatique dans **Paramètres > Sécurité** (ex: *1 minute d'inactivité*).
+- Vous pouvez également verrouiller l'écran manuellement en cliquant sur le bouton **Verrouiller** (icône de cadenas) ou en utilisant le raccourci `F12`.
+- Saisissez simplement votre mot de passe ou code PIN pour déverrouiller et reprendre votre travail là où vous l'avez laissé.

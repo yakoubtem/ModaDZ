@@ -1,0 +1,64 @@
+---
+title: Architecture Technique
+description: Vue d'ensemble de l'architecture logicielle, de la base de données et des protocoles de synchronisation de ModaDZ.
+---
+
+# Architecture Logicielle de ModaDZ
+
+Ce document est destiné aux gérants techniques et administrateurs réseau qui souhaitent comprendre le fonctionnement interne de ModaDZ POS.
+
+---
+
+## Vue d'Ensemble de l'Infrastructure
+
+ModaDZ utilise une architecture **hybride locale-cloud**. Cette approche garantit le fonctionnement ininterrompu de la caisse (résilience en cas de coupure internet) tout en offrant la commodité d'une gestion centralisée à distance.
+
+```
++-----------------------------------------------------------+
+|                      BOUTIQUE PHYSIQUE                    |
+|                                                           |
+|  [Douchette] --> [ PC de Caisse (ModaDZ POS Desktop) ]     |
+|                         |                                 |
+|                         v                                 |
+|                  [ Base SQLite locale ]                   |
+|                         |                                 |
++-------------------------|---------------------------------+
+                          | (Sync HTTPS sécurisée)
+                          v
++-----------------------------------------------------------+
+|                        CLOUD MODADZ                       |
+|                                                           |
+|                [ API Gateway (Next.js/Node) ]             |
+|                         |                                 |
+|                         v                                 |
+|              [ Base de Données Postgres ]                 |
+|                         |                                 |
+|                         v                                 |
+|        [ Dashboard Web (Propriétaire distant) ]           |
++-----------------------------------------------------------+
+```
+
+---
+
+## Choix Technologiques
+
+### 1. Base de Données Locale (SQLite)
+- Chaque terminal de caisse utilise une instance embarquée **SQLite**.
+- **Avantage** : SQLite ne requiert aucun serveur de base de données lourd à installer localement (comme MySQL ou SQL Server). Il est extrêmement rapide, consomme très peu de mémoire RAM et s'avère hautement fiable contre la corruption de fichiers.
+
+### 2. Base de Données Cloud (PostgreSQL)
+- Le serveur central héberge une base **PostgreSQL** gérant les comptes multi-boutiques et la consolidation des données.
+
+### 3. Client de Caisse (React & Next.js / Electron)
+- L'interface utilisateur est construite avec **React/Next.js** pour la réactivité, encapsulée dans **Electron** pour la version desktop Windows.
+- Cela permet au logiciel d'accéder directement au système d'impression natif de Windows via des commandes ESC/POS directes envoyées aux ports série/USB.
+
+---
+
+## Protocole de Synchronisation (Sync)
+
+La synchronisation s'effectue en arrière-plan selon les règles suivantes :
+
+1. **Ventes** : Chaque vente est sauvegardée localement dans SQLite. Si la connexion internet est active, un webhook pousse immédiatement la vente vers l'API Cloud. En cas de coupure, la vente reste marquée "Non synchronisée" et sera envoyée par lots dès le retour du réseau.
+2. **Produits** : Les mises à jour de produits faites sur le cloud (ex: modification de prix de vente par le gérant depuis son domicile) sont téléchargées par le PC de caisse lors d'un "Pull" automatique toutes les 5 minutes.
+3. **Résolution des conflits** : En cas de modification d'un produit simultanément en local et sur le cloud, la version du **Cloud** prévaut par défaut.
