@@ -57,9 +57,6 @@ export function SettingsPage() {
             {t("settings.breadcrumbs.global_config")}
           </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="btn-checkout">{t("common.buttons.checkout")}</button>
-        </div>
       </header>
 
       <main

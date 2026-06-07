@@ -61,9 +61,7 @@ export function TopBar({ title, description, actions }: TopBarProps) {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-        {actions ?? (
-          <button className="btn-checkout">Encaisser</button>
-        )}
+        {actions}
       </div>
     </header>
   );

@@ -55,14 +55,6 @@ export function CustomersPage() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar
         title=""
-        actions={
-          <div style={{ display: "flex", gap: "12px" }}>
-            <button className="btn-border" style={{ padding: "8px 16px", borderRadius: "var(--radius-md)" }}>
-              {t("common.buttons.notifications")}
-            </button>
-            <button className="btn-checkout">{t("common.buttons.checkout")}</button>
-          </div>
-        }
       />
 
       <main style={{ padding: "var(--space-container)", maxWidth: 1440, margin: "0 auto", width: "100%" }}>
