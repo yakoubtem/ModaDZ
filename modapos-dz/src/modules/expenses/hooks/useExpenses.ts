@@ -10,6 +10,7 @@ import type {
   PaginatedExpenses,
 } from "@/types";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface UseExpensesReturn {
   expenses: Expense[];
@@ -64,6 +65,7 @@ interface UseExpensesReturn {
 
 export function useExpenses(): UseExpensesReturn {
   const api = useIPC();
+  const { t } = useTranslation();
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [summary, setSummary] = useState<ExpenseSummary | null>(null);
@@ -94,11 +96,11 @@ export function useExpenses(): UseExpensesReturn {
       const result = await api<ExpenseSummary>("expenses:getSummary");
       setSummary(result);
     } catch {
-      toast.error("Impossible de charger le résumé des dépenses");
+      toast.error(t("expenses.toasts.summary_error"));
     } finally {
       setIsSummaryLoading(false);
     }
-  }, [api]);
+  }, [api, t]);
 
   const loadAnalytics = useCallback(
     async (params?: {
@@ -125,12 +127,12 @@ export function useExpenses(): UseExpensesReturn {
         });
         setAnalytics(result);
       } catch {
-        toast.error("Impossible de charger les analyses");
+        toast.error(t("expenses.toasts.analytics_error"));
       } finally {
         setIsAnalyticsLoading(false);
       }
     },
-    [api, from, to, category, supplier, paymentMethod, search, minAmount, maxAmount]
+    [api, from, to, category, supplier, paymentMethod, search, minAmount, maxAmount, t]
   );
 
   const loadCategories = useCallback(async () => {
@@ -139,11 +141,11 @@ export function useExpenses(): UseExpensesReturn {
       const result = await api<ExpenseCategoryRecord[]>("expenses:getCategories");
       setCategories(result);
     } catch {
-      toast.error("Impossible de charger les catégories");
+      toast.error(t("expenses.toasts.categories_error"));
     } finally {
       setIsCategoriesLoading(false);
     }
-  }, [api]);
+  }, [api, t]);
 
   const loadPage = useCallback(
     async (
@@ -177,12 +179,12 @@ export function useExpenses(): UseExpensesReturn {
         setTotal(result.total);
         setPage(result.page);
       } catch {
-        toast.error("Impossible de charger les dépenses");
+        toast.error(t("expenses.toasts.expenses_error"));
       } finally {
         setIsLoading(false);
       }
     },
-    [api, pageSize]
+    [api, pageSize, t]
   );
 
   const refresh = useCallback(() => {
@@ -204,11 +206,11 @@ export function useExpenses(): UseExpensesReturn {
     (q: string) => {
       setSearch(q);
       if (searchTimer) clearTimeout(searchTimer);
-      const t = setTimeout(() => {
+      const tTimer = setTimeout(() => {
         loadPage(1, q, category, supplier, paymentMethod, from, to, minAmount, maxAmount, sort);
         loadAnalytics({ search: q });
       }, 300);
-      setSearchTimer(t);
+      setSearchTimer(tTimer);
     },
     [searchTimer, loadPage, loadAnalytics, category, from, to, minAmount, maxAmount, sort]
   );
@@ -291,46 +293,46 @@ export function useExpenses(): UseExpensesReturn {
     async (name: string): Promise<boolean> => {
       try {
         await api("expenses:createCategory", { name });
-        toast.success("Catégorie ajoutée");
+        toast.success(t("expenses.toasts.category_added"));
         loadCategories();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la création");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_create_error"));
         return false;
       }
     },
-    [api, loadCategories]
+    [api, loadCategories, t]
   );
 
   const updateCategory = useCallback(
     async (id: number, name: string, isArchived?: boolean): Promise<boolean> => {
       try {
         await api("expenses:updateCategory", { id, name, isArchived });
-        toast.success("Catégorie mise à jour");
+        toast.success(t("expenses.toasts.category_updated"));
         loadCategories();
         refresh();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la modification");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_update_error"));
         return false;
       }
     },
-    [api, loadCategories, refresh]
+    [api, loadCategories, refresh, t]
   );
 
   const archiveCategory = useCallback(
     async (id: number, archive: boolean): Promise<boolean> => {
       try {
         await api("expenses:archiveCategory", { id, archive });
-        toast.success(archive ? "Catégorie archivée" : "Catégorie réactivée");
+        toast.success(archive ? t("expenses.toasts.category_archived") : t("expenses.toasts.category_reactivated"));
         loadCategories();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la modification");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_update_error"));
         return false;
       }
     },
-    [api, loadCategories]
+    [api, loadCategories, t]
   );
 
   const getReportData = useCallback(async () => {
@@ -348,54 +350,54 @@ export function useExpenses(): UseExpensesReturn {
       });
       return result;
     } catch {
-      toast.error("Impossible de générer le rapport");
+      toast.error(t("expenses.toasts.report_error"));
       return null;
     }
-  }, [api, search, category, supplier, paymentMethod, from, to, minAmount, maxAmount, sort]);
+  }, [api, search, category, supplier, paymentMethod, from, to, minAmount, maxAmount, sort, t]);
 
   const createExpense = useCallback(
     async (data: ExpenseFormData): Promise<boolean> => {
       try {
         await api("expenses:create", data);
-        toast.success("Dépense créée avec succès");
+        toast.success(t("expenses.toasts.expense_created"));
         refresh();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la création");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_create_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   const updateExpense = useCallback(
     async (id: number, data: ExpenseFormData): Promise<boolean> => {
       try {
         await api("expenses:update", { id, ...data });
-        toast.success("Dépense modifiée avec succès");
+        toast.success(t("expenses.toasts.expense_updated"));
         refresh();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la modification");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_update_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   const deleteExpense = useCallback(
     async (id: number): Promise<boolean> => {
       try {
         await api("expenses:delete", id);
-        toast.success("Dépense supprimée");
+        toast.success(t("expenses.toasts.expense_deleted"));
         refresh();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur lors de la suppression");
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.expense_delete_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   return {
@@ -439,3 +441,4 @@ export function useExpenses(): UseExpensesReturn {
     deleteExpense,
   };
 }
+

@@ -3,12 +3,14 @@ import { useCartStore } from "@/store/cartStore";
 import type { CartItem } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CartItemRowProps {
   item: CartItem;
 }
 
 export function CartItemRow({ item }: CartItemRowProps) {
+  const { t, isRtl } = useTranslation();
   const { removeItem, updateQuantity, updateItemDiscount } = useCartStore();
 
   const rowTotal = item.unitPrice * item.quantity - item.discount;
@@ -50,7 +52,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
       </div>
 
       {/* Row 2: Price × Qty + Discount + Total */}
-      <div className="flex items-center gap-2 pl-10">
+      <div className={cn("flex items-center gap-2", isRtl ? "pr-10" : "pl-10")}>
         {/* Unit price */}
         <span className="text-xs text-[var(--color-text-muted)] tabular-nums shrink-0">
           {formatCurrency(item.unitPrice)}
@@ -113,9 +115,9 @@ export function CartItemRow({ item }: CartItemRowProps) {
       </div>
 
       {/* Row 3: Discount input (subtle) */}
-      <div className="flex items-center gap-2 pl-10">
+      <div className={cn("flex items-center gap-2", isRtl ? "pr-10" : "pl-10")}>
         <label className="text-[10px] text-[var(--color-text-muted)] shrink-0">
-          Remise:
+          {t("pos.cart.discount")}:
         </label>
         <input
           type="number"

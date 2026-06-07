@@ -12,6 +12,7 @@ import type { Customer, Sale, PaymentMethod } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { toastError, toastSuccess } from "@/components/ui/toast";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Printer width preference (localStorage) ─────────────────────────────────
 const PRINTER_WIDTH_KEY = "moda_printer_width";
@@ -49,6 +50,7 @@ interface CheckoutModalProps {
 type Phase = "form" | "receipt";
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+  const { t, isRtl } = useTranslation();
   const api = useIPC();
   const { user } = useAuth();
   const clearCart = useCartStore((s) => s.clearCart);
@@ -148,8 +150,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     // Client-side guard: customer required for debt
     if (hasDebt && !selectedCustomer) {
       toastError(
-        "Client requis",
-        "Veuillez sélectionner un client pour enregistrer une dette."
+        t("pos.checkout_modal.customer_required"),
+        t("pos.checkout_modal.customer_required_desc")
       );
       return;
     }
@@ -180,14 +182,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
       if (remaining > 0) {
         toastSuccess(
-          "Vente enregistrée",
-          `Dette de ${formatCurrency(remaining)} enregistrée pour ${selectedCustomer?.name}.`
+          t("pos.checkout_modal.sale_saved"),
+          t("pos.checkout_modal.debt_saved_toast", {
+            amount: formatCurrency(remaining),
+            name: selectedCustomer?.name ?? "",
+          })
         );
       }
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Erreur lors du paiement";
-      toastError(message, "Veuillez réessayer ou vérifier la connexion.");
+        err instanceof Error ? err.message : t("pos.checkout_modal.payment_error");
+      toastError(message, t("pos.checkout_modal.payment_error_desc"));
     } finally {
       setIsSubmitting(false);
     }
@@ -223,10 +228,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     try {
       const newCustomer = await api<Customer>("customers:create", data);
       selectCustomer(newCustomer);
-      toastSuccess("Client créé avec succès");
+      toastSuccess(t("pos.checkout_modal.customer_created_success"));
       return true;
     } catch {
-      toastError("Erreur lors de la création du client");
+      toastError(t("pos.checkout_modal.customer_created_error"));
       return false;
     }
   };
@@ -236,10 +241,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
-        title={phase === "form" ? "Finaliser la vente" : "Reçu de vente"}
+        title={phase === "form" ? t("pos.checkout_modal.finalize_sale") : t("pos.checkout_modal.sale_receipt")}
         description={
           phase === "form"
-            ? `${items.length} article${items.length > 1 ? "s" : ""} · Total: ${formatCurrency(total)}`
+            ? `${t("pos.cart.items_count", { count: items.length })} · ${t("pos.checkout_modal.total")}: ${formatCurrency(total)}`
             : undefined
         }
         size="md"
@@ -254,7 +259,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 className="h-11 text-sm font-semibold rounded-[var(--radius-lg)]"
                 style={{ flex: 1 }}
               >
-                Annuler
+                {t("pos.checkout_modal.cancel")}
               </Button>
               <Button
                 variant="primary"
@@ -267,7 +272,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 {!isSubmitting && (
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>check_circle</span>
                 )}
-                Confirmer la vente
+                {t("pos.checkout_modal.confirm_sale")}
               </Button>
             </div>
           ) : (
@@ -275,7 +280,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             <div className="flex items-center gap-2 w-full">
               <Printer className="w-4 h-4 text-[var(--color-text-muted)] shrink-0" />
               <span className="text-xs text-[var(--color-text-muted)] mr-1">
-                Largeur :
+                {t("pos.checkout_modal.printer_width")}
               </span>
               {(["58mm", "80mm"] as PrinterWidth[]).map((w) => (
                 <button
@@ -313,7 +318,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 }}
               >
                 <p style={{ fontSize: 11, fontWeight: 700, color: "var(--color-secondary)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                  Récapitulatif
+                  {t("pos.checkout_modal.summary")}
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
@@ -332,7 +337,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <span style={{ fontSize: "var(--text-body-sm)", fontWeight: 600, color: "var(--color-on-surface)" }}>
                         {item.productName}
                       </span>
-                      <span style={{ fontSize: 12, color: "var(--color-secondary)", marginLeft: 6 }}>
+                      <span style={{ fontSize: 12, color: "var(--color-secondary)", [isRtl ? "marginRight" : "marginLeft"]: 6 }}>
                         {item.size}/{item.color} × {item.quantity}
                       </span>
                     </div>
@@ -355,14 +360,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               >
                 {totalItemDiscounts + cartDiscount > 0 && (
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--color-warning)", fontWeight: 600 }}>
-                    <span>Remise totale</span>
+                    <span>{t("pos.checkout_modal.total_discount")}</span>
                     <span>
                       −{formatCurrency(totalItemDiscounts + cartDiscount)}
                     </span>
                   </div>
                 )}
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, color: "var(--color-on-surface)" }}>
-                  <span>Total</span>
+                  <span>{t("pos.checkout_modal.total")}</span>
                   <span style={{ color: "var(--color-tertiary)" }}>
                     {formatCurrency(total)}
                   </span>
@@ -382,10 +387,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   letterSpacing: "0.02em",
                 }}
               >
-                Client{hasDebt ? " (requis pour la dette) *" : " (optionnel)"}
+                {t("pos.checkout_modal.customer_label")}{hasDebt ? t("pos.checkout_modal.customer_required_label") : t("pos.checkout_modal.customer_optional_label")}
               </label>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <div className={cn("absolute top-1/2 -translate-y-1/2 pointer-events-none", isRtl ? "right-4" : "left-4")}>
                   <UserCircle
                     className={cn(
                       "w-4 h-4",
@@ -397,7 +402,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 </div>
                 <input
                   type="text"
-                  placeholder="Rechercher un client…"
+                  placeholder={t("pos.checkout_modal.search_customer_placeholder")}
                   value={customerQuery}
                   onChange={(e) => {
                     setCustomerQuery(e.target.value);
@@ -410,7 +415,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       ? "1.5px solid var(--color-danger)"
                       : "1.5px solid rgba(208,197,175,0.3)",
                     borderRadius: "var(--radius-lg)",
-                    padding: selectedCustomer ? "14px 44px 14px 44px" : "14px 14px 14px 44px",
+                    paddingTop: 14,
+                    paddingBottom: 14,
+                    paddingLeft: isRtl ? (selectedCustomer ? 44 : 14) : 44,
+                    paddingRight: isRtl ? 44 : (selectedCustomer ? 44 : 14),
                     fontSize: "var(--text-body-sm)",
                     fontFamily: "var(--font-body)",
                     color: "var(--color-on-surface)",
@@ -430,7 +438,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 {selectedCustomer && (
                   <button
                     onClick={clearCustomer}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors cursor-pointer"
+                    className={cn("absolute top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors cursor-pointer", isRtl ? "left-4" : "right-4")}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -451,7 +459,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                               {c.name}
                             </span>
                             {c.phone && (
-                              <span className="text-[var(--color-text-muted)] text-xs ml-auto">
+                              <span className={cn("text-[var(--color-text-muted)] text-xs", isRtl ? "mr-auto" : "ml-auto")}>
                                 {c.phone}
                               </span>
                             )}
@@ -460,7 +468,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       </div>
                     ) : (
                       <div className="px-3 py-2 text-sm text-[var(--color-text-muted)] text-center italic">
-                        Aucun client trouvé.
+                        {t("pos.checkout_modal.no_customer_found")}
                       </div>
                     )}
                     <div className="p-1 border-t border-[var(--color-border)] bg-[var(--color-bg-overlay)]">
@@ -473,7 +481,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         className="w-full text-xs"
                         size="sm"
                       >
-                        + Nouveau client
+                        {t("pos.checkout_modal.new_customer")}
                       </Button>
                     </div>
                   </div>
@@ -493,7 +501,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   letterSpacing: "0.02em",
                 }}
               >
-                Mode de paiement *
+                {t("pos.checkout_modal.payment_method")}
               </label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
                 {PAYMENT_METHODS.map((opt) => {
@@ -524,7 +532,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <span className="material-symbols-outlined filled" style={{ fontSize: 24 }}>
                         {opt.icon}
                       </span>
-                      {opt.label}
+                      {t("common.payment_methods." + opt.value)}
                     </button>
                   );
                 })}
@@ -545,13 +553,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       letterSpacing: "0.02em",
                     }}
                   >
-                    Montant reçu (DZD)
+                    {t("pos.checkout_modal.cash_received")}
                   </label>
                   <div style={{ position: "relative" }}>
                     <span
                       style={{
                         position: "absolute",
-                        left: 18,
+                        [isRtl ? "right" : "left"]: 18,
                         top: "50%",
                         transform: "translateY(-50%)",
                         color: "var(--color-outline)",
@@ -575,7 +583,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         background: "var(--color-sand)",
                         border: "1.5px solid rgba(208,197,175,0.3)",
                         borderRadius: "var(--radius-lg)",
-                        padding: "18px 18px 18px 64px",
+                        paddingTop: 18,
+                        paddingBottom: 18,
+                        paddingLeft: isRtl ? 18 : 64,
+                        paddingRight: isRtl ? 64 : 18,
                         fontSize: 28,
                         fontFamily: "var(--font-display)",
                         fontWeight: 700,
@@ -595,7 +606,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     />
                   </div>
                   <p style={{ fontSize: 12, color: "var(--color-secondary)", marginTop: 6 }}>
-                    Laissez vide si le montant exact est donné
+                    {t("pos.checkout_modal.cash_received_help")}
                   </p>
                 </div>
 
@@ -610,14 +621,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     {/* Total row */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", borderBottom: "1.5px solid rgba(208,197,175,0.2)" }}>
-                      <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>Total</span>
+                      <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>{t("pos.checkout_modal.total")}</span>
                       <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, color: "var(--color-on-surface)" }}>
                         {formatCurrency(total)}
                       </span>
                     </div>
                     {/* Amount paid row */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", borderBottom: change > 0 || remaining > 0 ? "1.5px solid rgba(208,197,175,0.2)" : "none" }}>
-                      <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>Montant payé</span>
+                      <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>{t("pos.checkout_modal.amount_paid_live")}</span>
                       <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, color: "var(--color-on-surface)" }}>
                         {formatCurrency(dbAmountPaid)}
                       </span>
@@ -625,7 +636,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     {/* Remaining / change row */}
                     {change > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: "rgba(39,104,104,0.06)", borderTop: "1.5px solid rgba(39,104,104,0.15)" }}>
-                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-tertiary)", fontWeight: 700 }}>Monnaie à rendre</span>
+                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-tertiary)", fontWeight: 700 }}>{t("pos.checkout_modal.change_to_return")}</span>
                         <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, color: "var(--color-tertiary)" }}>
                           {formatCurrency(change)}
                         </span>
@@ -633,7 +644,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     )}
                     {remaining > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: "rgba(186,26,26,0.06)", borderTop: "1.5px solid rgba(186,26,26,0.15)" }}>
-                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-error)", fontWeight: 700 }}>Reste (Dette)</span>
+                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-error)", fontWeight: 700 }}>{t("pos.checkout_modal.remaining_debt")}</span>
                         <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, color: "var(--color-error)" }}>
                           {formatCurrency(remaining)}
                         </span>
@@ -641,7 +652,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     )}
                     {!change && !remaining && (
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: "rgba(39,104,104,0.06)", borderTop: "1.5px solid rgba(39,104,104,0.15)" }}>
-                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-tertiary)", fontWeight: 700 }}>Soldé</span>
+                        <span style={{ fontSize: "var(--text-body-sm)", color: "var(--color-tertiary)", fontWeight: 700 }}>{t("pos.checkout_modal.settled")}</span>
                         <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, color: "var(--color-tertiary)" }}>✓</span>
                       </div>
                     )}
@@ -672,8 +683,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         )}
                       >
                         {missingCustomer
-                          ? "Client requis"
-                          : `Cette vente générera une dette client de ${formatCurrency(remaining)}`}
+                          ? t("pos.checkout_modal.customer_required")
+                          : t("pos.checkout_modal.debt_warning", { amount: formatCurrency(remaining) })}
                       </p>
                       <p
                         className={cn(
@@ -682,8 +693,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         )}
                       >
                         {missingCustomer
-                          ? "Veuillez sélectionner un client pour enregistrer une dette."
-                          : `Le client ${selectedCustomer?.name} sera redevable de ${formatCurrency(remaining)}.`}
+                          ? t("pos.checkout_modal.customer_required_desc")
+                          : t("pos.checkout_modal.debt_warning_desc", { name: selectedCustomer?.name ?? "", amount: formatCurrency(remaining) })}
                       </p>
                     </div>
                   </div>
@@ -703,15 +714,15 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   letterSpacing: "0.02em",
                 }}
               >
-                Notes{" "}
+                {t("pos.checkout_modal.notes_label")}{" "}
                 <span style={{ color: "var(--color-secondary)", fontWeight: 400, textTransform: "lowercase" }}>
-                  (optionnelles)
+                  {t("pos.checkout_modal.notes_optional")}
                 </span>
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Remarques sur cette vente..."
+                placeholder={t("pos.checkout_modal.notes_placeholder")}
                 rows={2}
                 style={{
                   width: "100%",
@@ -745,6 +756,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               sale={completedSale}
               amountPaid={dbAmountPaid}
               onClose={handleClose}
+              closeLabel={t("pos.receipt.new_sale")}
               storeName={receiptSettings.storeName}
               storePhone={receiptSettings.storePhone}
               storeAddress={receiptSettings.storeAddress}

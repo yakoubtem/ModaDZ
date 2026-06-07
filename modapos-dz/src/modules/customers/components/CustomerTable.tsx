@@ -11,6 +11,7 @@ import { Pencil, Trash2, Eye, Phone, Mail } from "lucide-react";
 import type { CustomerWithStats } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CustomerTableProps {
   customers: CustomerWithStats[];
@@ -35,6 +36,7 @@ export function CustomerTable({
   onViewProfile,
   onPageChange,
 }: CustomerTableProps) {
+  const { t, isRtl } = useTranslation();
   const { can } = useAuth();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
@@ -43,7 +45,7 @@ export function CustomerTable({
     () => [
       {
         accessorKey: "name",
-        header: "Client",
+        header: t("customers.table.client"),
         cell: ({ row }) => (
           <div>
             <p style={{ fontSize: 14, fontWeight: 500, color: "var(--color-on-surface)" }}>
@@ -68,7 +70,7 @@ export function CustomerTable({
       },
       {
         accessorKey: "totalOrders",
-        header: "Commandes",
+        header: t("customers.table.orders_count"),
         cell: ({ getValue }) => (
           <span style={{ fontSize: 14, fontVariantNumeric: "tabular-nums", color: "var(--color-on-surface)" }}>
             {getValue() as number}
@@ -77,7 +79,7 @@ export function CustomerTable({
       },
       {
         accessorKey: "totalSpent",
-        header: "Total dépensé",
+        header: t("customers.table.total_spent"),
         cell: ({ getValue }) => (
           <span style={{ fontSize: 14, fontWeight: 600, fontVariantNumeric: "tabular-nums", color: "var(--color-on-surface)" }}>
             {formatCurrency(getValue() as number)}
@@ -86,7 +88,7 @@ export function CustomerTable({
       },
       {
         accessorKey: "debt",
-        header: "Crédit en attente",
+        header: t("customers.table.current_debt"),
         cell: ({ getValue }) => {
           const debt = getValue() as number;
           return debt > 0 ? (
@@ -112,7 +114,7 @@ export function CustomerTable({
       },
       {
         accessorKey: "lastPurchaseDate",
-        header: "Dernier achat",
+        header: t("customers.table.last_purchase"),
         cell: ({ getValue }) => {
           const d = getValue() as string | undefined;
           return (
@@ -135,7 +137,7 @@ export function CustomerTable({
                   className="btn-primary"
                   style={{ padding: "6px 14px", fontSize: 12, height: 36, background: "var(--color-error)" }}
                 >
-                  Oui
+                  {t("common.buttons.yes")}
                 </button>
                 <button
                   onClick={() => setDeleteConfirmId(null)}
@@ -150,7 +152,7 @@ export function CustomerTable({
                     fontSize: 12,
                   }}
                 >
-                  Non
+                  {t("common.buttons.no")}
                 </button>
               </div>
             );
@@ -159,7 +161,7 @@ export function CustomerTable({
             <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
               <button
                 onClick={() => onViewProfile(customer.id)}
-                title="Voir le profil"
+                title={t("customers.details.title")}
                 style={{
                   width: 36, height: 36,
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -177,7 +179,7 @@ export function CustomerTable({
               </button>
               <button
                 onClick={() => onEdit(customer)}
-                title="Modifier"
+                title={t("common.buttons.edit")}
                 style={{
                   width: 36, height: 36,
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -196,7 +198,7 @@ export function CustomerTable({
               {can("customers.delete") && (
                 <button
                   onClick={() => setDeleteConfirmId(customer.id)}
-                  title="Supprimer"
+                  title={t("common.buttons.delete")}
                   style={{
                     width: 36, height: 36,
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -219,7 +221,7 @@ export function CustomerTable({
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [deleteConfirmId, onEdit, onDelete, onViewProfile, can]
+    [deleteConfirmId, onEdit, onDelete, onViewProfile, can, t]
   );
 
   const table = useReactTable({
@@ -263,7 +265,7 @@ export function CustomerTable({
           people
         </span>
         <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-          Aucun client trouvé
+          {t("customers.table.no_customer_found")}
         </p>
       </div>
     );
@@ -285,7 +287,7 @@ export function CustomerTable({
                     onClick={header.column.getToggleSortingHandler()}
                     style={{
                       padding: "14px 20px",
-                      textAlign: "left",
+                      textAlign: isRtl ? "right" : "left",
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -337,7 +339,7 @@ export function CustomerTable({
           }}
         >
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            Affichage de {from}–{to} sur {total} clients
+            {t("customers.table.display_info", { from, to, total })}
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (

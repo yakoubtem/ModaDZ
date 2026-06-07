@@ -5,6 +5,7 @@ import type { Product, ProductVariant } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface VariantPickerProps {
   product: Product | null;
@@ -18,6 +19,7 @@ function VariantButton({
   variant: ProductVariant;
   onSelect: (v: ProductVariant) => void;
 }) {
+  const { t } = useTranslation();
   const outOfStock = variant.stock === 0;
 
   return (
@@ -47,13 +49,14 @@ function VariantButton({
             : "text-[var(--color-text-muted)]"
         )}
       >
-        {outOfStock ? "Épuisé" : `${variant.stock} restants`}
+        {outOfStock ? t("pos.variant_picker.out_of_stock") : t("pos.variant_picker.items_remaining", { count: variant.stock })}
       </span>
     </button>
   );
 }
 
 export function VariantPicker({ product, onClose }: VariantPickerProps) {
+  const { t } = useTranslation();
   const addItem = useCartStore((s) => s.addItem);
 
   if (!product) return null;
@@ -70,7 +73,11 @@ export function VariantPicker({ product, onClose }: VariantPickerProps) {
       unitPrice: product.price,
       maxStock: variant.stock,
     });
-    toast.success(`${product.name} — ${variant.size}/${variant.color} ajouté`, {
+    toast.success(t("pos.variant_picker.variant_added_toast", {
+      name: product.name,
+      size: variant.size,
+      color: variant.color,
+    }), {
       duration: 1500,
     });
     onClose();
@@ -81,7 +88,7 @@ export function VariantPicker({ product, onClose }: VariantPickerProps) {
       isOpen={!!product}
       onClose={onClose}
       title={product.name}
-      description={`${formatCurrency(product.price)} · Sélectionnez une variante`}
+      description={`${formatCurrency(product.price)} · ${t("pos.variant_picker.select_variant")}`}
       size="sm"
     >
       {/* Product image */}
@@ -99,7 +106,7 @@ export function VariantPicker({ product, onClose }: VariantPickerProps) {
       {product.variants.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-6 text-[var(--color-text-muted)]">
           <Package className="w-8 h-8" />
-          <p className="text-sm">Aucune variante pour ce produit</p>
+          <p className="text-sm">{t("pos.variant_picker.no_variant")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-2">
@@ -117,7 +124,7 @@ export function VariantPicker({ product, onClose }: VariantPickerProps) {
       {product.variants.some((v) => v.stock > 0 && v.stock <= 5) && (
         <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-warning)] bg-[var(--color-warning-subtle)] px-3 py-2 rounded-[var(--radius-md)]">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          Certaines variantes ont un stock faible
+          {t("pos.variant_picker.low_stock_warning_some")}
         </div>
       )}
     </Modal>

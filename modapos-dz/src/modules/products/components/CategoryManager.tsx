@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/Badge";
 
 import type { Category } from "@/types";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CategoryManagerProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function CategoryManager({
   onUpdate,
   onDelete,
 }: CategoryManagerProps) {
+  const { t } = useTranslation();
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
@@ -90,8 +92,8 @@ export function CategoryManager({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Gestion des catégories"
-      description="Organisez vos produits avec des catégories claires et structurées."
+      title={t("products.categories.manager_title")}
+      description={t("products.categories.manager_desc")}
       size="md"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
@@ -99,17 +101,17 @@ export function CategoryManager({
         <div style={{ borderRadius: 16, border: "1px solid rgba(208,197,175,0.3)", background: "rgba(245,243,238,0.5)", padding: 24 }}>
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-neutral-900">
-              Nouvelle catégorie
+              {t("products.categories.new")}
             </h3>
 
             <p className="mt-1 text-[13px] text-neutral-500">
-              Ajoutez une nouvelle catégorie pour organiser votre catalogue.
+              {t("products.categories.new_desc")}
             </p>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <Input
-              placeholder="Ex: Sneakers, Accessoires, Vestes..."
+              placeholder={t("products.categories.placeholder")}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) =>
@@ -127,7 +129,7 @@ export function CategoryManager({
               className="min-w-[110px]"
             >
               <Plus className="h-4 w-4" />
-              Ajouter
+              {t("common.buttons.add")}
             </Button>
           </div>
         </div>
@@ -137,12 +139,11 @@ export function CategoryManager({
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold text-neutral-900">
-                Catégories existantes
+                {t("products.categories.existing")}
               </h3>
 
               <p className="mt-1 text-[13px] text-neutral-500">
-                {categories.length} catégorie
-                {categories.length !== 1 ? "s" : ""}
+                {t("products.categories.count", { count: categories.length })}
               </p>
             </div>
           </div>
@@ -154,11 +155,11 @@ export function CategoryManager({
               </div>
 
               <p className="text-sm font-medium text-neutral-700">
-                Aucune catégorie
+                {t("products.categories.empty")}
               </p>
 
               <p className="mt-1 text-[13px] text-neutral-500">
-                Commencez par créer votre première catégorie.
+                {t("products.categories.empty_desc")}
               </p>
             </div>
           ) : (
@@ -196,7 +197,7 @@ export function CategoryManager({
                           onClick={() => setEditingId(null)}
                         >
                           <X className="h-4 w-4" />
-                          Annuler
+                          {t("common.buttons.cancel")}
                         </Button>
 
                         <Button
@@ -206,7 +207,7 @@ export function CategoryManager({
                           isLoading={isSubmitting}
                         >
                           <Check className="h-4 w-4" />
-                          Enregistrer
+                          {t("common.buttons.save")}
                         </Button>
                       </div>
                     </div>
@@ -214,11 +215,11 @@ export function CategoryManager({
                     <div className="space-y-4">
                       <div>
                         <p className="text-sm font-medium text-red-600">
-                          Supprimer cette catégorie ?
+                          {t("products.categories.delete_title")}
                         </p>
 
                         <p className="mt-1 text-[13px] text-neutral-500">
-                          Cette action est irréversible.
+                          {t("products.categories.delete_desc")}
                         </p>
                       </div>
 
@@ -230,7 +231,7 @@ export function CategoryManager({
                             setDeleteConfirmId(null)
                           }
                         >
-                          Annuler
+                          {t("common.buttons.cancel")}
                         </Button>
 
                         <Button
@@ -239,7 +240,7 @@ export function CategoryManager({
                           onClick={() => handleDelete(cat.id)}
                           isLoading={isSubmitting}
                         >
-                          Supprimer
+                          {t("common.buttons.delete")}
                         </Button>
                       </div>
                     </div>
@@ -252,10 +253,7 @@ export function CategoryManager({
 
                         <div className="mt-2">
                           <Badge variant="default">
-                            {cat._count?.products || 0} produit
-                            {(cat._count?.products || 0) !== 1
-                              ? "s"
-                              : ""}
+                            {t("products.categories.products_count", { count: cat._count?.products || 0 })}
                           </Badge>
                         </div>
                       </div>

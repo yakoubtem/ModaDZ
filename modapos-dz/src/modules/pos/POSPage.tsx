@@ -9,6 +9,7 @@ import { CheckoutModal } from "./components/CheckoutModal";
 import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import type { Product } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function POSPage() {
   const { query, setQuery, products, isSearching, clearSearch, categoryId, setCategoryId } = usePOSSearch();
@@ -16,6 +17,7 @@ export function POSPage() {
   const isEmpty = useCartStore(cartSelectors.isEmpty);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const { t, isRtl } = useTranslation();
 
   const handleEnterOnSearch = useCallback(() => {
     if (products.length === 1) {
@@ -52,7 +54,7 @@ export function POSPage() {
   });
 
   return (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100%", overflow: "hidden", flexDirection: isRtl ? "row-reverse" : "row" }}>
       {/* ── Left: Product panel ── */}
       <section
         style={{
@@ -82,7 +84,8 @@ export function POSPage() {
               className="material-symbols-outlined"
               style={{
                 position: "absolute",
-                left: 16,
+                left: isRtl ? "auto" : 16,
+                right: isRtl ? 16 : "auto",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: "var(--color-on-surface-variant)",
@@ -102,7 +105,7 @@ export function POSPage() {
 
           {/* Category chips — driven from DB */}
           <div
-            style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px" }}
+            style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px", flexDirection: isRtl ? "row-reverse" : "row" }}
             className="no-scrollbar"
           >
             {/* "All products" chip */}
@@ -111,7 +114,7 @@ export function POSPage() {
               className={`chip ${categoryId === undefined ? "chip-active" : "chip-default"}`}
               style={{ whiteSpace: "nowrap", cursor: "pointer", border: "none", fontFamily: "var(--font-body)" }}
             >
-              Tous les produits
+              {t("products.categories.all")}
             </button>
 
             {/* DB category chips */}

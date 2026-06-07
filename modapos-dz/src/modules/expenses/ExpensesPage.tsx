@@ -16,6 +16,7 @@ import { useSettings } from "@/modules/settings/hooks/useSettings";
 import { EXPENSE_PAYMENT_METHODS } from "@/types";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Export CSV helper ────────────────────────────────────
 
@@ -45,6 +46,7 @@ function exportCSV(data: object[], filename: string) {
 type Tab = "list" | "analytics" | "profitability" | "categories";
 
 export function ExpensesPage() {
+  const { t, isRtl } = useTranslation();
   const {
     expenses,
     summary,
@@ -90,10 +92,10 @@ export function ExpensesPage() {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   const tabs = [
-    { id: "list" as const, label: "Dépenses", icon: "payments" },
-    { id: "analytics" as const, label: "Analyses & Insights", icon: "monitoring" },
-    { id: "profitability" as const, label: "Rentabilité", icon: "trending_up" },
-    { id: "categories" as const, label: "Catégories", icon: "category" },
+    { id: "list" as const, label: t("expenses.tabs.list"), icon: "payments" },
+    { id: "analytics" as const, label: t("expenses.tabs.analytics"), icon: "monitoring" },
+    { id: "profitability" as const, label: t("expenses.tabs.profitability"), icon: "trending_up" },
+    { id: "categories" as const, label: t("expenses.tabs.categories"), icon: "category" },
   ];
 
   const openCreate = useCallback(() => {
@@ -124,18 +126,18 @@ export function ExpensesPage() {
   const handleExportCSV = async () => {
     const report = await getReportData();
     if (!report || report.expenses.length === 0) {
-      toast.warning("Aucune donnée à exporter");
+      toast.warning(t("expenses.toasts.no_data_export"));
       return;
     }
     const rows = report.expenses.map((e) => ({
-      Date: new Date(e.expenseDate).toLocaleDateString("fr-DZ"),
-      Titre: e.title,
-      Catégorie: e.category,
-      Montant: e.amount,
-      Paiement: e.paymentMethod ?? "",
-      Fournisseur: e.supplier ?? "",
-      Description: e.description ?? "",
-      Notes: e.notes ?? "",
+      [t("expenses.table.date")]: new Date(e.expenseDate).toLocaleDateString(isRtl ? "ar-DZ" : "fr-DZ"),
+      [t("expenses.table.title")]: e.title,
+      [t("expenses.table.category")]: e.category,
+      [t("expenses.table.amount")]: e.amount,
+      [t("expenses.table.payment_method")]: e.paymentMethod ?? "",
+      [t("expenses.table.supplier")]: e.supplier ?? "",
+      [t("expenses.form.description")]: e.description ?? "",
+      [t("expenses.table.notes")]: e.notes ?? "",
     }));
     exportCSV(rows, `depenses_modadz_${new Date().toISOString().slice(0, 10)}.csv`);
   };
@@ -143,23 +145,23 @@ export function ExpensesPage() {
   const handleExportExcel = async () => {
     const report = await getReportData();
     if (!report || report.expenses.length === 0) {
-      toast.warning("Aucune donnée à exporter");
+      toast.warning(t("expenses.toasts.no_data_export"));
       return;
     }
     const rows = report.expenses.map((e) => ({
-      Date: new Date(e.expenseDate).toLocaleDateString("fr-DZ"),
-      Titre: e.title,
-      Catégorie: e.category,
-      Montant: e.amount,
-      Paiement: e.paymentMethod ?? "",
-      Fournisseur: e.supplier ?? "",
-      Description: e.description ?? "",
-      Notes: e.notes ?? "",
+      [t("expenses.table.date")]: new Date(e.expenseDate).toLocaleDateString(isRtl ? "ar-DZ" : "fr-DZ"),
+      [t("expenses.table.title")]: e.title,
+      [t("expenses.table.category")]: e.category,
+      [t("expenses.table.amount")]: e.amount,
+      [t("expenses.table.payment_method")]: e.paymentMethod ?? "",
+      [t("expenses.table.supplier")]: e.supplier ?? "",
+      [t("expenses.form.description")]: e.description ?? "",
+      [t("expenses.table.notes")]: e.notes ?? "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
+    XLSX.utils.book_append_sheet(workbook, worksheet, t("expenses.tabs.list"));
     XLSX.writeFile(workbook, `depenses_modadz_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
@@ -236,10 +238,10 @@ export function ExpensesPage() {
               fontSize: 16,
               color: "var(--color-on-surface)",
               letterSpacing: "-0.01em",
-              marginRight: 24,
+              marginInlineEnd: 24,
             }}
           >
-            Gestion des Dépenses
+            {t("expenses.title")}
           </span>
 
           {/* Underline tabs navigation */}
@@ -295,7 +297,7 @@ export function ExpensesPage() {
           {activeTab === "list" && (
             <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-              Nouvelle dépense
+              {t("expenses.add_expense")}
             </button>
           )}
         </div>
@@ -329,10 +331,10 @@ export function ExpensesPage() {
                 marginBottom: 8,
               }}
             >
-              {activeTab === "list" && "Gestion des dépenses"}
-              {activeTab === "analytics" && "Analyses financières"}
-              {activeTab === "profitability" && "Rentabilité & Performance"}
-              {activeTab === "categories" && "Catégories de dépenses"}
+              {activeTab === "list" && t("expenses.headers.list")}
+              {activeTab === "analytics" && t("expenses.headers.analytics")}
+              {activeTab === "profitability" && t("expenses.headers.profitability")}
+              {activeTab === "categories" && t("expenses.headers.categories")}
             </h1>
             <p
               style={{
@@ -342,10 +344,10 @@ export function ExpensesPage() {
                 maxWidth: 520,
               }}
             >
-              {activeTab === "list" && "Suivez toutes les dépenses de votre activité et analysez votre rentabilité."}
-              {activeTab === "analytics" && "Consultez l'évolution des dépenses mensuelles, leur répartition et bénéfice net."}
-              {activeTab === "profitability" && "Calculez votre bénéfice net et suivez l'évolution de vos taux de marge."}
-              {activeTab === "categories" && "Gérez vos catégories professionnelles et personnalisées de dépenses."}
+              {activeTab === "list" && t("expenses.headers.list_desc")}
+              {activeTab === "analytics" && t("expenses.headers.analytics_desc")}
+              {activeTab === "profitability" && t("expenses.headers.profitability_desc")}
+              {activeTab === "categories" && t("expenses.headers.categories_desc")}
             </p>
           </div>
 
@@ -407,7 +409,7 @@ export function ExpensesPage() {
                     marginBottom: 3,
                   }}
                 >
-                  Profit net du mois
+                  {t("expenses.headers.net_profit_month")}
                 </p>
                 <p
                   style={{
@@ -440,12 +442,12 @@ export function ExpensesPage() {
             <div style={{ marginTop: 40 }}>
               <EmptyState
                 icon={Receipt}
-                title="Aucune dépense enregistrée"
-                description="Commencez à suivre vos dépenses pour mieux gérer la rentabilité de votre activité."
+                title={t("expenses.empty_state.title")}
+                description={t("expenses.empty_state.desc")}
                 action={
                   <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-                    Ajouter une dépense
+                    {t("expenses.empty_state.add_btn")}
                   </button>
                 }
               />
@@ -455,13 +457,13 @@ export function ExpensesPage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 320px",
+                gridTemplateColumns: isRtl ? "320px 1fr" : "1fr 320px",
                 gap: 24,
                 alignItems: "start",
               }}
             >
               {/* Main column */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0, gridRow: 1, gridColumn: isRtl ? 2 : 1 }}>
                 {/* Filters */}
                 <ExpenseFilters
                   search={search}
@@ -499,8 +501,8 @@ export function ExpensesPage() {
                 />
               </div>
 
-              {/* Right sidebar */}
-              <div style={{ position: "sticky", top: 96 }}>
+              {/* Right/Left sidebar */}
+              <div style={{ position: "sticky", top: 96, gridRow: 1, gridColumn: isRtl ? 1 : 2 }}>
                 <ExpenseCategorySidebar
                   expenses={expenses}
                   isLoading={isLoading}
@@ -523,7 +525,7 @@ export function ExpensesPage() {
               {/* Business Insights */}
               <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
                 <h3 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)", textTransform: "uppercase" }}>
-                  Analyses Automatiques (Business Insights)
+                  {t("expenses.analytics.insights_title")}
                 </h3>
                 {analytics?.insights && analytics.insights.length > 0 ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -536,7 +538,7 @@ export function ExpensesPage() {
                   </div>
                 ) : (
                   <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", fontStyle: "italic" }}>
-                    Aucune analyse disponible pour le moment.
+                    {t("expenses.analytics.no_insights")}
                   </p>
                 )}
               </div>
@@ -544,7 +546,7 @@ export function ExpensesPage() {
               {/* Alerts */}
               <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
                 <h3 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)", textTransform: "uppercase" }}>
-                  Alertes & Budgets
+                  {t("expenses.analytics.alerts_title")}
                 </h3>
                 {analytics?.alerts && analytics.alerts.length > 0 ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -566,7 +568,7 @@ export function ExpensesPage() {
                           : "var(--color-info)";
 
                       return (
-                        <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: severityBg, border: severityBorder, borderLeft: `4px solid ${severityColor}`, padding: 14, borderRadius: "var(--radius-lg)" }}>
+                        <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: severityBg, border: severityBorder, borderInlineStart: `4px solid ${severityColor}`, padding: 14, borderRadius: "var(--radius-lg)" }}>
                           <span className="material-symbols-outlined" style={{ color: severityColor }}>warning</span>
                           <div>
                             <p style={{ fontSize: 13, fontWeight: 700, color: "var(--color-on-surface)", marginBottom: 2 }}>{alert.title}</p>
@@ -579,7 +581,7 @@ export function ExpensesPage() {
                 ) : (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 14, borderRadius: "var(--radius-lg)", background: "rgba(39,104,104,0.08)" }}>
                     <span className="material-symbols-outlined" style={{ color: "var(--color-tertiary)" }}>check_circle</span>
-                    <p style={{ fontSize: 13, color: "var(--color-tertiary)" }}>Tout est sous contrôle. Aucun dépassement de budget ni anomalie détectée.</p>
+                    <p style={{ fontSize: 13, color: "var(--color-tertiary)" }}>{t("expenses.analytics.no_alerts")}</p>
                   </div>
                 )}
               </div>
@@ -601,7 +603,7 @@ export function ExpensesPage() {
                     {analytics?.profitability ? formatCurrency(analytics.profitability.revenue) : "—"}
                   </p>
                   <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
-                    Revenus Totaux
+                    {t("expenses.analytics.total_revenue")}
                   </p>
                 </div>
               </div>
@@ -616,7 +618,7 @@ export function ExpensesPage() {
                     {analytics?.profitability ? formatCurrency(analytics.profitability.expenses) : "—"}
                   </p>
                   <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
-                    Dépenses Totales
+                    {t("expenses.analytics.total_expenses")}
                   </p>
                 </div>
               </div>
@@ -637,7 +639,7 @@ export function ExpensesPage() {
                         {analytics?.profitability ? formatCurrency(profit) : "—"}
                       </p>
                       <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
-                        Bénéfice Net
+                        {t("expenses.analytics.net_profit")}
                       </p>
                     </div>
                   </div>
@@ -654,7 +656,7 @@ export function ExpensesPage() {
                     {analytics?.profitability ? `${analytics.profitability.marginPct}%` : "—"}
                   </p>
                   <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", fontWeight: "var(--fw-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", marginTop: 4 }}>
-                    Marge Bénéficiaire
+                    {t("expenses.analytics.profit_margin")}
                   </p>
                 </div>
               </div>
@@ -664,17 +666,17 @@ export function ExpensesPage() {
             {analytics?.profitability && (
               <div className="glass-card" style={{ borderRadius: "var(--radius-xl)", padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 16 }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: "var(--color-secondary)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  Évaluation de la performance
+                  {t("expenses.analytics.perf_eval")}
                 </p>
 
                 {analytics.profitability.status === "excellent" && (
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-tertiary)" }}>verified</span>
                     <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-tertiary)" }}>
-                      🟢 Excellente (&gt;30%)
+                      🟢 {t("expenses.analytics.rating.excellent")}
                     </span>
                     <p style={{ fontSize: 14, color: "var(--color-secondary)", maxWidth: 480, lineHeight: 1.6 }}>
-                      Votre rentabilité est exceptionnelle. Le commerce génère d'excellentes marges, ce qui indique une gestion saine et une activité en pleine croissance.
+                      {t("expenses.analytics.rating.excellent_desc")}
                     </p>
                   </div>
                 )}
@@ -683,10 +685,10 @@ export function ExpensesPage() {
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-primary)" }}>hourglass_empty</span>
                     <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-primary)" }}>
-                      🟡 Modérée (10% - 30%)
+                      🟡 {t("expenses.analytics.rating.moderate")}
                     </span>
                     <p style={{ fontSize: 14, color: "var(--color-secondary)", maxWidth: 480, lineHeight: 1.6 }}>
-                      Votre rentabilité est modérée. L'activité génère des bénéfices réguliers, mais il existe des opportunités d'optimisation des coûts ou de revalorisation des prix.
+                      {t("expenses.analytics.rating.moderate_desc")}
                     </p>
                   </div>
                 )}
@@ -695,10 +697,10 @@ export function ExpensesPage() {
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-error)" }}>warning</span>
                     <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-error)" }}>
-                      🔴 Faible (&lt;10%)
+                      🔴 {t("expenses.analytics.rating.low")}
                     </span>
                     <p style={{ fontSize: 14, color: "var(--color-error)", maxWidth: 480, lineHeight: 1.6 }}>
-                      Attention : votre marge bénéficiaire est faible. Il est fortement recommandé d'examiner et de réduire vos charges d'exploitation ou d'augmenter le panier moyen.
+                      {t("expenses.analytics.rating.low_desc")}
                     </p>
                   </div>
                 )}
@@ -734,7 +736,7 @@ export function ExpensesPage() {
         storeName={settings?.storeName}
         storePhone={settings?.storePhone}
         storeAddress={settings?.storeAddress}
-        rangeLabel={from && to ? `Du ${new Date(from).toLocaleDateString("fr-DZ")} au ${new Date(to).toLocaleDateString("fr-DZ")}` : "Toutes les périodes"}
+        rangeLabel={from && to ? (isRtl ? `من ${new Date(from).toLocaleDateString("ar-DZ")} إلى ${new Date(to).toLocaleDateString("ar-DZ")}` : `Du ${new Date(from).toLocaleDateString("fr-DZ")} au ${new Date(to).toLocaleDateString("fr-DZ")}`) : t("expenses.report.all_periods")}
         expenses={expenses}
         totalExpenses={analytics?.profitability?.expenses ?? 0}
         analytics={analytics}

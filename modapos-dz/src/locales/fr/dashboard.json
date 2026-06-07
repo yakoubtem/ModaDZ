@@ -1,0 +1,68 @@
+{
+  "title": "Tableau de bord",
+  "subtitle": "Aperçu de l'activité commerciale en temps réel",
+  "kpis": {
+    "revenue_today": "Chiffre d'affaires aujourd'hui",
+    "sales_today": "Ventes aujourd'hui",
+    "revenue_month": "Chiffre d'affaires mensuel",
+    "net_profit": "Bénéfice net",
+    "expenses": "Dépenses mensuelles",
+    "products": "Produits en stock",
+    "customers": "Clients enregistrés"
+  },
+  "recent_sales": "Ventes récentes",
+  "low_stock": "Alertes stock faible",
+  "low_stock_desc": "Ces variantes nécessitent un réapprovisionnement rapide.",
+  "top_products": "Top produits",
+  "revenue_chart": "Évolution du chiffre d'affaires",
+  "payments_chart": "Modes de paiement",
+  "expense_alerts": "Alertes budget",
+  "stats_title": "Statistiques Générales",
+  "stats_desc": "Analyse détaillée des performances commerciales",
+  "month_in_progress": "Mois en cours",
+  "active_products": "Produits actifs",
+  "total_registered": "Total enregistrés",
+  "top_products_desc": "Articles générant le plus de revenus",
+  "no_sales": "Aucune vente enregistrée",
+  "qty_sold": "{count} vendus",
+  "debt_widget": {
+    "title": "Créances clients",
+    "recovery_rate": "Taux de recouvrement (mois)",
+    "total_due": "Total dû",
+    "debtors": "Débiteurs"
+  },
+  "alerts_panel": {
+    "title": "Alertes",
+    "low_stock": "Stock faible",
+    "remaining_stock": "Reste {count}",
+    "new_sale": "Nouvelle vente",
+    "all_clear": "Tout est en ordre.",
+    "view_all": "Voir toutes les alertes"
+  },
+  "stats": {
+    "title": "Statistiques",
+    "description": "Analyses et performances de votre boutique.",
+    "period": "Période",
+    "periods": {
+      "7": "7 jours",
+      "30": "30 jours",
+      "90": "90 jours"
+    },
+    "kpis": {
+      "month_revenue": "CA du mois",
+      "avg_ticket": "Ticket moyen",
+      "total_transactions": "Transactions totales",
+      "revenue_today": "CA aujourd'hui",
+      "transactions_count": "{count} transactions",
+      "sales_count": "{count} ventes",
+      "this_month": "Ce mois-ci"
+    },
+    "summary": {
+      "title": "Résumé de la période",
+      "revenue": "Chiffre d'affaires",
+      "sales": "Nombre de ventes",
+      "avg_ticket": "Ticket moyen",
+      "catalog_products": "Produits au catalogue"
+    }
+  }
+}

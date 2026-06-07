@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 import { Badge } from "@/components/ui/Badge";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SaleDetailsModalProps {
   sale: Sale | null;
@@ -16,6 +17,7 @@ interface SaleDetailsModalProps {
 }
 
 export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetailsModalProps) {
+  const { t } = useTranslation();
   const { settings } = useReceiptSettings();
   const { can } = useAuth();
   const [isRefunding, setIsRefunding] = useState(false);
@@ -23,7 +25,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
   if (!sale) return null;
 
   const handleRefund = async () => {
-    if (!confirm("Voulez-vous vraiment rembourser cette vente ? Le stock des articles sera réintégré.")) {
+    if (!confirm(t("sales.details.confirm_refund"))) {
       return;
     }
     setIsRefunding(true);
@@ -37,12 +39,12 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Détails de la vente ${sale.receiptNumber}`}
+      title={t("sales.details.title_number", { number: sale.receiptNumber || "" })}
       size="md"
       footer={
         <div className="flex gap-2 w-full">
           <Button variant="secondary" onClick={onClose} className="flex-1" disabled={isRefunding}>
-            Fermer
+            {t("common.buttons.close")}
           </Button>
           {sale.status === "completed" && onRefund && can("sales.refund") && (
             <Button
@@ -51,7 +53,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
               className="flex-1"
               isLoading={isRefunding}
             >
-              Rembourser
+              {t("sales.details.refund_btn")}
             </Button>
           )}
         </div>
@@ -62,12 +64,12 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
         <div className="flex items-center gap-4 mb-4 px-1 flex-wrap">
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
-              Statut vente
+              {t("sales.details.status_sale")}
             </span>
             {sale.status === "completed" ? (
-              <Badge variant="success">✓ Terminée</Badge>
+              <Badge variant="success">✓ {t("common.status.completed")}</Badge>
             ) : sale.status === "refunded" ? (
-              <Badge variant="danger">Remboursée</Badge>
+              <Badge variant="danger">{t("common.status.refunded")}</Badge>
             ) : (
               <Badge variant="default">{sale.status}</Badge>
             )}
@@ -75,7 +77,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
           <div className="w-px h-8 bg-[var(--color-border)]" />
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
-              Statut paiement
+              {t("sales.details.status_payment")}
             </span>
             <PaymentStatusBadge amountPaid={sale.amountPaid} total={sale.total} />
           </div>
@@ -85,7 +87,7 @@ export function SaleDetailsModal({ sale, isOpen, onClose, onRefund }: SaleDetail
           sale={sale}
           amountPaid={sale.amountPaid}
           onClose={onClose}
-          closeLabel="Fermer"
+          closeLabel={t("common.buttons.close")}
           hideSuccessBanner={true}
           storeName={settings.storeName}
           storePhone={settings.storePhone}

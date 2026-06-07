@@ -8,6 +8,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import type { SaleSummary } from "@/types";
 import { FileText, Eye, FileSearch } from "lucide-react";
 import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const columnHelper = createColumnHelper<SaleSummary>();
 
@@ -16,16 +17,18 @@ interface SaleTableProps {
   onView: (id: number) => void;
 }
 
-const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  cash: "Espèces",
-  card: "Carte",
-  transfer: "Virement",
-};
-
 export function SaleTable({ sales, onView }: SaleTableProps) {
+  const { t, isRtl } = useTranslation();
+
+  const PAYMENT_METHOD_LABELS: Record<string, string> = {
+    cash: t("common.payment_methods.cash"),
+    card: t("common.payment_methods.card"),
+    transfer: t("common.payment_methods.transfer"),
+  };
+
   const columns = [
     columnHelper.accessor("receiptNumber", {
-      header: "N° Reçu",
+      header: t("sales.table.receipt"),
       cell: (info) => {
         const val = info.getValue() || `-`;
         return (
@@ -37,7 +40,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       },
     }),
     columnHelper.accessor("createdAt", {
-      header: "Date",
+      header: t("sales.table.date"),
       cell: (info) => (
         <span style={{ color: "var(--color-secondary)", fontWeight: 500, fontSize: 14 }}>
           {formatDate(info.getValue())}
@@ -46,7 +49,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
     }),
     columnHelper.accessor((row) => row.customer?.name, {
       id: "customerName",
-      header: "Client",
+      header: t("sales.table.customer"),
       cell: (info) => {
         const name = info.getValue();
         return name ? (
@@ -54,20 +57,20 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
             {name}
           </span>
         ) : (
-          <span style={{ color: "var(--color-secondary)", fontStyle: "italic", fontWeight: 400, fontSize: 14 }}>Passager</span>
+          <span style={{ color: "var(--color-secondary)", fontStyle: "italic", fontWeight: 400, fontSize: 14 }}>{t("sales.table.passenger")}</span>
         );
       },
     }),
     columnHelper.accessor("items", {
-      header: "Articles",
+      header: t("sales.table.items"),
       cell: (info) => {
         const items = info.getValue();
         const totalItems = items.reduce((acc, curr) => acc + curr.quantity, 0);
-        return <span style={{ color: "var(--color-secondary)", fontWeight: 500, fontSize: 14 }}>{totalItems} art.</span>;
+        return <span style={{ color: "var(--color-secondary)", fontWeight: 500, fontSize: 14 }}>{totalItems} {t("sales.table.items_unit")}</span>;
       },
     }),
     columnHelper.accessor("total", {
-      header: "Total",
+      header: t("sales.table.total"),
       cell: (info) => (
         <span style={{ fontWeight: 700, color: "var(--color-on-surface)", fontSize: 14, fontVariantNumeric: "tabular-nums" }}>
           {formatCurrency(info.getValue())}
@@ -75,7 +78,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       ),
     }),
     columnHelper.accessor("paymentMethod", {
-      header: "Moyen",
+      header: t("sales.table.payment_method"),
       cell: (info) => {
         const method = info.getValue();
         const label = PAYMENT_METHOD_LABELS[method] || method;
@@ -100,7 +103,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
     }),
     columnHelper.display({
       id: "paymentStatus",
-      header: "Paiement",
+      header: t("sales.table.paid"),
       cell: (info) => (
         <PaymentStatusBadge
           amountPaid={info.row.original.amountPaid}
@@ -110,13 +113,13 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
       ),
     }),
     columnHelper.accessor("status", {
-      header: "Statut",
+      header: t("sales.table.status"),
       cell: (info) => {
         const status = info.getValue();
         const config = status === "completed"
-          ? { bg: "var(--color-success-subtle, rgba(77,139,139,0.08))", color: "var(--color-success, var(--color-tertiary))", border: "rgba(77,139,139,0.2)", label: "Complétée" }
+          ? { bg: "var(--color-success-subtle, rgba(77,139,139,0.08))", color: "var(--color-success, var(--color-tertiary))", border: "rgba(77,139,139,0.2)", label: t("common.status.completed") }
           : status === "refunded"
-          ? { bg: "var(--color-danger-subtle, rgba(186,26,26,0.06))", color: "var(--color-danger, var(--color-error))", border: "rgba(186,26,26,0.18)", label: "Remboursée" }
+          ? { bg: "var(--color-danger-subtle, rgba(186,26,26,0.06))", color: "var(--color-danger, var(--color-error))", border: "rgba(186,26,26,0.18)", label: t("common.status.refunded") }
           : { bg: "rgba(208,197,175,0.1)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: status };
         return (
           <span
@@ -146,7 +149,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
           <button
             onClick={() => onView(info.row.original.id)}
-            title="Voir les détails"
+            title={t("sales.details.title")}
             style={{
               width: 36,
               height: 36,
@@ -186,12 +189,12 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
                 key={headerGroup.id}
                 style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}
               >
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map((header, idx) => (
                   <th
                     key={header.id}
                     style={{
                       padding: "14px 20px",
-                      textAlign: "left",
+                      textAlign: idx === 8 ? (isRtl ? "left" : "right") : (isRtl ? "right" : "left"),
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -227,7 +230,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
                   >
                     <FileSearch style={{ width: 48, height: 48, color: "var(--color-outline)", opacity: 0.5 }} />
                     <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-                      Aucune vente ne correspond à vos critères de recherche.
+                      {t("sales.table.no_sales_found")}
                     </p>
                   </div>
                 </td>
@@ -250,6 +253,7 @@ export function SaleTable({ sales, onView }: SaleTableProps) {
                         padding: "14px 20px",
                         whiteSpace: "nowrap",
                         verticalAlign: "middle",
+                        textAlign: isRtl ? "right" : "left"
                       }}
                     >
                       {flexRender(

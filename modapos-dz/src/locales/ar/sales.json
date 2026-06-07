@@ -1,0 +1,51 @@
+{
+  "title": "المبيعات",
+  "search_placeholder": "البحث عن طريق رقم الإيصال أو اسم العميل...",
+  "description": "سجل بجميع المعاملات الخاصة بك.",
+  "filters": {
+    "payment_method": "الدفع",
+    "status": "الحالة",
+    "date_from": "من",
+    "date_to": "إلى",
+    "all_payments": "كل طرق الدفع",
+    "all_statuses": "كل الحالات",
+    "period": "الفترة"
+  },
+  "table": {
+    "list_title": "قائمة المعاملات",
+    "transaction_count": "{count} معاملة( معاملات)",
+    "receipt": "رقم الإيصال",
+    "cashier": "أمين الصندوق",
+    "customer": "العميل",
+    "total": "المجموع",
+    "paid": "الدفع",
+    "payment_method": "طريقة الدفع",
+    "date": "التاريخ",
+    "status": "الحالة",
+    "items": "المنتجات",
+    "items_unit": "وحدة",
+    "passenger": "زبون عابر",
+    "no_sales_found": "لم يتم العثور على أي بيع يطابق معايير البحث الخاصة بك.",
+    "display_info": "عرض {from} إلى {to} من أصل {total} عملية بيع"
+  },
+  "details": {
+    "title": "تفاصيل البيع",
+    "title_number": "تفاصيل البيع رقم {number}",
+    "items": "المنتجات",
+    "qty": "الكمية",
+    "price": "سعر الوحدة",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "total": "المجموع الإجمالي",
+    "refund_btn": "إرجاع / استرداد",
+    "status_sale": "حالة البيع",
+    "status_payment": "حالة الدفع",
+    "confirm_refund": "هل تريد حقاً استرداد قيمة هذا البيع؟ سيتم إعادة مخزون المنتجات."
+  },
+  "toasts": {
+    "load_error": "تعذر تحميل المبيعات",
+    "detail_error": "تعذر تحميل التفاصيل",
+    "refund_success": "تم إرجاع البيع بنجاح. تم استعادة المخزون.",
+    "refund_error": "خطأ أثناء عملية الاسترداد"
+  }
+}

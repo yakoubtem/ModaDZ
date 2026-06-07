@@ -1256,3 +1256,60 @@ select {
     display: block !important;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   RTL OVERRIDES
+   ─────────────────────────────────────────────────────────────────── */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(208, 197, 175, 0.3);
+}
+
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: var(--sidebar-w);
+  max-width: calc(100vw - var(--sidebar-w));
+}
+
+[dir="rtl"] .cart-panel {
+  border-left: none;
+  border-right: 1px solid rgba(208, 197, 175, 0.3);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+}
+
+[dir="rtl"] .table-base {
+  text-align: right;
+}
+
+[dir="rtl"] .alert-card-gold {
+  border-left: none;
+  border-right: 4px solid var(--color-primary-container);
+}
+
+[dir="rtl"] .alert-card-error {
+  border-left: none;
+  border-right: 4px solid var(--color-error);
+}
+
+[dir="rtl"] .alert-card-teal {
+  border-left: none;
+  border-right: 4px solid var(--color-tertiary);
+}
+
+[dir="rtl"] .nav-item {
+  text-align: right;
+}
+
+[dir="rtl"] .top-bar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .top-bar div {
+  text-align: right;
+}

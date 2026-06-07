@@ -1,0 +1,60 @@
+{
+  "title": "Gestion des Clients",
+  "add_customer": "Nouveau client",
+  "subtitle": "Consultez l'historique d'achat, gérez les informations de contact et suivez les créances de votre clientèle VIP.",
+  "debts_count": "Créances",
+  "search_placeholder": "Rechercher par nom, téléphone, email...",
+  "search_placeholder_long": "Rechercher un client par nom, téléphone ou email...",
+  "total_active": "Total Clients Actifs",
+  "table": {
+    "client": "Client",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "email": "Email",
+    "orders_count": "Commandes",
+    "total_spent": "Total dépensé",
+    "current_debt": "Crédit en attente",
+    "last_purchase": "Dernier achat",
+    "no_customer_found": "Aucun client trouvé",
+    "display_info": "Affichage de {from}–{to} sur {total} clients"
+  },
+  "form": {
+    "add_title": "Nouveau client",
+    "edit_title": "Modifier — {name}",
+    "add_description": "Ajoutez un nouveau client à votre base.",
+    "edit_description": "Modifiez les informations du client.",
+    "create_btn": "Créer le client",
+    "name": "Nom complet",
+    "name_placeholder": "ex: Ahmed Belkacem",
+    "error_name_required": "Le nom est obligatoire",
+    "error_name_min": "Minimum 2 caractères",
+    "phone": "Téléphone",
+    "phone_placeholder": "ex: 0555 123 456",
+    "phone_hint": "Utilisé pour la recherche rapide en caisse",
+    "email": "Email",
+    "email_placeholder": "ex: client@email.com",
+    "notes": "Notes",
+    "notes_placeholder": "Informations supplémentaires…"
+  },
+  "details": {
+    "title": "Fiche Client",
+    "subtitle": "Profil client & historique des achats",
+    "orders": "Historique des achats",
+    "no_sales": "Aucun achat enregistré",
+    "statistics": "Statistiques client",
+    "orders_count": "Commandes",
+    "total_spent": "Total dépensé",
+    "current_debt": "Crédit en attente",
+    "items_count": "{count} article(s)"
+  },
+  "toasts": {
+    "load_error": "Impossible de charger les clients",
+    "profile_error": "Impossible de charger le profil",
+    "create_success": "Client créé avec succès",
+    "create_error": "Erreur lors de la création",
+    "update_success": "Client mis à jour",
+    "update_error": "Erreur lors de la mise à jour",
+    "delete_success": "Client supprimé",
+    "delete_error": "Erreur lors de la suppression"
+  }
+}

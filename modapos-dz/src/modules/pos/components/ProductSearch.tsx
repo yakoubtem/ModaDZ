@@ -1,4 +1,5 @@
 import { useRef, useEffect, type KeyboardEvent } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ProductSearchProps {
   query: string;
@@ -9,6 +10,7 @@ interface ProductSearchProps {
 
 export function ProductSearch({ query, onChange, onClear, onEnter }: ProductSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t, isRtl } = useTranslation();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -19,6 +21,9 @@ export function ProductSearch({ query, onChange, onClear, onEnter }: ProductSear
     if (e.key === "Escape") onClear();
   };
 
+  const paddingLeft = isRtl ? "16px" : "48px";
+  const paddingRight = isRtl ? "48px" : "16px";
+
   return (
     <input
       ref={inputRef}
@@ -27,7 +32,7 @@ export function ProductSearch({ query, onChange, onClear, onEnter }: ProductSear
       value={query}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={handleKeyDown}
-      placeholder="Recherche produit, code-barres (F1)"
+      placeholder={t("pos.search_placeholder")}
       autoComplete="off"
       spellCheck={false}
       style={{
@@ -35,11 +40,15 @@ export function ProductSearch({ query, onChange, onClear, onEnter }: ProductSear
         background: "#f2ede4",
         border: "none",
         borderRadius: "var(--radius-lg)",
-        padding: "16px 16px 16px 48px",
+        paddingTop: "16px",
+        paddingBottom: "16px",
+        paddingLeft,
+        paddingRight,
         fontSize: "var(--text-body-md)",
         fontFamily: "var(--font-body)",
         color: "var(--color-on-surface)",
         outline: "none",
+        textAlign: isRtl ? "right" : "left",
       }}
     />
   );

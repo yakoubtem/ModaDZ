@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import type { ExpenseCategoryRecord, ExpenseSort } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseFiltersProps {
   search: string;
@@ -25,13 +26,6 @@ interface ExpenseFiltersProps {
   total: number;
 }
 
-const SORT_OPTIONS: { value: ExpenseSort; label: string }[] = [
-  { value: "newest", label: "Plus récent" },
-  { value: "oldest", label: "Plus ancien" },
-  { value: "highest", label: "Montant ↓" },
-  { value: "lowest", label: "Montant ↑" },
-];
-
 export function ExpenseFilters({
   search,
   category,
@@ -54,7 +48,15 @@ export function ExpenseFilters({
   onReset,
   total,
 }: ExpenseFiltersProps) {
+  const { t } = useTranslation();
   const hasActiveFilters = category || from || to || minAmount || maxAmount || search || supplier || paymentMethod;
+
+  const sortOptions: { value: ExpenseSort; label: string }[] = [
+    { value: "newest", label: t("expenses.filters.sort.newest") },
+    { value: "oldest", label: t("expenses.filters.sort.oldest") },
+    { value: "highest", label: t("expenses.filters.sort.highest") },
+    { value: "lowest", label: t("expenses.filters.sort.lowest") },
+  ];
 
   return (
     <div className="bg-[var(--color-bg-elevated)]/80 backdrop-blur border border-[var(--color-border)] rounded-[var(--radius-xl)] p-6 space-y-4">
@@ -62,14 +64,14 @@ export function ExpenseFilters({
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex-1 min-w-[220px]">
           <Input
-            placeholder="Rechercher une dépense..."
+            placeholder={t("expenses.filters.search_placeholder")}
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             leftIcon={<span className="material-symbols-outlined text-sm">search</span>}
           />
         </div>
         <div className="flex gap-1 bg-[var(--color-surface-container-high)] rounded-[var(--radius-lg)] p-1">
-          {SORT_OPTIONS.map((opt) => (
+          {sortOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => onSort(opt.value)}
@@ -88,7 +90,7 @@ export function ExpenseFilters({
       {/* Row 2: Filters */}
       <div className="grid grid-cols-1 xl:grid-cols-6 gap-3">
         <Select value={category} onChange={(e) => onCategory(e.target.value)}>
-          <option value="">Toutes catégories</option>
+          <option value="">{t("expenses.filters.all_categories")}</option>
           {categories.filter((c) => !c.isArchived).map((c) => (
             <option key={c.id} value={c.name}>
               {c.name}
@@ -97,13 +99,13 @@ export function ExpenseFilters({
         </Select>
 
         <Input
-          placeholder="Fournisseur"
+          placeholder={t("expenses.filters.supplier")}
           value={supplier}
           onChange={(e) => onSupplier(e.target.value)}
         />
 
         <Select value={paymentMethod} onChange={(e) => onPaymentMethod(e.target.value)}>
-          <option value="">Tous paiements</option>
+          <option value="">{t("expenses.filters.all_payments")}</option>
           {paymentMethods.map((m) => (
             <option key={m} value={m}>
               {m}
@@ -117,13 +119,13 @@ export function ExpenseFilters({
         <div className="grid grid-cols-2 gap-2">
           <Input
             type="number"
-            placeholder="Min (DA)"
+            placeholder={t("expenses.filters.min_amount")}
             value={minAmount}
             onChange={(e) => onAmountRange(e.target.value, maxAmount)}
           />
           <Input
             type="number"
-            placeholder="Max (DA)"
+            placeholder={t("expenses.filters.max_amount")}
             value={maxAmount}
             onChange={(e) => onAmountRange(minAmount, e.target.value)}
           />
@@ -132,12 +134,12 @@ export function ExpenseFilters({
 
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold tracking-wide text-[var(--color-text-secondary)]">
-          {total} resultat{total !== 1 ? "s" : ""}
+          {t(total === 1 ? "expenses.filters.results" : "expenses.filters.results_plural", { count: total })}
         </span>
         {hasActiveFilters && (
           <button onClick={onReset} className="btn-border text-xs px-3 py-1.5">
             <span className="material-symbols-outlined text-sm">close</span>
-            Reinitialiser
+            {t("expenses.filters.reset")}
           </button>
         )}
       </div>

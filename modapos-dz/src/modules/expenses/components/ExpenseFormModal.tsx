@@ -10,6 +10,7 @@ import { EXPENSE_PAYMENT_METHODS } from "@/types";
 import type { Expense, ExpenseFormData } from "@/types";
 import type { ExpenseCategoryRecord } from "@/types";
 import { useIPC } from "@/hooks/useIPC";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseFormModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface ExpenseFormModalProps {
 export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categories }: ExpenseFormModalProps) {
   const isEdit = !!expense;
   const api = useIPC();
+  const { t } = useTranslation();
   const initialReceiptRef = useRef<string | undefined>(undefined);
   const [didSubmit, setDidSubmit] = useState(false);
 
@@ -110,14 +112,14 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEdit ? "Modifier la dépense" : "Nouvelle dépense"}
-      description={isEdit ? "Modifiez les détails de cette dépense." : "Enregistrez une nouvelle dépense."}
+      title={isEdit ? t("expenses.form.edit_title") : t("expenses.form.title")}
+      description={isEdit ? t("expenses.form.edit_title_desc") : t("expenses.form.title_desc")}
       size="xl"
       scrollable
       footer={
         <>
           <Button variant="ghost" onClick={handleClose} disabled={isSubmitting}>
-            Annuler
+            {t("common.buttons.cancel")}
           </Button>
           <Button
             variant="primary"
@@ -129,7 +131,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
                 progress_activity
               </span>
             ) : null}
-            {isEdit ? "Enregistrer" : "Ajouter"}
+            {isEdit ? t("common.buttons.save") : t("common.buttons.add")}
           </Button>
         </>
       }
@@ -138,29 +140,29 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <div style={{ gridColumn: "span 2" }}>
             <Input
-              label="Titre *"
-              placeholder="Ex: Loyer du mois"
+              label={t("expenses.form.expense_title")}
+              placeholder={t("expenses.form.expense_title_placeholder")}
               error={errors.title?.message}
-              {...register("title", { required: "Le titre est requis" })}
+              {...register("title", { required: t("expenses.form.validation.title_required") })}
             />
           </div>
           <Input
-            label="Montant (DA) *"
+            label={t("expenses.form.amount")}
             type="number"
             step="0.01"
             error={errors.amount?.message}
             {...register("amount", {
-              required: "Le montant est requis",
+              required: t("expenses.form.validation.amount_required"),
               valueAsNumber: true,
-              validate: (v) => v > 0 || "Le montant doit etre superieur a 0",
+              validate: (v) => v > 0 || t("expenses.form.validation.amount_positive"),
             })}
           />
           <Select
-            label="Categorie *"
+            label={t("expenses.form.category")}
             error={errors.category?.message}
-            {...register("category", { required: "La categorie est requise" })}
+            {...register("category", { required: t("expenses.form.validation.category_required") })}
           >
-            <option value="">Selectionner...</option>
+            <option value="">{t("expenses.form.category_select")}</option>
             {categories.filter((c) => !c.isArchived).map((c) => (
               <option key={c.id} value={c.name}>
                 {c.name}
@@ -168,12 +170,12 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
             ))}
           </Select>
           <Input
-            label="Fournisseur"
-            placeholder="Ex: Sonelgaz"
+            label={t("expenses.form.supplier")}
+            placeholder={t("expenses.form.supplier_placeholder")}
             {...register("supplier")}
           />
-          <Select label="Mode de paiement" {...register("paymentMethod")}>
-            <option value="">Aucun</option>
+          <Select label={t("expenses.form.payment_method")} {...register("paymentMethod")}>
+            <option value="">{t("expenses.form.payment_method_none")}</option>
             {EXPENSE_PAYMENT_METHODS.map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -182,17 +184,17 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, expense, categorie
           </Select>
           <div style={{ gridColumn: "span 2" }}>
             <Input
-              label="Date *"
+              label={t("expenses.form.date")}
               type="date"
               error={errors.expenseDate?.message}
-              {...register("expenseDate", { required: "La date est requise" })}
+              {...register("expenseDate", { required: t("expenses.form.validation.date_required") })}
             />
           </div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-          <Textarea label="Description" rows={3} {...register("description")} />
-          <Textarea label="Notes" rows={3} {...register("notes")} />
+          <Textarea label={t("expenses.form.description")} rows={3} {...register("description")} />
+          <Textarea label={t("expenses.form.notes")} rows={3} {...register("notes")} />
         </div>
 
         <ExpenseReceiptUpload

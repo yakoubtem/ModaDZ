@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useUsers } from "./hooks/useUsers";
 import { UserFormModal } from "./components/UserFormModal";
 import type { User } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function UsersSettings() {
   const { users, isLoading, createUser, updateUser, deleteUser } = useUsers();
+  const { t, isRtl } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
@@ -35,15 +37,15 @@ export function UsersSettings() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}>
-            Utilisateurs et permissions
+            {t("users.header_title")}
           </h3>
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", marginTop: 4 }}>
-            Gérez les accès à l'application.
+            {t("users.header_desc")}
           </p>
         </div>
         <button className="btn-primary" onClick={handleAdd}>
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>person_add</span>
-          Ajouter un utilisateur
+          {t("users.add_user")}
         </button>
       </div>
 
@@ -70,19 +72,24 @@ export function UsersSettings() {
               group
             </span>
             <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-              Aucun utilisateur trouvé.
+              {t("users.empty_state")}
             </p>
           </div>
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
             <thead>
               <tr style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
-                {["Nom", "Rôle", "Date de création", "Actions"].map((h) => (
+                {[
+                  { key: "name", label: t("users.table.name") },
+                  { key: "role", label: t("users.table.role") },
+                  { key: "created", label: t("users.table.created_at") },
+                  { key: "actions", label: t("users.table.actions"), alignRight: true }
+                ].map((h) => (
                   <th
-                    key={h}
+                    key={h.key}
                     style={{
                       padding: "14px 20px",
-                      textAlign: "left",
+                      textAlign: h.alignRight ? (isRtl ? "left" : "right") : (isRtl ? "right" : "left"),
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -91,7 +98,7 @@ export function UsersSettings() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {h}
+                    {h.label}
                   </th>
                 ))}
               </tr>
@@ -108,18 +115,18 @@ export function UsersSettings() {
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   {/* Name */}
-                  <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500 }}>
+                  <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500, textAlign: isRtl ? "right" : "left" }}>
                     {user.name}
                   </td>
 
                   {/* Role badge */}
-                  <td style={{ padding: "14px 20px" }}>
+                  <td style={{ padding: "14px 20px", textAlign: isRtl ? "right" : "left" }}>
                     {(() => {
                       const config = user.role === "admin"
-                        ? { bg: "rgba(212,175,55,0.12)", color: "var(--color-primary)", border: "rgba(212,175,55,0.25)", label: "Administrateur" }
+                        ? { bg: "rgba(212,175,55,0.12)", color: "var(--color-primary)", border: "rgba(212,175,55,0.25)", label: t("common.roles.admin") }
                         : user.role === "manager"
-                        ? { bg: "rgba(77,139,139,0.12)", color: "var(--color-tertiary)", border: "rgba(77,139,139,0.25)", label: "Manager" }
-                        : { bg: "rgba(208,197,175,0.15)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: "Caissier" };
+                        ? { bg: "rgba(77,139,139,0.12)", color: "var(--color-tertiary)", border: "rgba(77,139,139,0.25)", label: t("common.roles.manager") }
+                        : { bg: "rgba(208,197,175,0.15)", color: "var(--color-secondary)", border: "rgba(208,197,175,0.3)", label: t("common.roles.cashier") };
                       return (
                         <span
                           style={{
@@ -141,20 +148,20 @@ export function UsersSettings() {
                   </td>
 
                   {/* Created at */}
-                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)" }}>
-                    {new Date(user.createdAt).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}
+                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)", textAlign: isRtl ? "right" : "left" }}>
+                    {new Date(user.createdAt).toLocaleDateString(isRtl ? "ar-DZ" : "fr-FR", { year: "numeric", month: "long", day: "numeric" })}
                   </td>
 
                   {/* Actions */}
-                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                  <td style={{ padding: "14px 20px", textAlign: isRtl ? "left" : "right" }}>
                     {deleteConfirmId === user.id ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: isRtl ? "flex-start" : "flex-end" }}>
                         <button
                           onClick={() => { deleteUser(user.id); setDeleteConfirmId(null); }}
                           className="btn-primary"
                           style={{ padding: "6px 14px", fontSize: 12, height: 36, background: "var(--color-error)" }}
                         >
-                          Oui
+                          {t("common.buttons.yes")}
                         </button>
                         <button
                           onClick={() => setDeleteConfirmId(null)}
@@ -168,18 +175,18 @@ export function UsersSettings() {
                             fontSize: 12,
                           }}
                         >
-                          Non
+                          {t("common.buttons.no")}
                         </button>
                       </div>
                     ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: isRtl ? "flex-start" : "flex-end" }}>
                         <button
                           onClick={() => handleEdit(user)}
                           className="btn-border"
                           style={{ padding: "6px 14px", fontSize: 12, height: 36 }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
-                          Modifier
+                          {t("common.buttons.edit")}
                         </button>
                         <button
                           onClick={() => setDeleteConfirmId(user.id)}
@@ -202,7 +209,7 @@ export function UsersSettings() {
                           onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
-                          Supprimer
+                          {t("common.buttons.delete")}
                         </button>
                       </div>
                     )}
@@ -217,8 +224,8 @@ export function UsersSettings() {
       {/* Footer count */}
       {users.length > 0 && (
         <div style={{ padding: "0 4px" }}>
-          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            {users.length} utilisateur{users.length !== 1 ? "s" : ""} au total
+          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", textAlign: isRtl ? "right" : "left" }}>
+            {t(users.length === 1 ? "users.total_users" : "users.total_users_plural", { count: users.length })}
           </p>
         </div>
       )}

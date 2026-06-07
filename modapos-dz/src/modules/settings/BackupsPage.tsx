@@ -1,6 +1,9 @@
 import { BackupSettings } from "./components/BackupSettings";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function BackupsPage() {
+  const { t, isRtl } = useTranslation();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {/* Custom top bar */}
@@ -17,15 +20,18 @@ export function BackupsPage() {
           alignItems: "center",
           padding: "var(--space-gutter) var(--space-container)",
           borderBottom: "1px solid rgba(208,197,175,0.2)",
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--color-secondary)" }}>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
-            Administration
+            {t("settings.breadcrumbs.admin")}
           </span>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            {isRtl ? "chevron_left" : "chevron_right"}
+          </span>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase", color: "var(--color-on-surface)" }}>
-            Sauvegardes
+            {t("common.sidebar.backups")}
           </span>
         </div>
       </header>
@@ -41,7 +47,7 @@ export function BackupsPage() {
           flexDirection: "column",
         }}
       >
-        <div style={{ marginBottom: "var(--space-section)" }}>
+        <div style={{ marginBottom: "var(--space-section)", textAlign: isRtl ? "right" : "left" }}>
           <h2
             style={{
               fontFamily: "var(--font-display)",
@@ -51,10 +57,10 @@ export function BackupsPage() {
               marginBottom: "8px",
             }}
           >
-            Sauvegardes et Restauration
+            {t("settings.backups.title")}
           </h2>
           <p style={{ fontSize: "var(--text-body-lg)", color: "var(--color-on-surface-variant)", maxWidth: 640, lineHeight: "var(--lh-body-lg)" }}>
-            Gérez la sécurité de vos données en créant, exportant ou restaurant des sauvegardes du système.
+            {t("settings.backups.desc")}
           </p>
         </div>
 

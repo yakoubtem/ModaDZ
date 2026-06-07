@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSettings } from "../hooks/useSettings";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useAuth } from "@/modules/auth/AuthContext";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { Select } from "@/components/ui/Select";
 import { SkeletonFormSection } from "@/components/ui/Skeleton";
 import { toastSuccess, toastError } from "@/components/ui/toast";
 
 export function GeneralSettings() {
   const { settings, isLoading, updateSettings } = useSettings();
+  const { t, language, changeLanguage, isRtl } = useTranslation();
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     storeName: "",
     storePhone: "",
@@ -34,9 +40,31 @@ export function GeneralSettings() {
     const success = await updateSettings(formData);
     setIsSaving(false);
     if (success) {
-      toastSuccess("Paramètres enregistrés", "Les informations du magasin ont été mises à jour.");
+      toastSuccess(
+        t("settings.alerts.success_title"),
+        t("settings.alerts.success_desc")
+      );
     } else {
-      toastError("Erreur lors de l'enregistrement", "Veuillez réessayer ou vérifier vos permissions.");
+      toastError(
+        t("settings.alerts.error_title"),
+        t("settings.alerts.error_desc")
+      );
+    }
+  };
+
+  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as "fr" | "ar";
+    const success = await changeLanguage(newLang, user?.id);
+    if (success) {
+      toastSuccess(
+        newLang === "fr" ? "Langue mise à jour" : "تم تحديث اللغة",
+        newLang === "fr" ? "L'interface est maintenant en français." : "تم تغيير لغة الواجهة إلى العربية."
+      );
+    } else {
+      toastError(
+        newLang === "fr" ? "Erreur" : "خطأ",
+        newLang === "fr" ? "Échec du changement de langue" : "فشل تغيير اللغة"
+      );
     }
   };
 
@@ -51,7 +79,7 @@ export function GeneralSettings() {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Store information section */}
+      {/* Language selection section */}
       <div
         style={{
           background: "var(--color-surface-container-low)",
@@ -61,6 +89,7 @@ export function GeneralSettings() {
           display: "flex",
           flexDirection: "column",
           gap: 20,
+          textAlign: isRtl ? "right" : "left",
         }}
       >
         <div>
@@ -73,10 +102,51 @@ export function GeneralSettings() {
               marginBottom: 4,
             }}
           >
-            Informations du magasin
+            {t("settings.language_section.title")}
           </h3>
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            Ces informations apparaîtront sur les tickets de caisse imprimés.
+            {t("settings.language_section.desc")}
+          </p>
+        </div>
+        <div style={{ maxWidth: 300, alignSelf: isRtl ? "flex-end" : "flex-start", width: "100%" }}>
+          <Select
+            label={t("settings.language_section.select_label")}
+            value={language}
+            onChange={handleLanguageChange}
+          >
+            <option value="fr">{t("settings.language_section.fr_option")}</option>
+            <option value="ar">{t("settings.language_section.ar_option")}</option>
+          </Select>
+        </div>
+      </div>
+
+      {/* Store information section */}
+      <div
+        style={{
+          background: "var(--color-surface-container-low)",
+          padding: 28,
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid rgba(208,197,175,0.3)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 20,
+          textAlign: isRtl ? "right" : "left",
+        }}
+      >
+        <div>
+          <h3
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-display)",
+              marginBottom: 4,
+            }}
+          >
+            {t("settings.store_info.title")}
+          </h3>
+          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+            {t("settings.store_info.desc")}
           </p>
         </div>
         <div
@@ -87,7 +157,7 @@ export function GeneralSettings() {
           }}
         >
           <Input
-            label="Nom du magasin"
+            label={t("settings.store_info.name")}
             value={formData.storeName}
             onChange={(e) =>
               setFormData({ ...formData, storeName: e.target.value })
@@ -95,7 +165,7 @@ export function GeneralSettings() {
             placeholder="ex. ModaDZ"
           />
           <Input
-            label="Téléphone"
+            label={t("settings.store_info.phone")}
             value={formData.storePhone}
             onChange={(e) =>
               setFormData({ ...formData, storePhone: e.target.value })
@@ -104,12 +174,12 @@ export function GeneralSettings() {
           />
         </div>
         <Textarea
-          label="Adresse"
+          label={t("settings.store_info.address")}
           value={formData.storeAddress}
           onChange={(e) =>
             setFormData({ ...formData, storeAddress: e.target.value })
           }
-          placeholder="ex. 12 Rue Didouche Mourad, Alger"
+          placeholder={isRtl ? "مثال: 12 شارع ديدوش مراد، الجزائر" : "ex. 12 Rue Didouche Mourad, Alger"}
           rows={2}
         />
       </div>
@@ -124,6 +194,7 @@ export function GeneralSettings() {
           display: "flex",
           flexDirection: "column",
           gap: 20,
+          textAlign: isRtl ? "right" : "left",
         }}
       >
         <h3
@@ -134,15 +205,15 @@ export function GeneralSettings() {
             fontFamily: "var(--font-display)",
           }}
         >
-          Paramètres des tickets
+          {t("settings.receipt.title")}
         </h3>
         <Textarea
-          label="Message de pied de page"
+          label={t("settings.receipt.footer")}
           value={formData.receiptFooter}
           onChange={(e) =>
             setFormData({ ...formData, receiptFooter: e.target.value })
           }
-          placeholder="ex. Merci de votre visite ! Retours acceptés sous 7 jours."
+          placeholder={isRtl ? "مثال: شكراً لزيارتكم! تقبل المرتجعات خلال 7 أيام." : "ex. Merci de votre visite ! Retours acceptés sous 7 jours."}
           rows={3}
         />
       </div>
@@ -157,6 +228,7 @@ export function GeneralSettings() {
           display: "flex",
           flexDirection: "column",
           gap: 20,
+          textAlign: isRtl ? "right" : "left",
         }}
       >
         <div>
@@ -169,14 +241,14 @@ export function GeneralSettings() {
               marginBottom: 4,
             }}
           >
-            Budget dépenses
+            {t("settings.budget.title")}
           </h3>
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            Utilisé pour les alertes de dépassement mensuel.
+            {t("settings.budget.desc")}
           </p>
         </div>
         <Input
-          label="Budget mensuel (DZD)"
+          label={t("settings.budget.monthly")}
           type="number"
           min={0}
           value={formData.expensesMonthlyBudget}
@@ -188,7 +260,7 @@ export function GeneralSettings() {
       </div>
 
       {/* Submit */}
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: isRtl ? "flex-start" : "flex-end" }}>
         <button
           type="submit"
           className="btn-primary"
@@ -198,12 +270,12 @@ export function GeneralSettings() {
           {isSaving ? (
             <>
               <span className="material-symbols-outlined" style={{ fontSize: 18, animation: "spin 1s linear infinite" }}>progress_activity</span>
-              Enregistrement…
+              {t("common.buttons.save")}...
             </>
           ) : (
             <>
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
-              Enregistrer
+              {t("common.buttons.save")}
             </>
           )}
         </button>

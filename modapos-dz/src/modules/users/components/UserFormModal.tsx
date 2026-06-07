@@ -13,6 +13,7 @@ import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Props {
   user?: User;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function UserFormModal({ user, onClose, onSave }: Props) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -45,15 +47,13 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
     e.preventDefault();
 
     if (!formData.name)
-      return alert("Le nom est requis.");
+      return alert(t("users.form.validation.name_required"));
 
     if (!formData.username)
-      return alert("Le nom d'utilisateur est requis.");
+      return alert(t("users.form.validation.username_required"));
 
     if (!user && !formData.password)
-      return alert(
-        "Le mot de passe est requis pour un nouvel utilisateur."
-      );
+      return alert(t("users.form.validation.password_required"));
 
     setIsSubmitting(true);
 
@@ -105,16 +105,15 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
               <div className="flex items-center gap-2">
                 <h2 className="text-[22px] font-semibold tracking-tight text-white">
                   {user
-                    ? "Modifier l'utilisateur"
-                    : "Nouvel utilisateur"}
+                    ? t("users.form.edit_title")
+                    : t("users.form.add_title")}
                 </h2>
 
                 <Sparkles className="h-4 w-4 text-amber-300" />
               </div>
 
               <p className="mt-1 text-sm leading-relaxed text-zinc-400">
-                Configurez les informations d’accès et le rôle
-                de cet utilisateur dans le système ModaDZ.
+                {t("users.form.subtitle")}
               </p>
             </div>
           </div>
@@ -139,13 +138,13 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
                 <User2 className="h-4 w-4 text-amber-300" />
 
                 <p className="text-sm font-medium text-zinc-200">
-                  Informations personnelles
+                  {t("users.form.personal_info")}
                 </p>
               </div>
 
               <Input
-                label="Nom complet"
-                placeholder="Ex: Ahmed Benyahia"
+                label={t("users.form.name")}
+                placeholder={t("users.form.name_placeholder")}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({
@@ -169,14 +168,14 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
                 <KeyRound className="h-4 w-4 text-amber-300" />
 
                 <p className="text-sm font-medium text-zinc-200">
-                  Authentification
+                  {t("users.form.auth")}
                 </p>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <Input
-                  label="Nom d'utilisateur"
-                  placeholder="Ex: yakoub_admin"
+                  label={t("users.form.username")}
+                  placeholder={t("users.form.username_placeholder")}
                   value={formData.username}
                   onChange={(e) =>
                     setFormData({
@@ -190,19 +189,19 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
                 <Input
                   label={
                     user
-                      ? "Nouveau mot de passe"
-                      : "Mot de passe"
+                      ? t("users.form.password_new")
+                      : t("users.form.password")
                   }
                   hint={
                     user
-                      ? "Laissez vide pour conserver le mot de passe actuel."
+                      ? t("users.form.password_hint")
                       : undefined
                   }
                   type="password"
                   placeholder={
                     user
-                      ? "••••••••"
-                      : "Créer un mot de passe sécurisé"
+                      ? t("users.form.password_placeholder_edit")
+                      : t("users.form.password_placeholder")
                   }
                   value={formData.password}
                   onChange={(e) =>
@@ -228,12 +227,12 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
               <ShieldCheck className="h-4 w-4 text-amber-300" />
 
               <p className="text-sm font-medium text-zinc-200">
-                Permissions & rôle
+                {t("users.form.permissions")}
               </p>
             </div>
 
             <Select
-              label="Rôle utilisateur"
+              label={t("users.form.role")}
               value={formData.role}
               onChange={(e) =>
                 setFormData({
@@ -243,23 +242,23 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
               }
             >
               <option value="cashier">
-                Caissier — accès POS et clients
+                {t("users.form.role_cashier_desc")}
               </option>
 
               <option value="manager">
-                Manager — gestion boutique
+                {t("users.form.role_manager_desc")}
               </option>
 
               <option value="admin">
-                Administrateur — accès complet
+                {t("users.form.role_admin_desc")}
               </option>
             </Select>
 
             <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-3">
               <p className="text-xs leading-relaxed text-zinc-400">
-                {formData.role === "admin" && "Les administrateurs ont un accès complet au système, aux utilisateurs, paramètres et sauvegardes."}
-                {formData.role === "manager" && "Les managers gèrent le catalogue, les stocks, les dettes et les dépenses, mais n'ont pas accès à la configuration système."}
-                {formData.role === "cashier" && "Les caissiers sont limités aux ventes journalières (POS), à la sélection des clients et à la réception des paiements."}
+                {formData.role === "admin" && t("users.form.admin_role_details")}
+                {formData.role === "manager" && t("users.form.manager_role_details")}
+                {formData.role === "cashier" && t("users.form.cashier_role_details")}
               </p>
             </div>
           </div>
@@ -274,7 +273,7 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
           disabled={isSubmitting}
           className="min-w-[120px]"
         >
-          Annuler
+          {t("common.buttons.cancel")}
         </Button>
 
         <Button
@@ -287,14 +286,14 @@ export function UserFormModal({ user, onClose, onSave }: Props) {
           )}
         >
           {isSubmitting
-            ? "Enregistrement..."
+            ? t("users.form.saving")
             : user
-              ? "Mettre à jour"
-              : "Créer l'utilisateur"}
+              ? t("users.form.update_btn")
+              : t("users.form.create_btn")}
         </Button>
       </div>
     </form>
-      </div >
-    </Modal >
+      </div>
+    </Modal>
   );
 }

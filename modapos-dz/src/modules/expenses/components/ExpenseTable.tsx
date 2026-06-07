@@ -4,6 +4,7 @@ import type { Expense } from "@/types";
 import { useIPC } from "@/hooks/useIPC";
 import { toast } from "sonner";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -27,6 +28,7 @@ export function ExpenseTable({
   onPageChange,
 }: ExpenseTableProps) {
   const { can } = useAuth();
+  const { t, isRtl } = useTranslation();
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const totalPages = Math.ceil(total / pageSize);
@@ -37,7 +39,7 @@ export function ExpenseTable({
     try {
       await api("expenses:downloadReceipt", path);
     } catch {
-      toast.error("Erreur lors du telechargement");
+      toast.error(t("expenses.toasts.receipt_download_error"));
     }
   };
 
@@ -67,15 +69,15 @@ export function ExpenseTable({
       <table className="table-base">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Titre</th>
-            <th>Catégorie</th>
-            <th style={{ textAlign: "right" }}>Montant</th>
-            <th>Fournisseur</th>
-            <th>Paiement</th>
-            <th>Recu</th>
-            <th>Notes</th>
-            <th style={{ textAlign: "right" }}>Actions</th>
+            <th>{t("expenses.table.date")}</th>
+            <th>{t("expenses.table.title")}</th>
+            <th>{t("expenses.table.category")}</th>
+            <th style={{ textAlign: isRtl ? "left" : "right" }}>{t("expenses.table.amount")}</th>
+            <th>{t("expenses.table.supplier")}</th>
+            <th>{t("expenses.table.payment_method")}</th>
+            <th>{t("expenses.table.receipt")}</th>
+            <th>{t("expenses.table.notes")}</th>
+            <th style={{ textAlign: isRtl ? "left" : "right" }}>{t("expenses.table.actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -126,7 +128,7 @@ export function ExpenseTable({
               </td>
 
               {/* Amount */}
-              <td style={{ textAlign: "right" }}>
+              <td style={{ textAlign: isRtl ? "left" : "right" }}>
                 <span
                   style={{
                     fontFamily: "var(--font-display)",
@@ -163,14 +165,14 @@ export function ExpenseTable({
                       className="btn-border"
                       style={{ padding: "4px 8px", fontSize: 11 }}
                     >
-                      Voir
+                      {t("expenses.table.view")}
                     </button>
                     <button
                       onClick={() => handleDownload(expense.receiptPath)}
                       className="btn-border"
                       style={{ padding: "4px 8px", fontSize: 11 }}
                     >
-                      Telecharger
+                      {t("expenses.table.download")}
                     </button>
                   </div>
                 ) : (
@@ -196,12 +198,12 @@ export function ExpenseTable({
               </td>
 
               {/* Actions */}
-              <td style={{ textAlign: "right" }}>
+              <td style={{ textAlign: isRtl ? "left" : "right" }}>
                 <div
                   style={{
                     display: "flex",
                     gap: 6,
-                    justifyContent: "flex-end",
+                    justifyContent: isRtl ? "flex-start" : "flex-end",
                     opacity: hoveredRow === expense.id ? 1 : 0,
                     transition: "opacity 0.15s ease",
                   }}
@@ -223,7 +225,7 @@ export function ExpenseTable({
                       cursor: "pointer",
                       color: "var(--color-primary)",
                     }}
-                    title="Modifier"
+                    title={t("expenses.categories.edit")}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
                   </button>
@@ -253,7 +255,7 @@ export function ExpenseTable({
                         }}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check</span>
-                        Confirmer
+                        {t("expenses.table.confirm_delete")}
                       </button>
                     ) : (
                       <button
@@ -273,7 +275,7 @@ export function ExpenseTable({
                           cursor: "pointer",
                           color: "var(--color-error)",
                         }}
-                        title="Supprimer"
+                        title={t("expenses.categories.archive")}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
                       </button>
@@ -299,8 +301,11 @@ export function ExpenseTable({
           }}
         >
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            Affichage de {(page - 1) * pageSize + 1} à{" "}
-            {Math.min(page * pageSize, total)} sur {total} dépenses
+            {t("expenses.table.pagination", {
+              start: (page - 1) * pageSize + 1,
+              end: Math.min(page * pageSize, total),
+              total: total,
+            })}
           </p>
           <div style={{ display: "flex", gap: 8 }}>
             <button
@@ -309,7 +314,9 @@ export function ExpenseTable({
               disabled={page === 1}
               style={{ opacity: page === 1 ? 0.4 : 1 }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_left</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                {isRtl ? "chevron_right" : "chevron_left"}
+              </span>
             </button>
             <button
               className="btn-border"
@@ -317,7 +324,9 @@ export function ExpenseTable({
               disabled={page === totalPages}
               style={{ opacity: page === totalPages ? 0.4 : 1 }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_right</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                {isRtl ? "chevron_left" : "chevron_right"}
+              </span>
             </button>
           </div>
         </div>

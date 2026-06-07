@@ -1,51 +1,53 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const NAV_ITEMS = [
-  { name: "Tableau de bord",  path: "/dashboard", icon: "dashboard",              permission: "dashboard.view" },
-  { name: "Point de vente",   path: "/pos",        icon: "point_of_sale",          permission: "pos.use" },
-  { name: "Produits",         path: "/products",   icon: "inventory_2",            permission: "products.view" },
-  { name: "Inventaire",       path: "/inventory",  icon: "warehouse",              permission: "inventory.view" },
-  { name: "Clients",          path: "/customers",  icon: "group",                  permission: "customers.view" },
-  { name: "Ventes",           path: "/sales",      icon: "payments",               permission: "sales.view" },
-  { name: "Dettes",           path: "/debts",      icon: "account_balance_wallet", permission: "debts.view" },
-  { name: "Dépenses",         path: "/expenses",   icon: "receipt_long",           permission: "expenses.view" },
-  { name: "Statistiques",     path: "/stats",      icon: "leaderboard",            permission: "reports.view" },
-  { name: "Utilisateurs",     path: "/users",      icon: "shield",                 permission: "users.manage" },
-  { name: "Paramètres",       path: "/settings",   icon: "settings",               permission: "settings.manage" },
-  { name: "Sauvegardes",      path: "/backups",    icon: "hard_drive",             permission: "backups.manage" },
+  { key: "common.sidebar.dashboard",  path: "/dashboard", icon: "dashboard",              permission: "dashboard.view" },
+  { key: "common.sidebar.pos",        path: "/pos",        icon: "point_of_sale",          permission: "pos.use" },
+  { key: "common.sidebar.products",   path: "/products",   icon: "inventory_2",            permission: "products.view" },
+  { key: "common.sidebar.inventory",  path: "/inventory",  icon: "warehouse",              permission: "inventory.view" },
+  { key: "common.sidebar.customers",  path: "/customers",  icon: "group",                  permission: "customers.view" },
+  { key: "common.sidebar.sales",      path: "/sales",      icon: "payments",               permission: "sales.view" },
+  { key: "common.sidebar.debts",      path: "/debts",      icon: "account_balance_wallet", permission: "debts.view" },
+  { key: "common.sidebar.expenses",   path: "/expenses",   icon: "receipt_long",           permission: "expenses.view" },
+  { key: "common.sidebar.stats",      path: "/stats",      icon: "leaderboard",            permission: "reports.view" },
+  { key: "common.sidebar.users",      path: "/users",      icon: "shield",                 permission: "users.manage" },
+  { key: "common.sidebar.settings",   path: "/settings",   icon: "settings",               permission: "settings.manage" },
+  { key: "common.sidebar.backups",    path: "/backups",    icon: "hard_drive",             permission: "backups.manage" },
 ];
-
-const formatRole = (role?: string) => {
-  switch (role) {
-    case "admin": return "Administrateur";
-    case "manager": return "Manager";
-    case "cashier": return "Caissier";
-    default: return role || "Responsable";
-  }
-};
 
 export function Sidebar() {
   const { logout, user, can } = useAuth();
   const navigate = useNavigate();
+  const { t, isRtl } = useTranslation();
+
+  const formatRole = (role?: string) => {
+    switch (role) {
+      case "admin": return t("common.roles.admin");
+      case "manager": return t("common.roles.manager");
+      case "cashier": return t("common.roles.cashier");
+      default: return role || t("common.roles.manager");
+    }
+  };
 
   return (
     <aside className="sidebar">
       {/* ── Brand ── */}
-      <div style={{ marginBottom: "40px" }}>
+      <div style={{ marginBottom: "40px", textAlign: isRtl ? "right" : "left" }}>
         <h1 className="sidebar-logo-title">ModaDZ</h1>
-        <p className="sidebar-logo-sub">Vente au détail de luxe</p>
+        <p className="sidebar-logo-sub">{t("common.login.subtitle")}</p>
       </div>
 
       {/* ── CTA ── */}
       {can("pos.use") && (
         <button
           className="sidebar-cta"
-          style={{ marginBottom: "32px" }}
+          style={{ marginBottom: "32px", flexDirection: isRtl ? "row-reverse" : "row" }}
           onClick={() => navigate("/pos")}
         >
           <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-          Nouvelle transaction
+          {t("common.sidebar.new_transaction")}
         </button>
       )}
 
@@ -67,6 +69,10 @@ export function Sidebar() {
             className={({ isActive }) =>
               `nav-item${isActive ? " active" : ""}`
             }
+            style={{
+              flexDirection: isRtl ? "row-reverse" : "row",
+              textAlign: isRtl ? "right" : "left",
+            }}
           >
             {({ isActive }) => (
               <>
@@ -81,7 +87,7 @@ export function Sidebar() {
                 >
                   {item.icon}
                 </span>
-                <span>{item.name}</span>
+                <span>{t(item.key)}</span>
               </>
             )}
           </NavLink>
@@ -96,13 +102,20 @@ export function Sidebar() {
           marginTop: "16px",
         }}
       >
-        <button className="nav-item" onClick={logout} style={{ gap: "12px" }}>
+        <button
+          className="nav-item"
+          onClick={logout}
+          style={{
+            gap: "12px",
+            flexDirection: isRtl ? "row-reverse" : "row",
+          }}
+        >
           <span className="material-symbols-outlined" style={{ fontSize: "22px" }}>
             account_circle
           </span>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: isRtl ? "flex-end" : "flex-start" }}>
             <span style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.05em" }}>
-              {user?.name || "Profil utilisateur"}
+              {user?.name || t("common.sidebar.profile")}
             </span>
             <span
               style={{

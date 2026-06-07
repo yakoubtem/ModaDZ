@@ -4,6 +4,7 @@ import { useIPC } from "@/hooks/useIPC";
 import { formatCurrency } from "@/lib/utils";
 import { toastSuccess, toastError } from "@/components/ui/toast";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface InventoryVariant {
   id: number;
@@ -26,6 +27,7 @@ type StockFilter = "all" | "low" | "out";
 const LOW_STOCK_THRESHOLD = 5;
 
 export function InventoryPage() {
+  const { t, isRtl, language } = useTranslation();
   const api = useIPC();
   const [variants, setVariants] = useState<InventoryVariant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,9 +60,12 @@ export function InventoryPage() {
       setVariants((prev) =>
         prev.map((v) => (v.id === variantId ? { ...v, stock: Math.max(0, v.stock + delta) } : v))
       );
-      toastSuccess("Stock mis à jour", `Ajustement de ${delta > 0 ? "+" : ""}${delta} appliqué.`);
+      toastSuccess(
+        t("inventory.toast.success_title"),
+        t("inventory.toast.success_desc", { delta: `${delta > 0 ? "+" : ""}${delta}` })
+      );
     } catch {
-      toastError("Erreur", "Impossible de mettre à jour le stock.");
+      toastError(t("inventory.toast.error_title"), t("inventory.toast.error_desc"));
     } finally {
       setAdjustingId(null);
       setAdjustValue("");
@@ -87,7 +92,7 @@ export function InventoryPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <TopBar title="Inventaire" description="Gestion des stocks par variante de produit." />
+      <TopBar title={t("common.sidebar.inventory")} description={t("inventory.description")} />
 
       <main
         style={{
@@ -111,24 +116,24 @@ export function InventoryPage() {
         >
           {[
             {
-              label: "Unités en stock",
-              value: isLoading ? "—" : totalItems.toLocaleString("fr-DZ"),
+              label: t("inventory.kpis.in_stock"),
+              value: isLoading ? "—" : totalItems.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ"),
               icon: "inventory_2",
               error: false,
             },
             {
-              label: "Stocks bas",
-              value: isLoading ? "—" : lowStockCount.toLocaleString("fr-DZ"),
+              label: t("inventory.kpis.low_stock"),
+              value: isLoading ? "—" : lowStockCount.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ"),
               icon: "warning",
               error: lowStockCount > 0,
-              sub: `≤ ${LOW_STOCK_THRESHOLD} unités`,
+              sub: t("inventory.kpis.low_stock_sub", { threshold: LOW_STOCK_THRESHOLD }),
             },
             {
-              label: "Ruptures de stock",
-              value: isLoading ? "—" : outOfStockCount.toLocaleString("fr-DZ"),
+              label: t("inventory.kpis.out_of_stock"),
+              value: isLoading ? "—" : outOfStockCount.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ"),
               icon: "remove_shopping_cart",
               error: outOfStockCount > 0,
-              sub: "0 unité",
+              sub: t("inventory.kpis.out_of_stock_sub"),
             },
           ].map((card) => (
             <div
@@ -189,7 +194,15 @@ export function InventoryPage() {
             <div style={{ position: "relative", flex: 1, minWidth: 240, maxWidth: 480 }}>
               <span
                 className="material-symbols-outlined"
-                style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--color-secondary)", fontSize: 22, pointerEvents: "none" }}
+                style={{
+                  position: "absolute",
+                  [isRtl ? "right" : "left"]: 16,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "var(--color-secondary)",
+                  fontSize: 22,
+                  pointerEvents: "none"
+                }}
               >
                 search
               </span>
@@ -197,12 +210,12 @@ export function InventoryPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher par produit, SKU ou code-barres…"
+                placeholder={t("inventory.search_placeholder")}
                 style={{
                   width: "100%",
                   height: 48,
-                  paddingLeft: 48,
-                  paddingRight: 16,
+                  paddingLeft: isRtl ? 16 : 48,
+                  paddingRight: isRtl ? 48 : 16,
                   background: "var(--color-surface)",
                   border: "1px solid rgba(208,197,175,0.3)",
                   borderRadius: "var(--radius-lg)",
@@ -225,9 +238,9 @@ export function InventoryPage() {
               }}
             >
               {([
-                { value: "all", label: "Tous", count: variants.length },
-                { value: "low", label: "Stocks bas", count: lowStockCount },
-                { value: "out", label: "Ruptures", count: outOfStockCount },
+                { value: "all", label: t("inventory.controls.filter_all"), count: variants.length },
+                { value: "low", label: t("inventory.controls.filter_low"), count: lowStockCount },
+                { value: "out", label: t("inventory.controls.filter_out"), count: outOfStockCount },
               ] as { value: StockFilter; label: string; count: number }[]).map((tab) => (
                 <button
                   key={tab.value}
@@ -259,6 +272,7 @@ export function InventoryPage() {
                         fontSize: 10,
                         fontWeight: 700,
                         padding: "1px 6px",
+                        [isRtl ? "marginRight" : "marginLeft"]: 6,
                         minWidth: 18,
                         textAlign: "center",
                       }}
@@ -293,7 +307,7 @@ export function InventoryPage() {
                 shelves
               </span>
               <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-                Aucun article trouvé pour les filtres sélectionnés.
+                {t("inventory.controls.no_articles")}
               </p>
             </div>
           ) : (
@@ -301,12 +315,21 @@ export function InventoryPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
                 <thead>
                   <tr style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
-                    {["Produit", "SKU", "Taille", "Couleur", "Catégorie", "Prix", "Stock", ""].map((h) => (
+                    {[
+                      t("inventory.table.product"),
+                      t("inventory.table.sku"),
+                      t("inventory.table.size"),
+                      t("inventory.table.color"),
+                      t("inventory.table.category"),
+                      t("inventory.table.price"),
+                      t("inventory.table.stock"),
+                      "",
+                    ].map((h, idx) => (
                       <th
-                        key={h}
+                        key={idx}
                         style={{
                           padding: "14px 20px",
-                          textAlign: "left",
+                          textAlign: idx === 7 ? (isRtl ? "left" : "right") : (isRtl ? "right" : "left"),
                           fontSize: 10,
                           fontWeight: 700,
                           letterSpacing: "0.08em",
@@ -338,27 +361,27 @@ export function InventoryPage() {
                         onMouseLeave={(e) => (e.currentTarget.style.background = isOut ? "rgba(186, 26, 26, 0.03)" : isLow ? "rgba(212, 175, 55, 0.03)" : "transparent")}
                       >
                         {/* Product name */}
-                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500 }}>
+                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500, textAlign: isRtl ? "right" : "left" }}>
                           {variant.product.name}
                         </td>
 
                         {/* SKU */}
-                        <td style={{ padding: "14px 20px", color: "var(--color-secondary)", fontFamily: "monospace", fontSize: 12 }}>
+                        <td style={{ padding: "14px 20px", color: "var(--color-secondary)", fontFamily: "monospace", fontSize: 12, textAlign: isRtl ? "right" : "left" }}>
                           {variant.product.sku}
                         </td>
 
                         {/* Size */}
-                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)" }}>
+                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", textAlign: isRtl ? "right" : "left" }}>
                           {variant.size}
                         </td>
 
                         {/* Color */}
-                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)" }}>
+                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", textAlign: isRtl ? "right" : "left" }}>
                           {variant.color}
                         </td>
 
                         {/* Category */}
-                        <td style={{ padding: "14px 20px" }}>
+                        <td style={{ padding: "14px 20px", textAlign: isRtl ? "right" : "left" }}>
                           {variant.product.category ? (
                             <Badge variant="accent">
                               {variant.product.category.name}
@@ -369,24 +392,24 @@ export function InventoryPage() {
                         </td>
 
                         {/* Price */}
-                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontVariantNumeric: "tabular-nums" }}>
+                        <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontVariantNumeric: "tabular-nums", textAlign: isRtl ? "right" : "left" }}>
                           {formatCurrency(variant.product.price)}
                         </td>
 
                         {/* Stock badge */}
-                        <td style={{ padding: "14px 20px" }}>
+                        <td style={{ padding: "14px 20px", textAlign: isRtl ? "right" : "left" }}>
                           <Badge
                             variant={isOut ? "danger" : isLow ? "warning" : "success"}
                             style={{ fontVariantNumeric: "tabular-nums", padding: "4px 12px" }}
                           >
                             {isOut && <span className="material-symbols-outlined" style={{ fontSize: 14 }}>block</span>}
                             {isLow && <span className="material-symbols-outlined" style={{ fontSize: 14 }}>warning</span>}
-                            {variant.stock} unité{variant.stock !== 1 ? "s" : ""}
+                            {t("inventory.table.units", { count: variant.stock })}
                           </Badge>
                         </td>
 
                         {/* Actions */}
-                        <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                        <td style={{ padding: "14px 20px", textAlign: isRtl ? "left" : "right" }}>
                           {isAdjusting ? (
                             <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
                               <input
@@ -445,7 +468,7 @@ export function InventoryPage() {
                               style={{ padding: "6px 14px", fontSize: 12 }}
                             >
                               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>tune</span>
-                              Ajuster
+                              {t("inventory.table.adjust_btn")}
                             </button>
                           )}
                         </td>
@@ -467,7 +490,7 @@ export function InventoryPage() {
                 }}
               >
                 <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                  {filtered.length} variante{filtered.length !== 1 ? "s" : ""} affichée{filtered.length !== 1 ? "s" : ""}
+                  {t("inventory.table.displayed_count", { count: filtered.length })}
                 </p>
                 <button
                   onClick={fetchInventory}
@@ -483,7 +506,7 @@ export function InventoryPage() {
                   }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>refresh</span>
-                  Actualiser
+                  {t("inventory.table.refresh")}
                 </button>
               </div>
             </div>

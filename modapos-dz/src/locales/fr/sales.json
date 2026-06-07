@@ -1,0 +1,51 @@
+{
+  "title": "Ventes",
+  "search_placeholder": "Rechercher par N° reçu ou nom client…",
+  "description": "Historique de toutes vos transactions.",
+  "filters": {
+    "payment_method": "Paiement",
+    "status": "Statut",
+    "date_from": "Du",
+    "date_to": "Au",
+    "all_payments": "Tous paiements",
+    "all_statuses": "Tous statuts",
+    "period": "Période"
+  },
+  "table": {
+    "list_title": "Liste des transactions",
+    "transaction_count": "{count} transaction(s)",
+    "receipt": "N° Reçu",
+    "cashier": "Caissier",
+    "customer": "Client",
+    "total": "Total",
+    "paid": "Paiement",
+    "payment_method": "Moyen",
+    "date": "Date",
+    "status": "Statut",
+    "items": "Articles",
+    "items_unit": "art.",
+    "passenger": "Passager",
+    "no_sales_found": "Aucune vente ne correspond à vos critères de recherche.",
+    "display_info": "Affichage de {from} à {to} sur {total} ventes"
+  },
+  "details": {
+    "title": "Détails de la vente",
+    "title_number": "Détails de la vente {number}",
+    "items": "Articles",
+    "qty": "Qté",
+    "price": "Prix Unitaire",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "total": "Total",
+    "refund_btn": "Rembourser",
+    "status_sale": "Statut vente",
+    "status_payment": "Statut paiement",
+    "confirm_refund": "Voulez-vous vraiment rembourser cette vente ? Le stock des articles sera réintégré."
+  },
+  "toasts": {
+    "load_error": "Impossible de charger les ventes",
+    "detail_error": "Impossible de charger les détails",
+    "refund_success": "Vente remboursée avec succès. Le stock a été restauré.",
+    "refund_error": "Erreur lors du remboursement"
+  }
+}

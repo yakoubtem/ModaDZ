@@ -1,0 +1,72 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة القيادة",
+    "pos": "نقطة البيع",
+    "products": "المنتجات",
+    "inventory": "المخزن",
+    "customers": "العملاء",
+    "sales": "المبيعات",
+    "debts": "الديون",
+    "expenses": "المصاريف",
+    "stats": "الإحصائيات",
+    "users": "المستخدمين",
+    "settings": "الإعدادات",
+    "backups": "النسخ الاحتياطي",
+    "new_transaction": "عملية جديدة",
+    "profile": "ملف المستخدم"
+  },
+  "roles": {
+    "admin": "مدير النظام",
+    "manager": "مسير",
+    "cashier": "أمين الصندوق"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "search": "بحث",
+    "export": "تصدير",
+    "print": "طباعة",
+    "clear": "مسح",
+    "yes": "نعم",
+    "no": "لا",
+    "notifications": "الإشعارات",
+    "checkout": "قبض"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "completed": "مكتمل",
+    "refunded": "مسترجع",
+    "pending": "قيد الانتظار"
+  },
+  "login": {
+    "title": "تسجيل الدخول ModaDZ",
+    "subtitle": "بيع بالتجزئة فاخر",
+    "welcome": "مرحباً بك",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "submit": "تسجيل الدخول",
+    "error_empty": "يرجى ملء جميع الحقول",
+    "error_invalid": "اسم المستخدم أو كلمة المرور غير صحيحة"
+  },
+  "confirm_modal": {
+    "title": "هل أنت متأكد؟",
+    "confirm_btn": "تأكيد",
+    "cancel_btn": "إلغاء"
+  },
+  "errors": {
+    "unknown": "حدث خطأ غير متوقع",
+    "access_denied": "غير مسموح بالدخول",
+    "access_denied_desc": "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة."
+  },
+  "payment_methods": {
+    "cash": "نقداً",
+    "card": "بطاقة",
+    "transfer": "تحويل بنكي"
+  }
+}

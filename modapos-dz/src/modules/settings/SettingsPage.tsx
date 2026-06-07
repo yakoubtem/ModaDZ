@@ -3,18 +3,29 @@ import { GeneralSettings } from "./components/GeneralSettings";
 import { BackupSettings } from "./components/BackupSettings";
 import { UsersSettings } from "../users/UsersSettings";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Tab = "general" | "backup" | "users";
 
-const TABS: { id: Tab; label: string; icon: string; adminOnly?: boolean }[] = [
-  { id: "general",  label: "Magasin & Reçus", icon: "store" },
-  { id: "backup",   label: "Sauvegarde",       icon: "hard_drive" },
-  { id: "users",    label: "Utilisateurs",     icon: "shield",   adminOnly: true },
+const TABS: { id: Tab; icon: string; adminOnly?: boolean }[] = [
+  { id: "general",  icon: "store" },
+  { id: "backup",   icon: "hard_drive" },
+  { id: "users",    icon: "shield",   adminOnly: true },
 ];
 
 export function SettingsPage() {
   const { can } = useAuth();
+  const { t, isRtl } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>("general");
+
+  const getTabLabel = (id: Tab) => {
+    switch (id) {
+      case "general": return t("settings.tabs.store");
+      case "backup": return t("settings.tabs.backup");
+      case "users": return t("settings.tabs.users");
+      default: return "";
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -32,19 +43,22 @@ export function SettingsPage() {
           alignItems: "center",
           padding: "var(--space-gutter) var(--space-container)",
           borderBottom: "1px solid rgba(208,197,175,0.2)",
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--color-secondary)" }}>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
-            Administration
+            {t("settings.breadcrumbs.admin")}
           </span>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            {isRtl ? "chevron_left" : "chevron_right"}
+          </span>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase", color: "var(--color-on-surface)" }}>
-            Configuration Globale
+            {t("settings.breadcrumbs.global_config")}
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="btn-checkout">Encaisser</button>
+          <button className="btn-checkout">{t("common.buttons.checkout")}</button>
         </div>
       </header>
 
@@ -60,7 +74,7 @@ export function SettingsPage() {
         }}
       >
         {/* Page header */}
-        <div style={{ marginBottom: "var(--space-section)" }}>
+        <div style={{ marginBottom: "var(--space-section)", textAlign: isRtl ? "right" : "left" }}>
           <h2
             style={{
               fontFamily: "var(--font-display)",
@@ -70,14 +84,14 @@ export function SettingsPage() {
               marginBottom: "8px",
             }}
           >
-            Paramètres
+            {t("settings.title")}
           </h2>
           <p style={{ fontSize: "var(--text-body-lg)", color: "var(--color-on-surface-variant)", maxWidth: 640, lineHeight: "var(--lh-body-lg)", marginBottom: "32px" }}>
-            Gérez les informations de votre boutique, configurez l'apparence des reçus et administrez les accès.
+            {t("settings.description")}
           </p>
 
           {/* Tab underline navigation */}
-          <div style={{ display: "flex", gap: "32px", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
+          <div style={{ display: "flex", gap: "32px", borderBottom: "1px solid rgba(208,197,175,0.3)", flexDirection: isRtl ? "row-reverse" : "row" }}>
             {TABS.map((tab) => {
               if (tab.adminOnly && !can("users.manage")) return null;
               const isActive = activeTab === tab.id;
@@ -101,10 +115,11 @@ export function SettingsPage() {
                     alignItems: "center",
                     gap: "8px",
                     transition: "color 0.2s, border-color 0.2s",
+                    flexDirection: isRtl ? "row-reverse" : "row",
                   }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{tab.icon}</span>
-                  {tab.label}
+                  {getTabLabel(tab.id)}
                 </button>
               );
             })}
@@ -119,14 +134,14 @@ export function SettingsPage() {
             gap: "var(--space-card-gap)",
           }}
         >
-          {/* Left column */}
+          {/* Main content column */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-card-gap)" }}>
             {activeTab === "general" && <GeneralSettings />}
             {activeTab === "backup" && <BackupSettings />}
             {activeTab === "users" && can("users.manage") && <UsersSettings />}
           </div>
 
-          {/* Right column — sticky actions + tip */}
+          {/* Sticky actions + tip column */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-card-gap)" }}>
             <div
               style={{
@@ -144,6 +159,7 @@ export function SettingsPage() {
                   border: "1px solid rgba(208,197,175,0.3)",
                   borderRadius: "var(--radius-xl)",
                   padding: "24px",
+                  textAlign: isRtl ? "right" : "left",
                 }}
               >
                 <h3
@@ -156,17 +172,19 @@ export function SettingsPage() {
                     marginBottom: "8px",
                   }}
                 >
-                  Modifications en attente
+                  {t("settings.pending_changes.title")}
                 </h3>
                 <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", marginBottom: "24px" }}>
-                  Vous avez effectué des modifications qui ne sont pas encore appliquées en caisse.
+                  {t("settings.pending_changes.desc")}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   <button className="btn-primary" style={{ justifyContent: "center", width: "100%", padding: "16px" }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
-                    Enregistrer les paramètres
+                    {t("settings.pending_changes.save_btn")}
                   </button>
-                  <button className="btn-border" style={{ justifyContent: "center", width: "100%", padding: "12px" }}>Annuler</button>
+                  <button className="btn-border" style={{ justifyContent: "center", width: "100%", padding: "12px" }}>
+                    {t("settings.pending_changes.cancel_btn")}
+                  </button>
                 </div>
               </div>
 
@@ -179,12 +197,14 @@ export function SettingsPage() {
                   padding: "24px",
                   position: "relative",
                   overflow: "hidden",
+                  textAlign: isRtl ? "right" : "left",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    right: -32,
+                    right: isRtl ? "auto" : -32,
+                    left: isRtl ? -32 : "auto",
                     top: -32,
                     width: 96,
                     height: 96,
@@ -194,14 +214,14 @@ export function SettingsPage() {
                     pointerEvents: "none",
                   }}
                 />
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", position: "relative" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", position: "relative", flexDirection: isRtl ? "row-reverse" : "row" }}>
                   <span className="material-symbols-outlined" style={{ color: "var(--color-primary)", marginTop: 2, flexShrink: 0 }}>lightbulb</span>
                   <div>
                     <h4 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-on-surface)", marginBottom: "4px" }}>
-                      Astuce d'enseigne
+                      {t("settings.tip.title")}
                     </h4>
                     <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", lineHeight: "var(--lh-body-sm)" }}>
-                      Pour une expérience client premium, gardez le message du ticket court. Les points de fidélité s'impriment automatiquement si le client est identifié.
+                      {t("settings.tip.desc")}
                     </p>
                   </div>
                 </div>

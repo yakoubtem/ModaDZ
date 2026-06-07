@@ -11,6 +11,7 @@ import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ProductTableProps {
   products: Product[];
@@ -63,21 +64,22 @@ function ProductImage({ imagePath, name }: { imagePath?: string; name: string })
 }
 
 function StockSummary({ variants }: { variants: Product["variants"] }) {
+  const { t } = useTranslation();
   const totalStock = variants.reduce((s, v) => s + v.stock, 0);
   const lowStock = variants.filter((v) => v.stock <= 5);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <span style={{ fontSize: 14, color: "var(--color-on-surface)" }}>
-        {totalStock} unités
+        {t("products.table.units", { count: totalStock })}
       </span>
       <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>
-        {variants.length} variante{variants.length !== 1 ? "s" : ""}
+        {t("products.table.variants_count", { count: variants.length })}
       </span>
       {lowStock.length > 0 && (
         <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-warning)" }}>
           <AlertTriangle style={{ width: 12, height: 12 }} />
-          {lowStock.length} stock bas
+          {t("products.table.low_stock_count", { count: lowStock.length })}
         </div>
       )}
     </div>
@@ -94,6 +96,7 @@ export function ProductTable({
   onDelete,
   onPageChange,
 }: ProductTableProps) {
+  const { t, isRtl } = useTranslation();
   const { can } = useAuth();
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const totalPages = Math.ceil(total / pageSize);
@@ -126,7 +129,7 @@ export function ProductTable({
           inventory_2
         </span>
         <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-          Aucun produit trouvé. Créez votre premier produit ou modifiez les filtres.
+          {t("products.table.no_products_desc")}
         </p>
       </div>
     );
@@ -138,12 +141,20 @@ export function ProductTable({
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
           <thead>
             <tr style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
-              {["", "Produit", "Catégorie", "Prix", "Stock", "Statut", "Actions"].map((h) => (
+              {[
+                "",
+                t("products.table.name"),
+                t("products.table.category"),
+                t("products.table.price"),
+                t("products.table.stock"),
+                t("products.table.status"),
+                t("products.table.actions"),
+              ].map((h, idx) => (
                 <th
-                  key={h}
+                  key={idx}
                   style={{
                     padding: "14px 20px",
-                    textAlign: "left",
+                    textAlign: isRtl ? "right" : "left",
                     fontSize: 10,
                     fontWeight: 700,
                     letterSpacing: "0.08em",
@@ -209,12 +220,12 @@ export function ProductTable({
                 {/* Status */}
                 <td style={{ padding: "14px 20px" }}>
                   <Badge variant={product.isActive ? "success" : "danger"} dot>
-                    {product.isActive ? "Actif" : "Inactif"}
+                    {product.isActive ? t("common.status.active") : t("common.status.inactive")}
                   </Badge>
                 </td>
 
                 {/* Actions */}
-                <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                <td style={{ padding: "14px 20px", textAlign: isRtl ? "left" : "right" }}>
                   {deleteConfirmId === product.id ? (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
                       <button
@@ -222,7 +233,7 @@ export function ProductTable({
                         className="btn-primary"
                         style={{ padding: "6px 14px", fontSize: 12, height: 36, background: "var(--color-error)" }}
                       >
-                        Oui
+                        {t("common.buttons.yes")}
                       </button>
                       <button
                         onClick={() => setDeleteConfirmId(null)}
@@ -237,14 +248,14 @@ export function ProductTable({
                           fontSize: 12,
                         }}
                       >
-                        Non
+                        {t("common.buttons.no")}
                       </button>
                     </div>
                   ) : (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
                       <button
                         onClick={() => onEdit(product)}
-                        title="Modifier"
+                        title={t("common.buttons.edit")}
                         style={{
                           width: 36,
                           height: 36,
@@ -266,7 +277,7 @@ export function ProductTable({
                       {can("products.delete") && (
                         <button
                           onClick={() => setDeleteConfirmId(product.id)}
-                          title="Supprimer"
+                          title={t("common.buttons.delete")}
                           style={{
                             width: 36,
                             height: 36,
@@ -308,7 +319,7 @@ export function ProductTable({
           }}
         >
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            Affichage de {from}–{to} sur {total} produits
+            {t("products.table.pagination", { from, to, total })}
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <button
@@ -328,7 +339,7 @@ export function ProductTable({
                 color: "var(--color-secondary)",
               }}
             >
-              <ChevronLeft style={{ width: 16, height: 16 }} />
+              {isRtl ? <ChevronRight style={{ width: 16, height: 16 }} /> : <ChevronLeft style={{ width: 16, height: 16 }} />}
             </button>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
               const p = i + 1;
@@ -376,7 +387,7 @@ export function ProductTable({
                 color: "var(--color-secondary)",
               }}
             >
-              <ChevronRight style={{ width: 16, height: 16 }} />
+              {isRtl ? <ChevronLeft style={{ width: 16, height: 16 }} /> : <ChevronRight style={{ width: 16, height: 16 }} />}
             </button>
           </div>
         </div>

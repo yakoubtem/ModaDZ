@@ -2,6 +2,7 @@ import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/store/cartStore";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
+  const { t, isRtl } = useTranslation();
 
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
   const isOutOfStock = totalStock === 0;
@@ -30,7 +32,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
         unitPrice: product.price,
         maxStock: v.stock,
       });
-      toast.success(`${product.name} ajouté`, { duration: 1200 });
+      toast.success(t("pos.product_added", { name: product.name }), { duration: 1200 });
       return;
     }
     onVariantNeeded(product);
@@ -84,7 +86,8 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
             style={{
               position: "absolute",
               top: 12,
-              right: 12,
+              right: isRtl ? "auto" : 12,
+              left: isRtl ? 12 : "auto",
               background: "rgba(255,255,255,0.9)",
               backdropFilter: "blur(4px)",
               padding: "2px 8px",
@@ -95,7 +98,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
               color: "var(--color-primary)",
             }}
           >
-            En stock: {totalStock}
+            {t("pos.in_stock", { count: totalStock })}
           </div>
         )}
 
@@ -123,7 +126,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
                 color: "var(--color-on-surface-variant)",
               }}
             >
-              Rupture
+              {t("pos.out_of_stock")}
             </span>
           </div>
         )}
@@ -134,6 +137,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
         style={{
           padding: "16px",
           opacity: isOutOfStock ? 0.7 : 1,
+          textAlign: isRtl ? "right" : "left",
         }}
       >
         <h3
@@ -161,13 +165,14 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
         >
           {product.category?.name ?? ""}
         </p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexDirection: isRtl ? "row-reverse" : "row" }}>
           <span
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "var(--text-headline-md)",
               fontWeight: 700,
               color: "var(--color-on-surface)",
+              direction: "ltr",
             }}
           >
             {formatCurrency(product.price)}
@@ -199,7 +204,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
       <style>{`
         .product-card:hover .product-card-img { transform: scale(1.05); }
         .product-card:hover .product-add-btn {
-          background: var(--color-primary-container) !important;
+          background: var(--color-primary) !important;
           color: white !important;
         }
       `}</style>

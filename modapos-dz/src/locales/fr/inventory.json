@@ -1,0 +1,45 @@
+{
+  "title": "Inventaire & Stock",
+  "description": "Gestion des stocks par variante de produit.",
+  "search_placeholder": "Rechercher par produit, SKU ou code-barres…",
+  "toast": {
+    "success_title": "Stock mis à jour",
+    "success_desc": "Ajustement de {delta} appliqué.",
+    "error_title": "Erreur",
+    "error_desc": "Impossible de mettre à jour le stock."
+  },
+  "kpis": {
+    "in_stock": "Unités en stock",
+    "low_stock": "Stocks bas",
+    "low_stock_sub": "≤ {threshold} unités",
+    "out_of_stock": "Ruptures de stock",
+    "out_of_stock_sub": "0 unité"
+  },
+  "controls": {
+    "filter_all": "Tous",
+    "filter_low": "Stocks bas",
+    "filter_out": "Ruptures",
+    "no_articles": "Aucun article trouvé pour les filtres sélectionnés."
+  },
+  "table": {
+    "product": "Produit",
+    "sku": "SKU",
+    "size": "Taille",
+    "color": "Couleur",
+    "category": "Catégorie",
+    "price": "Prix",
+    "stock": "Stock",
+    "units": "{count} unité(s)",
+    "adjust_btn": "Ajuster",
+    "displayed_count": "{count} variante(s) affichée(s)",
+    "refresh": "Actualiser"
+  },
+  "adjust": {
+    "title": "Ajustement de Stock",
+    "quantity": "Nouvelle quantité",
+    "reason": "Raison de l'ajustement",
+    "reason_correction": "Correction d'inventaire",
+    "reason_damage": "Perte / Dommage",
+    "reason_return": "Retour fournisseur"
+  }
+}

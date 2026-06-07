@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import type { Customer } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CustomerFormData {
   name: string;
@@ -30,6 +31,7 @@ export function CustomerFormModal({
   onSubmit,
   editCustomer,
 }: CustomerFormModalProps) {
+  const { t } = useTranslation();
   const isEditing = !!editCustomer;
 
   const {
@@ -73,55 +75,55 @@ export function CustomerFormModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? `Modifier — ${editCustomer?.name}` : "Nouveau client"}
+      title={isEditing ? t("customers.form.edit_title", { name: editCustomer?.name ?? "" }) : t("customers.form.add_title")}
       description={
         isEditing
-          ? "Modifiez les informations du client."
-          : "Ajoutez un nouveau client à votre base."
+          ? t("customers.form.edit_description")
+          : t("customers.form.add_description")
       }
       size="md"
       scrollable
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
-            Annuler
+            {t("common.buttons.cancel")}
           </Button>
           <Button
             variant="primary"
             onClick={handleSubmit(handleFormSubmit)}
             isLoading={isSubmitting}
           >
-            {isEditing ? "Enregistrer" : "Créer le client"}
+            {isEditing ? t("common.buttons.save") : t("customers.form.create_btn")}
           </Button>
         </>
       }
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <Input
-          label="Nom complet"
-          placeholder="ex: Ahmed Belkacem"
+          label={t("customers.form.name")}
+          placeholder={t("customers.form.name_placeholder")}
           error={errors.name?.message}
           {...register("name", {
-            required: "Le nom est obligatoire",
-            minLength: { value: 2, message: "Minimum 2 caractères" },
+            required: t("customers.form.error_name_required"),
+            minLength: { value: 2, message: t("customers.form.error_name_min") },
           })}
         />
         <Input
-          label="Téléphone"
+          label={t("customers.form.phone")}
           type="tel"
-          placeholder="ex: 0555 123 456"
-          hint="Utilisé pour la recherche rapide en caisse"
+          placeholder={t("customers.form.phone_placeholder")}
+          hint={t("customers.form.phone_hint")}
           {...register("phone")}
         />
         <Input
-          label="Email"
+          label={t("customers.form.email")}
           type="email"
-          placeholder="ex: client@email.com"
+          placeholder={t("customers.form.email_placeholder")}
           {...register("email")}
         />
         <Textarea
-          label="Notes"
-          placeholder="Informations supplémentaires…"
+          label={t("customers.form.notes")}
+          placeholder={t("customers.form.notes_placeholder")}
           rows={3}
           {...register("notes")}
         />

@@ -1,0 +1,57 @@
+{
+  "title": "Gestion des Utilisateurs",
+  "admin": "Administration",
+  "header_title": "Utilisateurs et Rôles",
+  "header_desc": "Gérez les accès à l'application, configurez les informations d’identification et assignez les rôles.",
+  "add_user": "Ajouter un utilisateur",
+  "empty_state": "Aucun utilisateur trouvé.",
+  "total_users": "{count} utilisateur au total",
+  "total_users_plural": "{count} utilisateurs au total",
+  "table": {
+    "name": "Nom",
+    "username": "Identifiant",
+    "role": "Rôle",
+    "status": "Statut",
+    "actions": "Actions",
+    "created_at": "Date de création"
+  },
+  "form": {
+    "add_title": "Nouvel utilisateur",
+    "edit_title": "Modifier l'utilisateur",
+    "subtitle": "Configurez les informations d’accès et le rôle de cet utilisateur dans le système ModaDZ.",
+    "personal_info": "Informations personnelles",
+    "name": "Nom complet",
+    "name_placeholder": "Ex: Ahmed Benyahia",
+    "auth": "Authentification",
+    "username": "Nom d'utilisateur",
+    "username_placeholder": "Ex: yakoub_admin",
+    "password": "Mot de passe",
+    "password_new": "Nouveau mot de passe",
+    "password_hint": "Laissez vide pour conserver le mot de passe actuel.",
+    "password_placeholder": "Créer un mot de passe sécurisé",
+    "password_placeholder_edit": "••••••••",
+    "permissions": "Permissions & rôle",
+    "role": "Rôle utilisateur",
+    "role_cashier_desc": "Caissier — accès POS et clients",
+    "role_manager_desc": "Manager — gestion boutique",
+    "role_admin_desc": "Administrateur — accès complet",
+    "admin_role_details": "Les administrateurs ont un accès complet au système, aux utilisateurs, paramètres et sauvegardes.",
+    "manager_role_details": "Les managers gèrent le catalogue, les stocks, les dettes et les dépenses, mais n'ont pas accès à la configuration système.",
+    "cashier_role_details": "Les caissiers sont limités aux ventes journalières (POS), à la sélection des clients et à la réception des paiements.",
+    "saving": "Enregistrement...",
+    "create_btn": "Créer l'utilisateur",
+    "update_btn": "Mettre à jour",
+    "validation": {
+      "name_required": "Le nom est requis.",
+      "username_required": "Le nom d'utilisateur est requis.",
+      "password_required": "Le mot de passe est requis pour un nouvel utilisateur."
+    }
+  },
+  "alerts": {
+    "create_error": "Erreur de création: {message}",
+    "update_error": "Erreur de modification: {message}",
+    "delete_error": "Erreur de suppression: {message}",
+    "delete_self_error": "Vous ne pouvez pas supprimer votre propre compte.",
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+  }
+}

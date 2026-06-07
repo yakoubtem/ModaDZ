@@ -1,0 +1,60 @@
+{
+  "title": "إدارة العملاء",
+  "add_customer": "عميل جديد",
+  "subtitle": "عرض سجل المشتريات، إدارة معلومات الاتصال ومتابعة الديون الخاصة بالعملاء VIP.",
+  "debts_count": "ديون",
+  "search_placeholder": "البحث بالاسم، الهاتف، البريد الإلكتروني...",
+  "search_placeholder_long": "البحث عن عميل بالاسم، الهاتف أو البريد الإلكتروني...",
+  "total_active": "إجمالي العملاء النشطين",
+  "table": {
+    "client": "العميل",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "orders_count": "الطلبات",
+    "total_spent": "إجمالي الإنفاق",
+    "current_debt": "الائتمان المعلق",
+    "last_purchase": "آخر شراء",
+    "no_customer_found": "لم يتم العثور على أي عميل",
+    "display_info": "عرض {from}–{to} من أصل {total} عميل"
+  },
+  "form": {
+    "add_title": "عميل جديد",
+    "edit_title": "تعديل — {name}",
+    "add_description": "أضف عميلاً جديداً إلى قاعدة بياناتك.",
+    "edit_description": "تعديل معلومات العميل.",
+    "create_btn": "إنشاء العميل",
+    "name": "الاسم الكامل",
+    "name_placeholder": "مثال: أحمد بلقاسم",
+    "error_name_required": "الاسم مطلوب",
+    "error_name_min": "الحد الأدنى 2 أحرف",
+    "phone": "الهاتف",
+    "phone_placeholder": "مثال: 0555 123 456",
+    "phone_hint": "يستخدم للبحث السريع في الكاشير",
+    "email": "البريد الإلكتروني",
+    "email_placeholder": "مثال: client@email.com",
+    "notes": "ملاحظات",
+    "notes_placeholder": "معلومات إضافية..."
+  },
+  "details": {
+    "title": "ملف العميل",
+    "subtitle": "ملف العميل وسجل المشتريات",
+    "orders": "سجل المشتريات",
+    "no_sales": "لا توجد مشتريات مسجلة",
+    "statistics": "إحصائيات العميل",
+    "orders_count": "الطلبات",
+    "total_spent": "إجمالي الإنفاق",
+    "current_debt": "الائتمان المعلق",
+    "items_count": "{count} منتج(ات)"
+  },
+  "toasts": {
+    "load_error": "تعذر تحميل العملاء",
+    "profile_error": "تعذر تحميل ملف العميل",
+    "create_success": "تم إنشاء العميل بنجاح",
+    "create_error": "خطأ أثناء إنشاء العميل",
+    "update_success": "تم تحديث العميل بنجاح",
+    "update_error": "خطأ أثناء تحديث العميل",
+    "delete_success": "تم حذف العميل بنجاح",
+    "delete_error": "خطأ أثناء حذف العميل"
+  }
+}

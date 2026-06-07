@@ -10,6 +10,7 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { RevenueDataPoint } from "@/types";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface RevenueChartProps {
   data?: RevenueDataPoint[];
@@ -17,6 +18,9 @@ interface RevenueChartProps {
 }
 
 export function RevenueChart({ data, isLoading }: RevenueChartProps) {
+  const { t, isRtl } = useTranslation();
+  const getLang = () => (typeof document !== "undefined" ? document.documentElement.lang : "fr") || "fr";
+
   if (isLoading || !data) {
     return (
       <>
@@ -25,6 +29,8 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
       </>
     );
   }
+
+  const chartLang = getLang() === "ar" ? "ar-DZ" : "fr-DZ";
 
   return (
     <>
@@ -38,6 +44,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
           display: "flex",
           alignItems: "center",
           gap: 8,
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <span
@@ -50,7 +57,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             flexShrink: 0,
           }}
         />
-        Évolution du chiffre d'affaires
+        {t("dashboard.revenue_chart")}
       </h3>
       <div style={{ minWidth: 0, width: "100%", height: 320 }}>
         <ResponsiveContainer width="100%" height={320}>
@@ -61,12 +68,12 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
                 <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
               </linearGradient>
             </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} strokeOpacity={0.65} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} strokeOpacity={0.65} />
             <XAxis
               dataKey="date"
               tickFormatter={(val) => {
                 const d = new Date(val);
-                return d.toLocaleDateString("fr-DZ", { day: "2-digit", month: "short" });
+                return d.toLocaleDateString(chartLang, { day: "2-digit", month: "short" });
               }}
               stroke="var(--color-secondary)"
               fontSize={12}
@@ -76,7 +83,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             />
             <YAxis
               tickFormatter={(val) =>
-                new Intl.NumberFormat("fr-DZ", {
+                new Intl.NumberFormat(chartLang, {
                   notation: "compact",
                   compactDisplay: "short",
                 }).format(val)
@@ -85,6 +92,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
+              orientation={isRtl ? "right" : "left"}
             />
             <Tooltip
               contentStyle={{
@@ -95,9 +103,10 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
                 boxShadow: "var(--shadow-card)",
                 fontSize: "12px",
                 padding: "8px 12px",
+                textAlign: isRtl ? "right" : "left",
               }}
               labelFormatter={(label) => formatDate(label)}
-              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), "Revenu"]}
+              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), t("dashboard.kpis.revenue_today")]}
             />
             <Area
               type="monotone"

@@ -2,10 +2,12 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useIPC } from "@/hooks/useIPC";
 import type { User } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function useUsers() {
   const { user: currentUser } = useAuth();
   const invoke = useIPC();
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,10 +30,10 @@ export function useUsers() {
       await fetchUsers();
       return true;
     } catch (err: any) {
-      alert("Erreur de création: " + err.message);
+      alert(t("users.alerts.create_error", { message: err.message }));
       return false;
     }
-  }, [invoke, currentUser, fetchUsers]);
+  }, [invoke, currentUser, fetchUsers, t]);
 
   const updateUser = useCallback(async (id: number, data: any) => {
     if (!currentUser?.id) return false;
@@ -40,18 +42,18 @@ export function useUsers() {
       await fetchUsers();
       return true;
     } catch (err: any) {
-      alert("Erreur de modification: " + err.message);
+      alert(t("users.alerts.update_error", { message: err.message }));
       return false;
     }
-  }, [invoke, currentUser, fetchUsers]);
+  }, [invoke, currentUser, fetchUsers, t]);
 
   const deleteUser = useCallback(async (id: number) => {
     if (!currentUser?.id) return false;
     if (id === currentUser.id) {
-      alert("Vous ne pouvez pas supprimer votre propre compte.");
+      alert(t("users.alerts.delete_self_error"));
       return false;
     }
-    const yes = window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?");
+    const yes = window.confirm(t("users.alerts.delete_confirm"));
     if (!yes) return false;
 
     try {
@@ -59,10 +61,10 @@ export function useUsers() {
       await fetchUsers();
       return true;
     } catch (err: any) {
-      alert("Erreur de suppression: " + err.message);
+      alert(t("users.alerts.delete_error", { message: err.message }));
       return false;
     }
-  }, [invoke, currentUser, fetchUsers]);
+  }, [invoke, currentUser, fetchUsers, t]);
 
   useEffect(() => {
     fetchUsers();

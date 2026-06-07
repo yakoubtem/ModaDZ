@@ -1,6 +1,9 @@
 import { UsersSettings } from "./UsersSettings";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function UsersPage() {
+  const { t, isRtl } = useTranslation();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {/* Custom top bar */}
@@ -21,11 +24,13 @@ export function UsersPage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--color-secondary)" }}>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
-            Administration
+            {t("users.admin")}
           </span>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            {isRtl ? "chevron_left" : "chevron_right"}
+          </span>
           <span style={{ fontSize: "var(--text-label-sm)", fontWeight: "var(--fw-label-sm)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase", color: "var(--color-on-surface)" }}>
-            Utilisateurs
+            {t("title")}
           </span>
         </div>
       </header>
@@ -51,10 +56,10 @@ export function UsersPage() {
               marginBottom: "8px",
             }}
           >
-            Utilisateurs et Rôles
+            {t("users.header_title")}
           </h2>
           <p style={{ fontSize: "var(--text-body-lg)", color: "var(--color-on-surface-variant)", maxWidth: 640, lineHeight: "var(--lh-body-lg)" }}>
-            Gérez les accès à l'application, configurez les informations d’identification et assignez les rôles.
+            {t("users.header_desc")}
           </p>
         </div>
 

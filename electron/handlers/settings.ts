@@ -22,7 +22,11 @@ export function registerSettingsHandlers(ipcMain: IpcMain) {
   ipcMain.handle(
     "settings:updateMany",
     async (_e, params: { currentUserId?: number; updates: Record<string, string> }) => {
-      await requireAdmin(params.currentUserId);
+      const keys = Object.keys(params.updates);
+      const isOnlyLanguage = keys.length === 1 && keys[0] === "language";
+      if (!isOnlyLanguage) {
+        await requireAdmin(params.currentUserId);
+      }
       // Upsert all keys
       return prisma.$transaction(
         Object.entries(params.updates).map(([key, value]) =>

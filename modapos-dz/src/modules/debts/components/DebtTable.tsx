@@ -1,24 +1,21 @@
 import { formatCurrency, formatDate, initials } from "@/lib/utils";
 import type { CustomerDebtSummary } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Debt Status Badge ────────────────────────────────────
 
-function debtStatus(debt: number): {
-  label: string;
+function getDebtStatusInfo(debt: number): {
+  key: string;
   chipClass: string;
   dotColor: string;
 } {
   if (debt <= 0)
-    return { label: "Soldé", chipClass: "chip chip-success", dotColor: "var(--color-tertiary)" };
+    return { key: "completed", chipClass: "chip chip-success", dotColor: "var(--color-tertiary)" };
   if (debt < 5000)
-    return { label: "Faible", chipClass: "chip chip-success", dotColor: "var(--color-tertiary)" };
+    return { key: "low", chipClass: "chip chip-success", dotColor: "var(--color-tertiary)" };
   if (debt < 50000)
-    return {
-      label: "Moyenne",
-      chipClass: "chip",
-      dotColor: "var(--color-warning)",
-    } as ReturnType<typeof debtStatus>;
-  return { label: "Élevée", chipClass: "chip chip-error", dotColor: "var(--color-error)" };
+    return { key: "medium", chipClass: "chip", dotColor: "var(--color-warning)" };
+  return { key: "high", chipClass: "chip chip-error", dotColor: "var(--color-error)" };
 }
 
 // ─── Skeleton Row ─────────────────────────────────────────
@@ -48,6 +45,7 @@ function SkeletonRow() {
 // ─── Empty State ──────────────────────────────────────────
 
 function EmptyState() {
+  const { t } = useTranslation();
   return (
     <tr>
       <td colSpan={8}>
@@ -88,10 +86,10 @@ function EmptyState() {
                 marginBottom: 6,
               }}
             >
-              Aucun client trouvé
+              {t("debts.table.no_debtors_found")}
             </p>
             <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-              Essayez d'ajuster votre recherche ou vos filtres.
+              {t("debts.table.adjust_filters_desc")}
             </p>
           </div>
         </div>
@@ -121,6 +119,7 @@ export function DebtTable({
   onViewDetail,
   onPageChange,
 }: DebtTableProps) {
+  const { t, isRtl } = useTranslation();
   const totalPages = Math.ceil(total / pageSize);
 
   return (
@@ -154,7 +153,7 @@ export function DebtTable({
             color: "var(--color-secondary)",
           }}
         >
-          Clients
+          {t("debts.table.list_header")}
         </p>
         {!isLoading && total > 0 && (
           <span
@@ -164,7 +163,7 @@ export function DebtTable({
               fontWeight: 500,
             }}
           >
-            {total} résultat{total !== 1 ? "s" : ""}
+            {t("debts.table.result_count", { count: total })}
           </span>
         )}
       </div>
@@ -179,13 +178,22 @@ export function DebtTable({
         >
           <thead>
             <tr>
-              {["Client", "Téléphone", "Total achats", "Total payé", "Dette actuelle", "Dernier achat", "Statut", ""].map(
+              {[
+                t("debts.table.debtor"),
+                t("debts.table.phone"),
+                t("debts.customer_debts.total_purchases"),
+                t("debts.customer_debts.total_paid"),
+                t("debts.table.current_debt"),
+                t("debts.table.last_purchase"),
+                t("sales.table.status"),
+                ""
+              ].map(
                 (col, i) => (
                   <th
                     key={i}
                     style={{
                       padding: "12px 24px",
-                      textAlign: "left",
+                      textAlign: i === 7 ? (isRtl ? "left" : "right") : (isRtl ? "right" : "left"),
                       fontSize: "var(--text-label-sm)",
                       fontWeight: 700,
                       letterSpacing: "0.07em",
@@ -208,7 +216,8 @@ export function DebtTable({
               : customers.length === 0
               ? <EmptyState />
               : customers.map((c) => {
-                  const status = debtStatus(c.currentDebt);
+                  const status = getDebtStatusInfo(c.currentDebt);
+                  const statusLabel = status.key === "completed" ? t("common.status.completed") : t(`debts.status.${status.key}`);
                   return (
                     <tr
                       key={c.id}
@@ -222,7 +231,7 @@ export function DebtTable({
                       }
                     >
                       {/* Client */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", textAlign: isRtl ? "right" : "left" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
                           <div
                             style={{
@@ -264,29 +273,29 @@ export function DebtTable({
                               {c.name}
                             </p>
                             <p style={{ fontSize: 11, color: "var(--color-secondary)" }}>
-                              {c.salesCount} vente{c.salesCount !== 1 ? "s" : ""}
+                              {t("debts.table.sales_count", { count: c.salesCount })}
                             </p>
                           </div>
                         </div>
                       </td>
 
                       {/* Phone */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-secondary)", fontSize: "var(--text-body-sm)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-secondary)", fontSize: "var(--text-body-sm)", textAlign: isRtl ? "right" : "left" }}>
                         {c.phone ?? "—"}
                       </td>
 
                       {/* Total purchases */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", fontWeight: 600, fontSize: "var(--text-body-sm)", color: "var(--color-on-surface)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", fontWeight: 600, fontSize: "var(--text-body-sm)", color: "var(--color-on-surface)", textAlign: isRtl ? "right" : "left" }}>
                         {formatCurrency(c.totalPurchases)}
                       </td>
 
                       {/* Total paid */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-tertiary)", fontWeight: 600, fontSize: "var(--text-body-sm)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-tertiary)", fontWeight: 600, fontSize: "var(--text-body-sm)", textAlign: isRtl ? "right" : "left" }}>
                         {formatCurrency(c.totalPaid)}
                       </td>
 
                       {/* Current debt */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", textAlign: isRtl ? "right" : "left" }}>
                         <span
                           style={{
                             fontFamily: "var(--font-display)",
@@ -308,16 +317,16 @@ export function DebtTable({
                       </td>
 
                       {/* Last purchase */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-secondary)", fontSize: "var(--text-body-sm)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", color: "var(--color-secondary)", fontSize: "var(--text-body-sm)", textAlign: isRtl ? "right" : "left" }}>
                         {c.lastPurchaseDate ? formatDate(c.lastPurchaseDate) : "—"}
                       </td>
 
                       {/* Status badge */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)" }}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", textAlign: isRtl ? "right" : "left" }}>
                         <span
                           className={status.chipClass}
                           style={
-                            status.label === "Moyenne"
+                            status.key === "medium"
                               ? { background: "rgba(180,83,9,0.08)", color: "var(--color-warning)", border: "1px solid rgba(180,83,9,0.2)" }
                               : undefined
                           }
@@ -329,16 +338,16 @@ export function DebtTable({
                               borderRadius: "50%",
                               background: status.dotColor,
                               display: "inline-block",
-                              marginRight: 5,
+                              [isRtl ? "marginLeft" : "marginRight"]: 5,
                               flexShrink: 0,
                             }}
                           />
-                          {status.label}
+                          {statusLabel}
                         </span>
                       </td>
 
                       {/* Actions */}
-                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)" }} onClick={(e) => e.stopPropagation()}>
+                      <td style={{ padding: "18px 24px", borderBottom: "1px solid rgba(208,197,175,0.1)", textAlign: isRtl ? "left" : "right" }} onClick={(e) => e.stopPropagation()}>
                         <button
                           className="btn-border"
                           style={{ padding: "7px 16px", fontSize: 12, gap: 5, whiteSpace: "nowrap" }}
@@ -347,7 +356,7 @@ export function DebtTable({
                           <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                             open_in_new
                           </span>
-                          Détails
+                          {t("debts.table.details_btn")}
                         </button>
                       </td>
                     </tr>
@@ -369,7 +378,7 @@ export function DebtTable({
           }}
         >
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-            {Math.min((page - 1) * pageSize + 1, total)}–{Math.min(page * pageSize, total)} sur {total} clients
+            {t("debts.table.display_info", { from: Math.min((page - 1) * pageSize + 1, total), to: Math.min(page * pageSize, total), total })}
           </p>
           <div style={{ display: "flex", gap: 4 }}>
             <button

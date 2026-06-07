@@ -1,0 +1,75 @@
+{
+  "title": "Paramètres",
+  "description": "Gerez les informations de votre boutique, configurez l'apparence des reçus et administrez les acces.",
+  "tabs": {
+    "store": "Magasin & Reçus",
+    "backup": "Sauvegarde",
+    "users": "Utilisateurs",
+    "language": "Langue (Language)"
+  },
+  "breadcrumbs": {
+    "admin": "Administration",
+    "global_config": "Configuration Globale"
+  },
+  "tip": {
+    "title": "Astuce d'enseigne",
+    "desc": "Pour une expérience client premium, gardez le message du ticket court. Les points de fidélité s'impriment automatiquement si le client est identifié."
+  },
+  "store_info": {
+    "title": "Informations du magasin",
+    "desc": "Ces informations apparaîtront sur les tickets de caisse imprimés.",
+    "name": "Nom du magasin",
+    "phone": "Téléphone",
+    "address": "Adresse"
+  },
+  "receipt": {
+    "title": "Paramètres des tickets",
+    "footer": "Message de pied de page"
+  },
+  "budget": {
+    "title": "Budget dépenses",
+    "desc": "Utilisé pour les alertes de dépassement mensuel.",
+    "monthly": "Budget mensuel (DZD)"
+  },
+  "backups": {
+    "title": "Sauvegardes de la base de données",
+    "desc": "Créez des points de restauration ou importez une sauvegarde.",
+    "create_btn": "Créer une sauvegarde",
+    "new_backup": "Nouvelle sauvegarde",
+    "list_title": "Historique des sauvegardes",
+    "empty": "Aucune sauvegarde trouvée.",
+    "export_btn": "Exporter",
+    "restore_btn": "Restaurer",
+    "table": {
+      "filename": "Fichier",
+      "size": "Taille",
+      "type": "Type",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "alerts": {
+      "restore_success": "Sauvegarde restaurée avec succès. Veuillez relancer l'application pour appliquer les changements.",
+      "export_success": "Export réussi !",
+      "export_error": "Erreur lors de l'export: {error}"
+    }
+  },
+  "language_section": {
+    "title": "Langue de l'interface",
+    "desc": "Choisissez la langue d'affichage de l'application.",
+    "select_label": "Langue",
+    "fr_option": "Français",
+    "ar_option": "العربية"
+  },
+  "pending_changes": {
+    "title": "Modifications en attente",
+    "desc": "Vous avez effectué des modifications qui ne sont pas encore appliquées en caisse.",
+    "save_btn": "Enregistrer les paramètres",
+    "cancel_btn": "Annuler"
+  },
+  "alerts": {
+    "success_title": "Paramètres enregistrés",
+    "success_desc": "Les informations du magasin ont été mises à jour.",
+    "error_title": "Erreur lors de l'enregistrement",
+    "error_desc": "Veuillez réessayer ou vérifier vos permissions."
+  }
+}

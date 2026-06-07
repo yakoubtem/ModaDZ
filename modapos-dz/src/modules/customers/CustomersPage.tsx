@@ -5,8 +5,10 @@ import { CustomerTable } from "./components/CustomerTable";
 import { CustomerFormModal } from "./components/CustomerFormModal";
 import { CustomerProfileModal } from "./components/CustomerProfileModal";
 import type { CustomerWithStats } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function CustomersPage() {
+  const { t } = useTranslation();
   const {
     customers,
     total,
@@ -56,9 +58,9 @@ export function CustomersPage() {
         actions={
           <div style={{ display: "flex", gap: "12px" }}>
             <button className="btn-border" style={{ padding: "8px 16px", borderRadius: "var(--radius-md)" }}>
-              Notifications
+              {t("common.buttons.notifications")}
             </button>
-            <button className="btn-checkout">Encaisser</button>
+            <button className="btn-checkout">{t("common.buttons.checkout")}</button>
           </div>
         }
       />
@@ -84,17 +86,17 @@ export function CustomersPage() {
                   color: "var(--color-on-surface)",
                 }}
               >
-                Gestion des Clients
+                {t("customers.title")}
               </h2>
               {debtCount > 0 && (
                 <span className="chip chip-error" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 14 }}>warning</span>
-                  {debtCount} Créances
+                  {debtCount} {t("customers.debts_count")}
                 </span>
               )}
             </div>
             <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-on-surface-variant)" }}>
-              Consultez l'historique d'achat, gérez les informations de contact et suivez les créances de votre clientèle VIP.
+              {t("customers.subtitle")}
             </p>
           </div>
 
@@ -103,7 +105,7 @@ export function CustomersPage() {
             onClick={() => { setEditingCustomer(null); setIsFormOpen(true); }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>person_add</span>
-            Nouveau client
+            {t("customers.add_customer")}
           </button>
         </div>
 
@@ -135,7 +137,7 @@ export function CustomersPage() {
               type="text"
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Rechercher un client par nom, téléphone ou email..."
+              placeholder={t("customers.search_placeholder_long")}
               style={{
                 flex: 1,
                 background: "transparent",
@@ -168,7 +170,7 @@ export function CustomersPage() {
             }}
           >
             <p style={{ fontSize: "var(--text-label-sm)", letterSpacing: "var(--ls-label-sm)", color: "var(--color-on-surface-variant)", textTransform: "uppercase", marginBottom: "4px" }}>
-              Total Clients Actifs
+              {t("customers.total_active")}
             </p>
             <p
               style={{

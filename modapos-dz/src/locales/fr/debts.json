@@ -1,0 +1,68 @@
+{
+  "title": "Gestion des Dettes",
+  "debtors_count_label": "débiteur(s)",
+  "header_title": "Tableau des dettes",
+  "header_desc": "Suivez les créances clients et les paiements en attente. Enregistrez des remboursements et consultez l'historique de chaque débiteur.",
+  "total_outstanding": "Encours total",
+  "kpis": {
+    "total_debt": "Dette totale clients",
+    "debtor_count": "Nombre de débiteurs",
+    "recovered_month": "Dettes recouvrées ce mois",
+    "recovery_rate": "Taux de recouvrement"
+  },
+  "filters": {
+    "all": "Toutes",
+    "with_debt": "Avec dette",
+    "no_debt": "Sans dette",
+    "search_placeholder": "Rechercher par nom ou téléphone...",
+    "filters_label": "Filtres",
+    "debt_desc": "Dette décroissante",
+    "debt_asc": "Dette croissante",
+    "name_asc": "Nom A–Z",
+    "name_desc": "Nom Z–A"
+  },
+  "status": {
+    "low": "Faible",
+    "medium": "Moyenne",
+    "high": "Élevée"
+  },
+  "table": {
+    "debtor": "Client",
+    "phone": "Téléphone",
+    "current_debt": "Dette actuelle",
+    "total_purchases": "Total acheté",
+    "last_purchase": "Dernier achat",
+    "list_header": "Clients",
+    "result_count": "{count} résultat(s)",
+    "sales_count": "{count} vente(s)",
+    "details_btn": "Détails",
+    "display_info": "{from}–{to} sur {total} clients",
+    "no_debtors_found": "Aucun client trouvé",
+    "adjust_filters_desc": "Essayez d'ajuster votre recherche ou vos filtres."
+  },
+  "payment_modal": {
+    "title": "Enregistrer un paiement de dette",
+    "amount": "Montant payé (DZD)",
+    "amount_label": "Montant (DZD) *",
+    "method": "Mode de paiement",
+    "note": "Note",
+    "note_placeholder": "Remarque sur ce paiement...",
+    "success": "Paiement enregistré avec succès",
+    "invalid_amount": "Veuillez saisir un montant valide",
+    "settle_all": "Tout solder",
+    "optional": "(optionnelle)",
+    "saving": "Enregistrement...",
+    "confirm_btn": "Confirmer le paiement"
+  },
+  "customer_debts": {
+    "title": "Dettes de {name}",
+    "total_purchases": "Total des achats",
+    "total_paid": "Total payé",
+    "remaining": "Reste à payer",
+    "payments_history": "Historique des règlements",
+    "payments_tab": "Paiements",
+    "no_sales_desc": "Ce client n'a pas encore d'historique d'achats.",
+    "no_payments": "Aucun paiement enregistré",
+    "no_payments_desc": "Enregistrez le premier paiement via le bouton ci-dessus."
+  }
+}

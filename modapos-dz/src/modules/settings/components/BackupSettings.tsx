@@ -1,7 +1,9 @@
 import { useBackups } from "../hooks/useBackups";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function BackupSettings() {
   const { backups, isLoading, createBackup, restoreBackup, exportBackup } = useBackups();
+  const { t, isRtl } = useTranslation();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -19,7 +21,7 @@ export function BackupSettings() {
           flexWrap: "wrap",
         }}
       >
-        <div style={{ flex: 1, minWidth: 240 }}>
+        <div style={{ flex: 1, minWidth: 240, textAlign: isRtl ? "right" : "left" }}>
           <h3
             style={{
               fontSize: 16,
@@ -29,15 +31,15 @@ export function BackupSettings() {
               marginBottom: 6,
             }}
           >
-            Créer une sauvegarde
+            {t("settings.backups.create_btn")}
           </h3>
           <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", lineHeight: "var(--lh-body-sm)" }}>
-            Il est recommandé de sauvegarder vos données régulièrement pour éviter toute perte en cas de panne de l'appareil.
+            {t("settings.backups.desc")}
           </p>
         </div>
         <button className="btn-primary" onClick={() => createBackup()} style={{ flexShrink: 0 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>backup</span>
-          Nouvelle sauvegarde
+          {t("settings.backups.new_backup")}
         </button>
       </div>
 
@@ -55,6 +57,7 @@ export function BackupSettings() {
             padding: "16px 24px",
             borderBottom: "1px solid rgba(208,197,175,0.3)",
             background: "rgba(245,243,238,0.7)",
+            textAlign: isRtl ? "right" : "left",
           }}
         >
           <h3
@@ -65,7 +68,7 @@ export function BackupSettings() {
               fontFamily: "var(--font-display)",
             }}
           >
-            Historique des sauvegardes
+            {t("settings.backups.list_title")}
           </h3>
         </div>
 
@@ -90,19 +93,19 @@ export function BackupSettings() {
               cloud_off
             </span>
             <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-secondary)" }}>
-              Aucune sauvegarde trouvée.
+              {t("settings.backups.empty")}
             </p>
           </div>
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
             <thead>
               <tr style={{ background: "rgba(245,243,238,0.4)", borderBottom: "1px solid rgba(208,197,175,0.2)" }}>
-                {["Fichier", "Date", "Taille", "Actions"].map((h) => (
+                {["filename", "date", "size", "actions"].map((key) => (
                   <th
-                    key={h}
+                    key={key}
                     style={{
                       padding: "14px 20px",
-                      textAlign: "left",
+                      textAlign: key === "actions" ? (isRtl ? "left" : "right") : (isRtl ? "right" : "left"),
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -111,7 +114,7 @@ export function BackupSettings() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {h}
+                    {t("settings.backups.table." + key)}
                   </th>
                 ))}
               </tr>
@@ -128,18 +131,18 @@ export function BackupSettings() {
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   {/* Filename */}
-                  <td style={{ padding: "14px 20px", fontWeight: 500, color: "var(--color-on-surface)" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <td style={{ padding: "14px 20px", fontWeight: 500, color: "var(--color-on-surface)", textAlign: isRtl ? "right" : "left" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexDirection: isRtl ? "row-reverse" : "row" }}>
                       <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--color-secondary)" }}>
                         description
                       </span>
-                      {backup.filename}
+                      <span>{backup.filename}</span>
                     </div>
                   </td>
 
                   {/* Date */}
-                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)" }}>
-                    {new Date(backup.createdAt).toLocaleString("fr-FR", {
+                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)", textAlign: isRtl ? "right" : "left" }}>
+                    {new Date(backup.createdAt).toLocaleString(isRtl ? "ar-DZ" : "fr-FR", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -149,20 +152,20 @@ export function BackupSettings() {
                   </td>
 
                   {/* Size */}
-                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)", fontVariantNumeric: "tabular-nums" }}>
+                  <td style={{ padding: "14px 20px", fontSize: 12, color: "var(--color-secondary)", fontVariantNumeric: "tabular-nums", textAlign: isRtl ? "right" : "left" }}>
                     {(backup.size / 1024).toFixed(2)} KB
                   </td>
 
                   {/* Actions */}
-                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
+                  <td style={{ padding: "14px 20px", textAlign: isRtl ? "left" : "right" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: isRtl ? "flex-start" : "flex-end", flexDirection: isRtl ? "row-reverse" : "row" }}>
                       <button
                         className="btn-border"
                         onClick={() => exportBackup(backup.id, backup.filename)}
                         style={{ padding: "6px 14px", fontSize: 12, height: 36, gap: 6 }}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span>
-                        Exporter
+                        {t("settings.backups.export_btn")}
                       </button>
                       <button
                         className="btn-border"
@@ -170,7 +173,7 @@ export function BackupSettings() {
                         style={{ padding: "6px 14px", fontSize: 12, height: 36, gap: 6 }}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>restore</span>
-                        Restaurer
+                        {t("settings.backups.restore_btn")}
                       </button>
                     </div>
                   </td>

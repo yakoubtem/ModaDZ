@@ -17,6 +17,7 @@ import {
 import type { ExpenseAnalytics } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseChartsProps {
   analytics: ExpenseAnalytics | null;
@@ -35,6 +36,8 @@ const CATEGORY_COLORS = [
 ];
 
 export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
+  const { t } = useTranslation();
+
   if (isLoading || !analytics) {
     return (
       <>
@@ -60,7 +63,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
       <div className="glass-card rounded-[var(--radius-xl)] p-6">
         <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--color-primary-container)]" />
-          Evolution des depenses mensuelles
+          {t("expenses.analytics.trend_title")}
         </h3>
         <div className="w-full h-64">
           <ResponsiveContainer width="100%" height={256}>
@@ -84,7 +87,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
                 }}
                 formatter={(value: unknown) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [formatCurrency(n), "Depenses"];
+                  return [formatCurrency(n), t("expenses.analytics.expenses_label")];
                 }}
               />
               <Line type="monotone" dataKey="value" stroke="var(--color-primary)" strokeWidth={3} dot={false} />
@@ -97,7 +100,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
       <div className="glass-card rounded-[var(--radius-xl)] p-6">
         <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--color-warning)]" />
-          Depenses par categorie
+          {t("expenses.analytics.category_title")}
         </h3>
         <div className="w-full h-64">
           <ResponsiveContainer width="100%" height={256}>
@@ -126,7 +129,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
                 }}
                 formatter={(value: unknown) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [formatCurrency(n), "Total"];
+                  return [formatCurrency(n), t("expenses.table.amount")];
                 }}
               />
             </PieChart>
@@ -138,7 +141,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
       <div className="glass-card rounded-[var(--radius-xl)] p-6">
         <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--color-tertiary)]" />
-          Revenu vs depenses
+          {t("expenses.analytics.rev_vs_exp_title")}
         </h3>
         <div className="w-full h-64">
           <ResponsiveContainer width="100%" height={256}>
@@ -162,7 +165,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
                 }}
                 formatter={(value: any, name: any) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [formatCurrency(n), name === "revenue" ? "Revenu" : "Dépenses"];
+                  return [formatCurrency(n), name === "revenue" ? t("expenses.analytics.revenue_label") : t("expenses.analytics.expenses_label")];
                 }}
               />
               <Bar dataKey="revenue" fill="var(--color-primary-container)" radius={[6, 6, 0, 0]} />
@@ -176,7 +179,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
       <div className="glass-card rounded-[var(--radius-xl)] p-6">
         <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)] mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--color-tertiary-container)]" />
-          Evolution du benefice net
+          {t("expenses.analytics.net_profit_title")}
         </h3>
         <div className="w-full h-64">
           <ResponsiveContainer width="100%" height={256}>
@@ -206,7 +209,7 @@ export function ExpenseCharts({ analytics, isLoading }: ExpenseChartsProps) {
                 }}
                 formatter={(value: unknown) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [formatCurrency(n), "Benefice net"];
+                  return [formatCurrency(n), t("expenses.analytics.net_profit_label")];
                 }}
               />
               <Area type="monotone" dataKey="profit" stroke="var(--color-tertiary)" strokeWidth={3} fill="url(#profitFill)" />

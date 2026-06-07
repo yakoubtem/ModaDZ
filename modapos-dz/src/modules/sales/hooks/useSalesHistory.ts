@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useIPC } from "@/hooks/useIPC";
 import type { PaginatedSales, SalesFilters, Sale } from "@/types";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const DEFAULT_FILTERS: SalesFilters = {
   search: "",
@@ -30,6 +31,7 @@ interface UseSalesHistoryReturn {
 }
 
 export function useSalesHistory(): UseSalesHistoryReturn {
+  const { t } = useTranslation();
   const api = useIPC();
   const [sales, setSales] = useState<PaginatedSales["sales"]>([]);
   const [total, setTotal] = useState(0);
@@ -61,12 +63,12 @@ export function useSalesHistory(): UseSalesHistoryReturn {
         setTotal(result.total);
         setPage(result.page);
       } catch {
-        toast.error("Impossible de charger les ventes");
+        toast.error(t("sales.toasts.load_error"));
       } finally {
         setIsLoading(false);
       }
     },
-    [api, pageSize]
+    [api, pageSize, t]
   );
 
   useEffect(() => {
@@ -113,10 +115,10 @@ export function useSalesHistory(): UseSalesHistoryReturn {
           setIsDetailOpen(true);
         }
       } catch {
-        toast.error("Impossible de charger les détails");
+        toast.error(t("sales.toasts.detail_error"));
       }
     },
-    [api]
+    [api, t]
   );
 
   const closeDetail = useCallback(() => {
@@ -128,7 +130,7 @@ export function useSalesHistory(): UseSalesHistoryReturn {
     async (id: number) => {
       try {
         await api("sales:refund", id);
-        toast.success("Vente remboursée avec succès. Le stock a été restauré.");
+        toast.success(t("sales.toasts.refund_success"));
         await loadPage(page, filters);
         const updated = await api<Sale>("sales:getById", id);
         if (updated) {
@@ -136,11 +138,11 @@ export function useSalesHistory(): UseSalesHistoryReturn {
         }
         return true;
       } catch (err: any) {
-        toast.error(err.message || "Erreur lors du remboursement");
+        toast.error(err.message || t("sales.toasts.refund_error"));
         return false;
       }
     },
-    [api, page, filters, loadPage]
+    [api, page, filters, loadPage, t]
   );
 
   return {

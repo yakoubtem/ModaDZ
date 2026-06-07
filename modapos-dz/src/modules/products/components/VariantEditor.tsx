@@ -3,6 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import type { ProductFormData } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Common size presets for clothing stores
 const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "46"];
@@ -27,6 +28,7 @@ interface VariantEditorProps {
 }
 
 export function VariantEditor({ control, register, errors }: VariantEditorProps) {
+  const { t, isRtl, language } = useTranslation();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "variants",
@@ -42,10 +44,10 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-            Variantes
+            {t("products.form.variants")}
           </h3>
           <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-            Taille, couleur, stock et code-barres pour chaque variante
+            {t("products.form.variants_desc")}
           </p>
         </div>
         <Button
@@ -56,14 +58,14 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
           className="gap-1.5"
         >
           <Plus className="w-3.5 h-3.5" />
-          Ajouter
+          {t("common.buttons.add")}
         </Button>
       </div>
 
       {/* Quick-pick sizes */}
       <div className="flex flex-wrap gap-1.5">
-        <span className="text-xs text-[var(--color-text-muted)] self-center mr-1">
-          Raccourcis tailles:
+        <span className={cn("text-xs text-[var(--color-text-muted)] self-center", isRtl ? "ml-1" : "mr-1")}>
+          {t("products.form.size_shortcuts")}
         </span>
         {SIZE_PRESETS.map((size) => (
           <button
@@ -82,8 +84,8 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
         <div className="rounded-[var(--radius-lg)] border-[1.5px] border-[rgba(208,197,175,0.3)] overflow-hidden bg-transparent">
           {/* Table header */}
           <div className="grid grid-cols-[1fr_1.2fr_80px_1.2fr_36px] gap-2 px-3 py-2.5 bg-[rgba(208,197,175,0.1)] border-b-[1.5px] border-[rgba(208,197,175,0.2)]">
-            {["Taille", "Couleur", "Stock", "Code-barres", ""].map((h) => (
-              <span key={h} className="text-xs font-semibold text-[var(--color-secondary)] uppercase tracking-wider">
+            {[t("products.form.size"), t("products.form.color"), t("products.form.stock"), t("products.form.barcode"), ""].map((h, idx) => (
+              <span key={idx} className="text-xs font-semibold text-[var(--color-secondary)] uppercase tracking-wider" style={{ textAlign: isRtl ? "right" : "left" }}>
                 {h}
               </span>
             ))}
@@ -102,7 +104,7 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                 {/* Size */}
                 <input
                   {...register(`variants.${idx}.size`, { required: true })}
-                  placeholder="ex: M, XL, 42"
+                  placeholder={t("products.form.size_placeholder")}
                   list="size-datalist"
                   className={cn(
                     "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
@@ -117,7 +119,7 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                 <div className="relative flex items-center gap-1.5">
                   <input
                     {...register(`variants.${idx}.color`, { required: true })}
-                    placeholder="ex: Noir, Bleu"
+                    placeholder={t("products.form.color_placeholder")}
                     list="color-datalist"
                     className={cn(
                       "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm",
@@ -151,7 +153,7 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
                 {/* Barcode */}
                 <input
                   {...register(`variants.${idx}.barcode`)}
-                  placeholder="Code-barres (optionnel)"
+                  placeholder={t("products.form.barcode_placeholder")}
                   className={cn(
                     "w-full h-8 px-2.5 rounded-[var(--radius-sm)] text-sm font-mono",
                     "bg-[var(--color-sand)] border border-[rgba(208,197,175,0.3)]",
@@ -175,15 +177,16 @@ export function VariantEditor({ control, register, errors }: VariantEditorProps)
       ) : (
         <div className="flex flex-col items-center justify-center py-8 rounded-[var(--radius-lg)] border-2 border-dashed border-[var(--color-border)]">
           <p className="text-sm text-[var(--color-text-muted)]">
-            Aucune variante. Cliquez sur{" "}
+            {t("products.form.no_variants")}{" "}
+            {language === "ar" ? "اضغط على " : "Cliquez sur "}
             <button
               type="button"
               onClick={addVariant}
-              className="text-[var(--color-accent)] hover:underline"
+              className="text-[var(--color-accent)] hover:underline font-semibold"
             >
-              Ajouter
-            </button>{" "}
-            pour créer une variante.
+              {t("common.buttons.add")}
+            </button>
+            {language === "ar" ? " لإنشاء نوع منتج." : " pour créer une variante."}
           </p>
         </div>
       )}

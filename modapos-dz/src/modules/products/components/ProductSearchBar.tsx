@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Category } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ProductSearchBarProps {
   onSearch: (query: string) => void;
@@ -16,6 +17,7 @@ export function ProductSearchBar({
   value,
   categoryId,
 }: ProductSearchBarProps) {
+  const { t, isRtl } = useTranslation();
   const [localValue, setLocalValue] = useState(value);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,7 +47,7 @@ export function ProductSearchBar({
           className="material-symbols-outlined"
           style={{
             position: "absolute",
-            left: 16,
+            [isRtl ? "right" : "left"]: 16,
             top: "50%",
             transform: "translateY(-50%)",
             color: "var(--color-secondary)",
@@ -57,14 +59,14 @@ export function ProductSearchBar({
         </span>
         <input
           type="text"
-          placeholder="Rechercher par nom ou SKU..."
+          placeholder={t("products.search_placeholder")}
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           style={{
             width: "100%",
             height: 48,
-            paddingLeft: 48,
-            paddingRight: localValue ? 36 : 16,
+            paddingLeft: isRtl ? (localValue ? 36 : 16) : 48,
+            paddingRight: isRtl ? 48 : (localValue ? 36 : 16),
             background: "var(--color-surface)",
             border: "1px solid rgba(208,197,175,0.3)",
             borderRadius: "var(--radius-lg)",
@@ -77,10 +79,10 @@ export function ProductSearchBar({
         {localValue && (
           <button
             onClick={handleClear}
-            aria-label="Effacer"
+            aria-label={t("common.buttons.clear")}
             style={{
               position: "absolute",
-              right: 10,
+              [isRtl ? "left" : "right"]: 10,
               top: "50%",
               transform: "translateY(-50%)",
               background: "none",
@@ -116,7 +118,7 @@ export function ProductSearchBar({
           cursor: "pointer",
         }}
       >
-        <option value="">Toutes catégories</option>
+        <option value="">{t("products.categories.all")}</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -136,7 +138,7 @@ export function ProductSearchBar({
           style={{ padding: "8px 14px", fontSize: 12, height: 48, gap: 6 }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>filter_list_off</span>
-          Effacer
+          {t("common.buttons.clear")}
         </button>
       )}
     </div>

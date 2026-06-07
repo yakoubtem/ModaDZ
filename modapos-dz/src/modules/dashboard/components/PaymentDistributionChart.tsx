@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import type { PaymentDataPoint } from "@/types";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PaymentDistributionChartProps {
   data?: PaymentDataPoint[];
@@ -20,13 +21,9 @@ const COLORS = {
   transfer: "var(--color-secondary)",
 };
 
-const LABELS: Record<string, string> = {
-  cash: "Espèces",
-  card: "Carte",
-  transfer: "Virement",
-};
-
 export function PaymentDistributionChart({ data, isLoading }: PaymentDistributionChartProps) {
+  const { t, isRtl } = useTranslation();
+
   if (isLoading || !data) {
     return (
       <>
@@ -38,7 +35,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
 
   // Format data for chart
   const formattedData = data.map((d) => ({
-    name: LABELS[d.name] || d.name,
+    name: t("common.payment_methods." + d.name),
     value: d.value,
     color: COLORS[d.name as keyof typeof COLORS] || "var(--color-text-muted)",
   }));
@@ -57,6 +54,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
           display: "flex",
           alignItems: "center",
           gap: 8,
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <span
@@ -69,7 +67,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
             flexShrink: 0,
           }}
         />
-        Répartition des paiements
+        {t("dashboard.payments_chart")}
       </h3>
       <div style={{ minWidth: 0, width: "100%", height: 220, position: "relative" }}>
         {hasData ? (
@@ -85,7 +83,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
                 dataKey="value"
               >
                 {formattedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} stroke="transparent" />
+                   <Cell key={`cell-${index}`} fill={entry.color} stroke="transparent" />
                 ))}
               </Pie>
               <Tooltip
@@ -96,10 +94,11 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
                   color: "var(--color-on-surface)",
                   boxShadow: "var(--shadow-card)",
                   fontSize: "12px",
+                  textAlign: isRtl ? "right" : "left",
                 }}
                 formatter={(value: unknown) => {
                   const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return [`${n} transaction(s)`, "Paiements"];
+                  return [`${n} ${isRtl ? "عمليات" : "transaction(s)"}`, t("common.sidebar.sales")];
                 }}
               />
               <Legend
@@ -112,7 +111,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
           </ResponsiveContainer>
         ) : (
           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-secondary)", fontSize: 14, fontStyle: "italic" }}>
-            Aucun paiement enregistré
+            {isRtl ? "لا توجد مدفوعات مسجلة" : "Aucun paiement enregistré"}
           </div>
         )}
       </div>

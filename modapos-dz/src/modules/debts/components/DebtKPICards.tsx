@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/lib/utils";
 import type { DebtStatistics } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface KPICardProps {
   icon: string;
@@ -99,6 +100,8 @@ interface DebtKPICardsProps {
 }
 
 export function DebtKPICards({ stats, isLoading }: DebtKPICardsProps) {
+  const { t, language } = useTranslation();
+
   return (
     <div
       style={{
@@ -110,7 +113,7 @@ export function DebtKPICards({ stats, isLoading }: DebtKPICardsProps) {
     >
       <KPICard
         icon="account_balance_wallet"
-        label="Montant total dû"
+        label={t("debts.kpis.total_debt")}
         value={stats ? formatCurrency(stats.totalDebt) : "—"}
         iconBg="rgba(186,26,26,0.1)"
         iconColor="var(--color-error)"
@@ -119,15 +122,15 @@ export function DebtKPICards({ stats, isLoading }: DebtKPICardsProps) {
       />
       <KPICard
         icon="group"
-        label="Clients débiteurs"
-        value={stats ? stats.debtorCount.toLocaleString("fr-DZ") : "—"}
+        label={t("debts.kpis.debtor_count")}
+        value={stats ? stats.debtorCount.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ") : "—"}
         iconBg="rgba(212,175,55,0.15)"
         iconColor="var(--color-primary)"
         isLoading={isLoading}
       />
       <KPICard
         icon="payments"
-        label="Récupéré ce mois"
+        label={t("debts.kpis.recovered_month")}
         value={stats ? formatCurrency(stats.recoveredThisMonth) : "—"}
         iconBg="rgba(39,104,104,0.12)"
         iconColor="var(--color-tertiary)"
@@ -135,7 +138,7 @@ export function DebtKPICards({ stats, isLoading }: DebtKPICardsProps) {
       />
       <KPICard
         icon="track_changes"
-        label="Taux de recouvrement"
+        label={t("debts.kpis.recovery_rate")}
         value={stats ? `${stats.recoveryRate} %` : "—"}
         iconBg="rgba(180,83,9,0.1)"
         iconColor="var(--color-warning)"

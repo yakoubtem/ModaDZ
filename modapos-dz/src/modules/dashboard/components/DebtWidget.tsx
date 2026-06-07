@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface DebtWidgetProps {
   totalDebt: number;
@@ -13,12 +14,14 @@ function MiniStat({
   color,
   icon,
   isLoading,
+  isRtl,
 }: {
   label: string;
   value: string;
   color: string;
   icon: string;
   isLoading?: boolean;
+  isRtl: boolean;
 }) {
   return (
     <div
@@ -28,9 +31,11 @@ function MiniStat({
         gap: 4,
         flex: 1,
         minWidth: 0,
+        alignItems: isRtl ? "flex-end" : "flex-start",
+        textAlign: isRtl ? "right" : "left",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, flexDirection: isRtl ? "row-reverse" : "row" }}>
         <span
           className="material-symbols-outlined filled"
           style={{ fontSize: 14, color }}
@@ -63,6 +68,8 @@ function MiniStat({
             color,
             letterSpacing: "-0.02em",
             lineHeight: 1.1,
+            direction: "ltr",
+            textAlign: isRtl ? "right" : "left",
           }}
         >
           {value}
@@ -78,6 +85,8 @@ export function DebtWidget({
   recoveryRate,
   isLoading,
 }: DebtWidgetProps) {
+  const { t, isRtl } = useTranslation();
+
   return (
     <div
       style={{
@@ -89,10 +98,11 @@ export function DebtWidget({
         display: "flex",
         flexDirection: "column",
         gap: 16,
+        textAlign: isRtl ? "right" : "left",
       }}
     >
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: isRtl ? "row-reverse" : "row" }}>
         <span
           className="material-symbols-outlined filled"
           style={{ fontSize: 18, color: "var(--color-error)" }}
@@ -108,7 +118,7 @@ export function DebtWidget({
             letterSpacing: "-0.01em",
           }}
         >
-          Créances clients
+          {t("dashboard.debt_widget.title")}
         </p>
       </div>
 
@@ -119,6 +129,7 @@ export function DebtWidget({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexDirection: isRtl ? "row-reverse" : "row",
           }}
         >
           <span
@@ -128,7 +139,7 @@ export function DebtWidget({
               fontWeight: 600,
             }}
           >
-            Taux de recouvrement (mois)
+            {t("dashboard.debt_widget.recovery_rate")}
           </span>
           {isLoading ? (
             <div
@@ -184,14 +195,16 @@ export function DebtWidget({
           gap: 16,
           paddingTop: 4,
           borderTop: "1px solid rgba(208,197,175,0.12)",
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <MiniStat
-          label="Total dû"
+          label={t("dashboard.debt_widget.total_due")}
           value={formatCurrency(totalDebt)}
           color="var(--color-error)"
           icon="payments"
           isLoading={isLoading}
+          isRtl={isRtl}
         />
         <div
           style={{
@@ -201,11 +214,12 @@ export function DebtWidget({
           }}
         />
         <MiniStat
-          label="Débiteurs"
-          value={debtorCount.toLocaleString("fr-DZ")}
+          label={t("dashboard.debt_widget.debtors")}
+          value={debtorCount.toLocaleString(isRtl ? "ar-DZ" : "fr-DZ")}
           color="var(--color-warning)"
           icon="group"
           isLoading={isLoading}
+          isRtl={isRtl}
         />
       </div>
     </div>

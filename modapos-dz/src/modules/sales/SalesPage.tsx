@@ -3,8 +3,10 @@ import { useSalesHistory } from "./hooks/useSalesHistory";
 import { SaleTable } from "./components/SaleTable";
 import { SaleFilters as SaleFiltersComponent } from "./components/SaleFilters";
 import { SaleDetailsModal } from "./components/SaleDetailsModal";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function SalesPage() {
+  const { t } = useTranslation();
   const {
     sales,
     total,
@@ -26,7 +28,7 @@ export function SalesPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <TopBar title="Ventes" description="Historique de toutes vos transactions." />
+      <TopBar title={t("sales.title")} description={t("sales.description")} />
 
       <main style={{ padding: "40px var(--space-container) 80px", maxWidth: 1600, margin: "0 auto", width: "100%" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
@@ -42,7 +44,7 @@ export function SalesPage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 4px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--color-text-primary)" }}>
-                  Liste des transactions
+                  {t("sales.table.list_title")}
                 </h3>
                 <span
                   style={{
@@ -58,7 +60,7 @@ export function SalesPage() {
                     padding: "2px 8px"
                   }}
                 >
-                  {total} transaction{total !== 1 ? "s" : ""}
+                  {t("sales.table.transaction_count", { count: total })}
                 </span>
               </div>
             </div>
@@ -90,7 +92,7 @@ export function SalesPage() {
                   }}
                 >
                   <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", fontWeight: 500 }}>
-                    Affichage de {(page - 1) * pageSize + 1} à {Math.min(page * pageSize, total)} sur {total} ventes
+                    {t("sales.table.display_info", { from: (page - 1) * pageSize + 1, to: Math.min(page * pageSize, total), total })}
                   </p>
                   <div style={{ display: "flex", gap: "8px" }}>
                     <button

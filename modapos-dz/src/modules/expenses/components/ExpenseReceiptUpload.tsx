@@ -3,6 +3,7 @@ import { FileText, ImageIcon, Upload, Download, Trash2 } from "lucide-react";
 import { useIPC } from "@/hooks/useIPC";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseReceiptUploadProps {
   value?: string;
@@ -17,6 +18,7 @@ function isPdf(path?: string) {
 
 export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseReceiptUploadProps) {
   const api = useIPC();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const preview = useMemo(() => {
@@ -33,11 +35,11 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
       const savedPath = await api<string | null>("expenses:selectReceipt");
       if (savedPath) onChange(savedPath);
     } catch {
-      toast.error("Erreur lors du chargement du recu");
+      toast.error(t("expenses.toasts.receipt_upload_error"));
     } finally {
       setIsLoading(false);
     }
-  }, [api, onChange]);
+  }, [api, onChange, t]);
 
   const handleRemove = useCallback(async () => {
     if (!value) return;
@@ -45,23 +47,23 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
       await api("expenses:deleteReceipt", value);
       onChange(undefined);
     } catch {
-      toast.error("Erreur lors de la suppression du recu");
+      toast.error(t("expenses.toasts.receipt_delete_error"));
     }
-  }, [api, onChange, value]);
+  }, [api, onChange, value, t]);
 
   const handleDownload = useCallback(async () => {
     if (!value) return;
     try {
       await api("expenses:downloadReceipt", value);
     } catch {
-      toast.error("Erreur lors du telechargement");
+      toast.error(t("expenses.toasts.receipt_download_error"));
     }
-  }, [api, value]);
+  }, [api, value, t]);
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <span className="text-xs font-semibold text-[var(--color-text-secondary)] tracking-wide uppercase">
-        Recu
+        {t("expenses.form.receipt")}
       </span>
 
       {preview ? (
@@ -69,7 +71,7 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
           {preview.isPdf ? (
             <div className="h-48 flex flex-col items-center justify-center gap-2 text-[var(--color-text-secondary)]">
               <FileText className="w-10 h-10" />
-              <span className="text-sm">Document PDF</span>
+              <span className="text-sm">{t("expenses.form.receipt_pdf")}</span>
             </div>
           ) : (
             <img src={preview.src} alt="Recu" className="w-full h-48 object-cover" />
@@ -81,7 +83,7 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
               onClick={handleSelect}
               className="px-3 py-1.5 rounded-[var(--radius-sm)] bg-white text-xs font-semibold"
             >
-              Remplacer
+              {t("expenses.form.receipt_replace")}
             </button>
             <button
               type="button"
@@ -89,7 +91,7 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
               className="px-3 py-1.5 rounded-[var(--radius-sm)] bg-white text-xs font-semibold inline-flex items-center gap-1"
             >
               <Download className="w-3 h-3" />
-              Telecharger
+              {t("expenses.form.receipt_download")}
             </button>
             <button
               type="button"
@@ -97,7 +99,7 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
               className="px-3 py-1.5 rounded-[var(--radius-sm)] bg-[var(--color-danger-subtle)] text-[var(--color-danger)] text-xs font-semibold inline-flex items-center gap-1"
             >
               <Trash2 className="w-3 h-3" />
-              Supprimer
+              {t("expenses.form.receipt_delete")}
             </button>
           </div>
         </div>
@@ -122,12 +124,12 @@ export function ExpenseReceiptUpload({ value, onChange, className }: ExpenseRece
                 <ImageIcon className="w-6 h-6" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium">Ajouter un recu</p>
-                <p className="text-xs mt-0.5 text-[var(--color-text-muted)]">JPG, PNG, PDF</p>
+                <p className="text-sm font-medium">{t("expenses.form.receipt_add")}</p>
+                <p className="text-xs mt-0.5 text-[var(--color-text-muted)]">{t("expenses.form.receipt_formats")}</p>
               </div>
               <div className="flex items-center gap-1.5 text-xs">
                 <Upload className="w-3 h-3" />
-                <span>Parcourir les fichiers</span>
+                <span>{t("expenses.form.receipt_browse")}</span>
               </div>
             </>
           )}

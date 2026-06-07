@@ -3,14 +3,9 @@ import type { Sale } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export type PrinterWidth = "58mm" | "80mm";
-
-const PAYMENT_LABELS: Record<string, string> = {
-  cash: "Espèces",
-  card: "Carte bancaire",
-  transfer: "Virement",
-};
 
 // ── Divider line that prints well on thermal paper ──────────────────────────
 function ReceiptDivider({ style = "dashed" }: { style?: "dashed" | "solid" }) {
@@ -45,14 +40,15 @@ export function ReceiptPreview({
   sale,
   amountPaid,
   onClose,
-  closeLabel = "Nouvelle vente",
+  closeLabel,
   hideSuccessBanner = false,
   storeName = "ModaDZ",
   storePhone,
   storeAddress,
-  storeFooter = "Merci de votre visite ! À bientôt.",
+  storeFooter,
   printerWidth = "80mm",
 }: ReceiptPreviewProps) {
+  const { t, isRtl } = useTranslation();
   const subtotal = sale.items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
 
   const handlePrint = () => {
@@ -65,6 +61,9 @@ export function ReceiptPreview({
     }, 1000);
   };
 
+  const finalCloseLabel = closeLabel || t("pos.receipt.new_sale");
+  const finalStoreFooter = storeFooter || t("pos.receipt.footer_default");
+
   return (
     <div className="flex flex-col gap-4">
       {/* ── Success banner ──────────────────────────────────────────── */}
@@ -73,10 +72,10 @@ export function ReceiptPreview({
           <CheckCircle2 className="w-6 h-6 text-[var(--color-success)] shrink-0" />
           <div>
             <p className="text-sm font-semibold text-[var(--color-success)]">
-              Vente enregistrée avec succès !
+              {t("pos.receipt.success_banner")}
             </p>
             <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-              Vente #{sale.receiptNumber ?? sale.id} · {formatDate(sale.createdAt)}
+              {t("common.sidebar.pos")} #{sale.receiptNumber ?? sale.id} · {formatDate(sale.createdAt)}
             </p>
           </div>
         </div>
@@ -91,6 +90,7 @@ export function ReceiptPreview({
           "text-[var(--color-text-secondary)]",
           printerWidth === "58mm" ? "text-[10px]" : "text-[11px] sm:text-xs"
         )}
+        style={{ direction: isRtl ? "rtl" : "ltr" }}
       >
         {/* ── Store header ─────────────────────────────────────────── */}
         <div className="text-center space-y-0.5 mb-2">
@@ -117,17 +117,17 @@ export function ReceiptPreview({
         {/* ── Receipt metadata ─────────────────────────────────────── */}
         <div className="text-center space-y-0.5 my-2">
           <p className="font-bold text-[var(--color-text-primary)] tracking-wider">
-            TICKET N° {(sale.receiptNumber ?? `#${sale.id}`).toUpperCase()}
+            {t("pos.receipt.ticket_no", { number: (sale.receiptNumber ?? `#${sale.id}`).toUpperCase() })}
           </p>
           <p className="text-[var(--color-text-muted)]">{formatDate(sale.createdAt)}</p>
           {sale.user && (
             <p className="text-[var(--color-text-muted)]">
-              Caissier : {sale.user.name}
+              {t("pos.receipt.cashier")} : {sale.user.name}
             </p>
           )}
           {sale.customer && (
             <p className="text-[var(--color-text-muted)]">
-              Client : {sale.customer.name}
+              {t("pos.receipt.customer")} : {sale.customer.name}
             </p>
           )}
         </div>
@@ -173,20 +173,20 @@ export function ReceiptPreview({
         {/* ── Totals ───────────────────────────────────────────────── */}
         <div className="space-y-1 my-2">
           <div className="flex justify-between">
-            <span>Sous-total</span>
+            <span>{t("pos.receipt.subtotal")}</span>
             <span className="tabular-nums">{formatCurrency(subtotal)}</span>
           </div>
 
           {sale.discount > 0 && (
             <div className="flex justify-between text-[var(--color-warning)] print:text-black">
-              <span>Remise</span>
+              <span>{t("pos.receipt.discount")}</span>
               <span className="tabular-nums">−{formatCurrency(sale.discount)}</span>
             </div>
           )}
 
           {sale.tax > 0 && (
             <div className="flex justify-between">
-              <span>TVA</span>
+              <span>{t("pos.receipt.tax")}</span>
               <span className="tabular-nums">{formatCurrency(sale.tax)}</span>
             </div>
           )}
@@ -194,13 +194,13 @@ export function ReceiptPreview({
           <ReceiptDivider style="solid" />
 
           <div className="flex justify-between font-bold text-sm text-[var(--color-text-primary)]">
-            <span>TOTAL</span>
+            <span>{t("pos.receipt.total")}</span>
             <span className="tabular-nums">{formatCurrency(sale.total)}</span>
           </div>
 
           <div className="flex justify-between">
-            <span>Paiement</span>
-            <span>{PAYMENT_LABELS[sale.paymentMethod] ?? sale.paymentMethod}</span>
+            <span>{t("pos.receipt.payment")}</span>
+            <span>{t("common.payment_methods." + sale.paymentMethod)}</span>
           </div>
 
           {/* ── Cash: show amount received and either change or remaining debt ── */}
@@ -213,11 +213,11 @@ export function ReceiptPreview({
               return (
                 <>
                   <div className="flex justify-between">
-                    <span>Montant reçu</span>
+                    <span>{t("pos.receipt.amount_received")}</span>
                     <span className="tabular-nums">{formatCurrency(amountPaid)}</span>
                   </div>
                   <div className="flex justify-between text-[var(--color-success)] font-semibold print:text-black">
-                    <span>Monnaie</span>
+                    <span>{t("pos.receipt.change")}</span>
                     <span className="tabular-nums">{formatCurrency(cashChange)}</span>
                   </div>
                 </>
@@ -229,11 +229,11 @@ export function ReceiptPreview({
               return (
                 <>
                   <div className="flex justify-between">
-                    <span>Montant payé</span>
+                    <span>{t("pos.receipt.amount_received")}</span>
                     <span className="tabular-nums">{formatCurrency(sale.amountPaid)}</span>
                   </div>
                   <div className="flex justify-between font-semibold print:text-black" style={{ color: "var(--color-danger, #ba1a1a)" }}>
-                    <span>Reste (Dette)</span>
+                    <span>{t("pos.receipt.debt")}</span>
                     <span className="tabular-nums">{formatCurrency(saleRemaining)}</span>
                   </div>
                 </>
@@ -249,7 +249,7 @@ export function ReceiptPreview({
 
         {/* ── Footer ───────────────────────────────────────────────── */}
         <div className="text-center text-[var(--color-text-muted)] space-y-0.5 mt-2">
-          <p>{storeFooter}</p>
+          <p>{finalStoreFooter}</p>
           {/* Receipt ID in a scannable-friendly format */}
           <p className="text-[9px] tracking-wider opacity-60 mt-1 print:opacity-100">
             REF: {(sale.receiptNumber ?? `VNT-${String(sale.id).padStart(6, "0")}`).toUpperCase()}
@@ -266,7 +266,7 @@ export function ReceiptPreview({
           onClick={handlePrint}
         >
           <Printer className="w-4 h-4" />
-          Imprimer
+          {t("pos.receipt.print")}
           <span className="ml-auto text-[10px] opacity-50 bg-[var(--color-bg-overlay)] px-1.5 py-0.5 rounded">
             {printerWidth}
           </span>
@@ -277,7 +277,7 @@ export function ReceiptPreview({
           className="flex-1"
           onClick={onClose}
         >
-          {closeLabel}
+          {finalCloseLabel}
         </Button>
       </div>
     </div>

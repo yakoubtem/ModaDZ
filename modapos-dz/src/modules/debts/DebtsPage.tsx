@@ -8,6 +8,7 @@ import { DebtTable } from "./components/DebtTable";
 import { CustomerDebtModal } from "./components/CustomerDebtModal";
 import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/modules/auth/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Export CSV helper ────────────────────────────────────
 
@@ -33,6 +34,7 @@ function exportCSV(data: object[], filename: string) {
 // ─── Page ─────────────────────────────────────────────────
 
 export function DebtsPage() {
+  const { t } = useTranslation();
   const { can } = useAuth();
   const {
     customers, stats, total, page, pageSize,
@@ -61,13 +63,13 @@ export function DebtsPage() {
 
   const handleExportCSV = () => {
     const rows = customers.map((c) => ({
-      Client: c.name,
-      Téléphone: c.phone ?? "",
-      "Total achats": c.totalPurchases,
-      "Total payé": c.totalPaid,
-      "Dette actuelle": c.currentDebt,
-      "Dernier achat": c.lastPurchaseDate ?? "",
-      Statut: c.currentDebt <= 0 ? "Soldé" : c.currentDebt < 5000 ? "Faible" : c.currentDebt < 50000 ? "Moyenne" : "Élevée",
+      [t("debts.table.debtor")]: c.name,
+      [t("debts.table.phone")]: c.phone ?? "",
+      [t("debts.customer_debts.total_purchases")]: c.totalPurchases,
+      [t("debts.customer_debts.total_paid")]: c.totalPaid,
+      [t("debts.table.current_debt")]: c.currentDebt,
+      [t("debts.table.last_purchase")]: c.lastPurchaseDate ?? "",
+      [t("sales.table.status")]: c.currentDebt <= 0 ? t("common.status.completed") : c.currentDebt < 5000 ? t("debts.status.low") : c.currentDebt < 50000 ? t("debts.status.medium") : t("debts.status.high"),
     }));
     exportCSV(rows, `dettes_modadz_${new Date().toISOString().slice(0, 10)}.csv`);
   };
@@ -117,7 +119,7 @@ export function DebtsPage() {
               letterSpacing: "-0.01em",
             }}
           >
-            Gestion des Dettes
+            {t("debts.title")}
           </span>
           {debtorCount > 0 && (
             <span
@@ -131,7 +133,7 @@ export function DebtsPage() {
                 border: "1px solid rgba(186,26,26,0.2)",
               }}
             >
-              {debtorCount} débiteur{debtorCount !== 1 ? "s" : ""}
+              {debtorCount} {t("debts.debtors_count_label")}
             </span>
           )}
         </div>
@@ -178,7 +180,7 @@ export function DebtsPage() {
                 marginBottom: 8,
               }}
             >
-              Tableau des dettes
+              {t("debts.header_title")}
             </h1>
             <p
               style={{
@@ -188,8 +190,7 @@ export function DebtsPage() {
                 maxWidth: 480,
               }}
             >
-              Suivez les créances clients et les paiements en attente. Enregistrez des
-              remboursements et consultez l'historique de chaque débiteur.
+              {t("debts.header_desc")}
             </p>
           </div>
 
@@ -233,7 +234,7 @@ export function DebtsPage() {
                     marginBottom: 3,
                   }}
                 >
-                  Encours total
+                  {t("debts.total_outstanding")}
                 </p>
                 <p
                   style={{

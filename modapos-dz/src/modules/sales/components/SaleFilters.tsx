@@ -1,24 +1,11 @@
 import type { SalesFilters } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SaleFiltersProps {
   filters: SalesFilters;
   onChange: (f: Partial<SalesFilters>) => void;
   onReset: () => void;
 }
-
-const PAYMENT_OPTIONS = [
-  { value: "", label: "Tous paiements" },
-  { value: "cash", label: "Espèces" },
-  { value: "card", label: "Carte" },
-  { value: "transfer", label: "Virement" },
-];
-
-const STATUS_OPTIONS = [
-  { value: "", label: "Tous statuts" },
-  { value: "completed", label: "Complétée" },
-  { value: "refunded", label: "Remboursée" },
-  { value: "pending", label: "En attente" },
-];
 
 function TabFilter({
   options,
@@ -76,6 +63,22 @@ const hasActiveFilters = (f: SalesFilters) =>
   f.search || f.paymentMethod || f.status || f.from || f.to;
 
 export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
+  const { t, isRtl } = useTranslation();
+
+  const PAYMENT_OPTIONS = [
+    { value: "", label: t("sales.filters.all_payments") },
+    { value: "cash", label: t("common.payment_methods.cash") },
+    { value: "card", label: t("common.payment_methods.card") },
+    { value: "transfer", label: t("common.payment_methods.transfer") },
+  ];
+
+  const STATUS_OPTIONS = [
+    { value: "", label: t("sales.filters.all_statuses") },
+    { value: "completed", label: t("common.status.completed") },
+    { value: "refunded", label: t("common.status.refunded") },
+    { value: "pending", label: t("common.status.pending") },
+  ];
+
   return (
     <div
       style={{
@@ -120,7 +123,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
             type="text"
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
-            placeholder="Rechercher par N° reçu ou nom client…"
+            placeholder={t("sales.search_placeholder")}
             style={{
               flex: 1,
               background: "transparent",
@@ -167,7 +170,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
           }}
         >
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", flexShrink: 0 }}>
-            Période
+            {t("sales.filters.period")}
           </span>
           <input
             type="date"
@@ -202,7 +205,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
             <button
               onClick={onReset}
               style={{
-                marginLeft: "auto",
+                [isRtl ? "marginRight" : "marginLeft"]: "auto",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -215,7 +218,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
               }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>filter_list_off</span>
-              Effacer
+              {t("common.buttons.clear")}
             </button>
           )}
         </div>
@@ -233,7 +236,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
-            Paiement
+            {t("sales.filters.payment_method")}
           </span>
           <TabFilter
             options={PAYMENT_OPTIONS}
@@ -244,7 +247,7 @@ export function SaleFilters({ filters, onChange, onReset }: SaleFiltersProps) {
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
-            Statut
+            {t("sales.filters.status")}
           </span>
           <TabFilter
             options={STATUS_OPTIONS}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useDebtPayments } from "../hooks/useDebtPayments";
 import type { AddPaymentPayload } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PaymentFormModalProps {
   isOpen: boolean;
@@ -12,12 +13,6 @@ interface PaymentFormModalProps {
   onSuccess: () => void;
 }
 
-const METHOD_OPTIONS = [
-  { value: "cash",     label: "Espèces",  icon: "payments" },
-  { value: "card",     label: "Carte",    icon: "credit_card" },
-  { value: "transfer", label: "Virement", icon: "account_balance" },
-] as const;
-
 export function PaymentFormModal({
   isOpen,
   customerId,
@@ -26,6 +21,7 @@ export function PaymentFormModal({
   onClose,
   onSuccess,
 }: PaymentFormModalProps) {
+  const { t, isRtl, language } = useTranslation();
   const { isSubmitting, addPayment } = useDebtPayments();
 
   const [amount, setAmount] = useState("");
@@ -33,8 +29,14 @@ export function PaymentFormModal({
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
 
+  const METHOD_OPTIONS = [
+    { value: "cash",     label: t("common.payment_methods.cash"),  icon: "payments" },
+    { value: "card",     label: t("common.payment_methods.card"),    icon: "credit_card" },
+    { value: "transfer", label: t("common.payment_methods.transfer"), icon: "account_balance" },
+  ] as const;
+
   const formatCurrencyLocal = (n: number) =>
-    new Intl.NumberFormat("fr-DZ", {
+    new Intl.NumberFormat(language === "ar" ? "ar-DZ" : "fr-DZ", {
       style: "currency",
       currency: "DZD",
       minimumFractionDigits: 0,
@@ -43,7 +45,7 @@ export function PaymentFormModal({
   const handleSubmit = async () => {
     const parsed = parseFloat(amount.replace(/\s/g, "").replace(",", "."));
     if (!parsed || parsed <= 0) {
-      setError("Veuillez saisir un montant valide");
+      setError(t("debts.payment_modal.invalid_amount"));
       return;
     }
     setError("");
@@ -138,7 +140,7 @@ export function PaymentFormModal({
                   letterSpacing: "-0.01em",
                 }}
               >
-                Enregistrer un paiement
+                {t("debts.payment_modal.title")}
               </p>
               <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", lineHeight: 1.5 }}>
                 {customerName}
@@ -157,7 +159,7 @@ export function PaymentFormModal({
                 padding: 6,
                 borderRadius: "var(--radius-full)",
                 flexShrink: 0,
-                marginLeft: 16,
+                [isRtl ? "marginRight" : "marginLeft"]: 16,
               }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
@@ -178,7 +180,7 @@ export function PaymentFormModal({
             }}
           >
             <span style={{ fontSize: "var(--text-label-sm)", color: "var(--color-secondary)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>
-              Dette restante
+              {t("debts.customer_debts.remaining")}
             </span>
             <span
               style={{
@@ -208,13 +210,13 @@ export function PaymentFormModal({
                 letterSpacing: "0.02em",
               }}
             >
-              Montant (DZD) *
+              {t("debts.payment_modal.amount_label")}
             </label>
             <div style={{ position: "relative" }}>
               <span
                 style={{
                   position: "absolute",
-                  left: 18,
+                  [isRtl ? "right" : "left"]: 18,
                   top: "50%",
                   transform: "translateY(-50%)",
                   color: "var(--color-outline)",
@@ -240,7 +242,9 @@ export function PaymentFormModal({
                     ? "1.5px solid var(--color-error)"
                     : "1.5px solid rgba(208,197,175,0.3)",
                   borderRadius: "var(--radius-lg)",
-                  padding: "18px 18px 18px 64px",
+                  padding: isRtl ? "18px 18px 18px 64px" : "18px 18px 18px 64px", // Keep original padding sizes, but let's check
+                  paddingLeft: isRtl ? 18 : 64,
+                  paddingRight: isRtl ? 64 : 18,
                   fontSize: 28,
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
@@ -248,6 +252,7 @@ export function PaymentFormModal({
                   outline: "none",
                   letterSpacing: "-0.02em",
                   transition: "border-color 0.15s, box-shadow 0.15s",
+                  textAlign: isRtl ? "right" : "left"
                 }}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = "var(--color-tertiary)";
@@ -284,7 +289,7 @@ export function PaymentFormModal({
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {v === currentDebt ? "Tout solder" : `${(v / 1000).toFixed(0)} 000`}
+                  {v === currentDebt ? t("debts.payment_modal.settle_all") : `${(v / 1000).toFixed(0)} 000`}
                 </button>
               ))}
             </div>
@@ -309,7 +314,7 @@ export function PaymentFormModal({
                 letterSpacing: "0.02em",
               }}
             >
-              Méthode de paiement *
+              {t("debts.payment_modal.method")}
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
               {METHOD_OPTIONS.map((opt) => {
@@ -359,15 +364,15 @@ export function PaymentFormModal({
                 letterSpacing: "0.02em",
               }}
             >
-              Note{" "}
+              {t("debts.payment_modal.note")}{" "}
               <span style={{ color: "var(--color-secondary)", fontWeight: 400, textTransform: "lowercase" }}>
-                (optionnelle)
+                {t("debts.payment_modal.optional")}
               </span>
             </label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Remarque sur ce paiement..."
+              placeholder={t("debts.payment_modal.note_placeholder")}
               rows={2}
               style={{
                 width: "100%",
@@ -382,6 +387,7 @@ export function PaymentFormModal({
                 resize: "none",
                 lineHeight: 1.6,
                 transition: "border-color 0.15s, box-shadow 0.15s",
+                textAlign: isRtl ? "right" : "left"
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "var(--color-tertiary)";
@@ -410,7 +416,7 @@ export function PaymentFormModal({
             disabled={isSubmitting}
             style={{ flex: 1, justifyContent: "center", padding: "12px 0" }}
           >
-            Annuler
+            {t("common.buttons.cancel")}
           </button>
           <button
             className="btn-primary"
@@ -426,12 +432,12 @@ export function PaymentFormModal({
                 >
                   progress_activity
                 </span>
-                Enregistrement...
+                {t("debts.payment_modal.saving")}
               </>
             ) : (
               <>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>check_circle</span>
-                Confirmer le paiement
+                {t("debts.payment_modal.confirm_btn")}
               </>
             )}
           </button>

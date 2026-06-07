@@ -1,0 +1,72 @@
+{
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "pos": "Point de vente",
+    "products": "Produits",
+    "inventory": "Inventaire",
+    "customers": "Clients",
+    "sales": "Ventes",
+    "debts": "Dettes",
+    "expenses": "Dépenses",
+    "stats": "Statistiques",
+    "users": "Utilisateurs",
+    "settings": "Paramètres",
+    "backups": "Sauvegardes",
+    "new_transaction": "Nouvelle transaction",
+    "profile": "Profil utilisateur"
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "manager": "Manager",
+    "cashier": "Caissier"
+  },
+  "buttons": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "search": "Rechercher",
+    "export": "Exporter",
+    "print": "Imprimer",
+    "clear": "Effacer",
+    "yes": "Oui",
+    "no": "Non",
+    "notifications": "Notifications",
+    "checkout": "Encaisser"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "completed": "Complété",
+    "refunded": "Remboursé",
+    "pending": "En attente"
+  },
+  "login": {
+    "title": "Connexion ModaDZ",
+    "subtitle": "Vente au détail de luxe",
+    "welcome": "Bienvenue",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "error_empty": "Veuillez remplir tous les champs",
+    "error_invalid": "Identifiants incorrects"
+  },
+  "confirm_modal": {
+    "title": "Êtes-vous sûr ?",
+    "confirm_btn": "Confirmer",
+    "cancel_btn": "Annuler"
+  },
+  "errors": {
+    "unknown": "Une erreur est survenue",
+    "access_denied": "Accès refusé",
+    "access_denied_desc": "Vous n'avez pas la permission d'accéder à cette page."
+  },
+  "payment_methods": {
+    "cash": "Espèces",
+    "card": "Carte",
+    "transfer": "Virement"
+  }
+}

@@ -6,6 +6,7 @@ import type {
   PaginatedCustomers,
 } from "@/types";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface UseCustomersReturn {
   customers: CustomerWithStats[];
@@ -29,6 +30,7 @@ interface UseCustomersReturn {
 }
 
 export function useCustomers(): UseCustomersReturn {
+  const { t } = useTranslation();
   const api = useIPC();
   const [customers, setCustomers] = useState<CustomerWithStats[]>([]);
   const [total, setTotal] = useState(0);
@@ -54,12 +56,12 @@ export function useCustomers(): UseCustomersReturn {
         setTotal(result.total);
         setPage(result.page);
       } catch {
-        toast.error("Impossible de charger les clients");
+        toast.error(t("customers.toasts.load_error"));
       } finally {
         setIsLoading(false);
       }
     },
-    [api, pageSize]
+    [api, pageSize, t]
   );
 
   const refresh = useCallback(() => loadPage(page, search), [loadPage, page, search]);
@@ -93,10 +95,10 @@ export function useCustomers(): UseCustomersReturn {
           setIsProfileOpen(true);
         }
       } catch {
-        toast.error("Impossible de charger le profil");
+        toast.error(t("customers.toasts.profile_error"));
       }
     },
-    [api]
+    [api, t]
   );
 
   const closeProfile = useCallback(() => {
@@ -108,45 +110,45 @@ export function useCustomers(): UseCustomersReturn {
     async (data: { name: string; phone?: string; email?: string; notes?: string }): Promise<boolean> => {
       try {
         await api("customers:create", data);
-        toast.success("Client créé avec succès");
+        toast.success(t("customers.toasts.create_success"));
         refresh();
         return true;
       } catch {
-        toast.error("Erreur lors de la création");
+        toast.error(t("customers.toasts.create_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   const update = useCallback(
     async (id: number, data: { name?: string; phone?: string; email?: string; notes?: string }): Promise<boolean> => {
       try {
         await api("customers:update", id, data);
-        toast.success("Client mis à jour");
+        toast.success(t("customers.toasts.update_success"));
         refresh();
         return true;
       } catch {
-        toast.error("Erreur lors de la mise à jour");
+        toast.error(t("customers.toasts.update_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   const remove = useCallback(
     async (id: number): Promise<boolean> => {
       try {
         await api("customers:delete", id);
-        toast.success("Client supprimé");
+        toast.success(t("customers.toasts.delete_success"));
         refresh();
         return true;
       } catch {
-        toast.error("Erreur lors de la suppression");
+        toast.error(t("customers.toasts.delete_error"));
         return false;
       }
     },
-    [api, refresh]
+    [api, refresh, t]
   );
 
   return {

@@ -2,6 +2,7 @@ import { formatCurrency } from "@/lib/utils";
 import type { TopProduct } from "@/types";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Trophy } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface TopProductsListProps {
   products?: TopProduct[];
@@ -9,6 +10,8 @@ interface TopProductsListProps {
 }
 
 export function TopProductsList({ products, isLoading }: TopProductsListProps) {
+  const { t, isRtl } = useTranslation();
+
   if (isLoading || !products) {
     return (
       <>
@@ -34,27 +37,30 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
             display: "flex",
             alignItems: "center",
             gap: 8,
+            flexDirection: isRtl ? "row-reverse" : "row",
           }}
         >
           <Trophy className="w-4 h-4" style={{ color: "var(--color-primary)" }} />
-          Meilleures ventes (30j)
+          {t("dashboard.top_products")}
         </h3>
         <p
           style={{
             fontSize: 12,
             color: "var(--color-outline)",
             marginTop: 4,
-            marginLeft: 24,
+            marginLeft: isRtl ? 0 : 24,
+            marginRight: isRtl ? 24 : 0,
+            textAlign: isRtl ? "right" : "left",
           }}
         >
-          Articles générant le plus de revenus
+          {t("dashboard.top_products_desc")}
         </p>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 20, flex: 1, overflowY: "auto", paddingRight: 4 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 20, flex: 1, overflowY: "auto", paddingRight: isRtl ? 0 : 4, paddingLeft: isRtl ? 4 : 0 }}>
         {products.length === 0 ? (
           <p style={{ color: "var(--color-outline)", fontSize: 14, padding: "32px 0", textAlign: "center", fontStyle: "italic" }}>
-            Aucune vente enregistrée
+            {t("dashboard.no_sales")}
           </p>
         ) : (
           products.map((product, idx) => {
@@ -72,6 +78,7 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
                   border: "1px solid transparent",
                   cursor: "default",
                   transition: "background 0.15s",
+                  flexDirection: isRtl ? "row-reverse" : "row",
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "var(--color-surface-container-low)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
@@ -96,7 +103,7 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
                 </div>
 
                 {/* Product info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ flex: 1, minWidth: 0, textAlign: isRtl ? "right" : "left" }}>
                   <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {product.name}
                   </p>
@@ -108,12 +115,12 @@ export function TopProductsList({ products, isLoading }: TopProductsListProps) {
                 </div>
 
                 {/* Stats */}
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ textAlign: isRtl ? "left" : "right", flexShrink: 0 }}>
                   <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-on-surface)", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(product.revenueGenerated)}
                   </p>
                   <p style={{ fontSize: 11, color: "var(--color-primary)", fontWeight: 600, marginTop: 2 }}>
-                    {product.quantitySold} vendus
+                    {t("dashboard.qty_sold", { count: product.quantitySold })}
                   </p>
                 </div>
               </div>

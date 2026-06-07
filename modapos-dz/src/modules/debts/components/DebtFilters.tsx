@@ -1,4 +1,5 @@
 import type { DebtFilter, DebtSort } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface DebtFiltersProps {
   search: string;
@@ -9,21 +10,6 @@ interface DebtFiltersProps {
   onSort: (s: DebtSort) => void;
 }
 
-const FILTER_OPTIONS: { value: DebtFilter; label: string }[] = [
-  { value: "all",       label: "Toutes" },
-  { value: "with_debt", label: "Avec dette" },
-  { value: "no_debt",   label: "Sans dette" },
-  { value: "gt_10k",   label: "> 10 000 DZD" },
-  { value: "gt_50k",   label: "> 50 000 DZD" },
-];
-
-const SORT_OPTIONS: { value: DebtSort; label: string }[] = [
-  { value: "debt_desc", label: "Dette décroissante" },
-  { value: "debt_asc",  label: "Dette croissante" },
-  { value: "name_asc",  label: "Nom A–Z" },
-  { value: "name_desc", label: "Nom Z–A" },
-];
-
 export function DebtFilters({
   search,
   filter,
@@ -32,6 +18,23 @@ export function DebtFilters({
   onFilter,
   onSort,
 }: DebtFiltersProps) {
+  const { t, isRtl } = useTranslation();
+
+  const FILTER_OPTIONS: { value: DebtFilter; label: string }[] = [
+    { value: "all",       label: t("debts.filters.all") },
+    { value: "with_debt", label: t("debts.filters.with_debt") },
+    { value: "no_debt",   label: t("debts.filters.no_debt") },
+    { value: "gt_10k",   label: "> 10 000 DZD" },
+    { value: "gt_50k",   label: "> 50 000 DZD" },
+  ];
+
+  const SORT_OPTIONS: { value: DebtSort; label: string }[] = [
+    { value: "debt_desc", label: t("debts.filters.debt_desc") },
+    { value: "debt_asc",  label: t("debts.filters.debt_asc") },
+    { value: "name_asc",  label: t("debts.filters.name_asc") },
+    { value: "name_desc", label: t("debts.filters.name_desc") },
+  ];
+
   return (
     <div
       style={{
@@ -74,7 +77,7 @@ export function DebtFilters({
             type="text"
             value={search}
             onChange={(e) => onSearch(e.target.value)}
-            placeholder="Rechercher par nom ou téléphone..."
+            placeholder={t("debts.filters.search_placeholder")}
             style={{
               flex: 1,
               background: "transparent",
@@ -115,7 +118,7 @@ export function DebtFilters({
             className="material-symbols-outlined"
             style={{
               position: "absolute",
-              left: 16,
+              [isRtl ? "right" : "left"]: 16,
               fontSize: 18,
               color: "var(--color-outline)",
               pointerEvents: "none",
@@ -151,7 +154,7 @@ export function DebtFilters({
             className="material-symbols-outlined"
             style={{
               position: "absolute",
-              right: 14,
+              [isRtl ? "left" : "right"]: 14,
               fontSize: 18,
               color: "var(--color-outline)",
               pointerEvents: "none",
@@ -179,11 +182,11 @@ export function DebtFilters({
             letterSpacing: "0.07em",
             textTransform: "uppercase",
             fontWeight: 700,
-            marginRight: 4,
+            [isRtl ? "marginLeft" : "marginRight"]: 4,
             flexShrink: 0,
           }}
         >
-          Filtres
+          {t("debts.filters.filters_label")}
         </span>
         {FILTER_OPTIONS.map((opt) => (
           <button

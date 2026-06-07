@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/lib/utils";
 import type { ExpenseSummary } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface KPICardProps {
   icon: string;
@@ -128,6 +129,7 @@ interface ExpenseKPICardsProps {
 }
 
 export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
+  const { t } = useTranslation();
   const netProfit = summary ? summary.totalSalesMonth - summary.monthTotal : 0;
   const isPositive = netProfit >= 0;
 
@@ -142,47 +144,47 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
     >
       <KPICard
         icon="payments"
-        label="Total dépenses du mois"
+        label={t("expenses.kpis.month_total")}
         value={summary ? formatCurrency(summary.monthTotal) : "—"}
         trend={summary?.monthChangePct}
-        trendLabel="vs mois dernier"
+        trendLabel={t("expenses.kpis.vs_last_month")}
         iconBg="rgba(186,26,26,0.1)"
         iconColor="var(--color-error)"
         isLoading={isLoading}
       />
       <KPICard
         icon="today"
-        label="Total dépenses aujourd'hui"
+        label={t("expenses.kpis.today_total")}
         value={summary ? formatCurrency(summary.todayTotal) : "—"}
         trend={summary?.todayChangePct}
-        trendLabel="vs hier"
+        trendLabel={t("expenses.kpis.vs_yesterday")}
         iconBg="rgba(212,175,55,0.15)"
         iconColor="var(--color-primary)"
         isLoading={isLoading}
       />
       <KPICard
         icon="calendar_view_week"
-        label="Dépenses cette semaine"
+        label={t("expenses.kpis.week_total")}
         value={summary ? formatCurrency(summary.weekTotal) : "—"}
         trend={summary?.weekChangePct}
-        trendLabel="vs semaine dernière"
+        trendLabel={t("expenses.kpis.vs_last_week")}
         iconBg="rgba(2,132,199,0.12)"
         iconColor="var(--color-info)"
         isLoading={isLoading}
       />
       <KPICard
         icon="calendar_month"
-        label="Dépenses cette année"
+        label={t("expenses.kpis.year_total")}
         value={summary ? formatCurrency(summary.yearTotal) : "—"}
         trend={summary?.yearChangePct}
-        trendLabel="vs année passée"
+        trendLabel={t("expenses.kpis.vs_last_year")}
         iconBg="rgba(39,104,104,0.1)"
         iconColor="var(--color-tertiary)"
         isLoading={isLoading}
       />
       <KPICard
         icon="category"
-        label="Catégorie principale"
+        label={t("expenses.kpis.top_category")}
         value={summary?.topCategory?.name ?? "—"}
         sub={summary?.topCategory ? `${formatCurrency(summary.topCategory.amount)} · ${summary.topCategory.sharePct}%` : undefined}
         iconBg="rgba(180,83,9,0.1)"
@@ -191,11 +193,11 @@ export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
       />
       <KPICard
         icon="trending_up"
-        label="Profit net estimé"
+        label={t("expenses.headers.estimated_net_profit")}
         value={summary ? formatCurrency(netProfit) : "—"}
-        sub={summary ? `Ventes: ${formatCurrency(summary.totalSalesMonth)}` : undefined}
+        sub={summary ? `${t("expenses.kpis.sales_label")}${formatCurrency(summary.totalSalesMonth)}` : undefined}
         trend={summary?.netProfitChangePct}
-        trendLabel="vs mois dernier"
+        trendLabel={t("expenses.kpis.vs_last_month")}
         iconBg={isPositive ? "rgba(39,104,104,0.12)" : "rgba(186,26,26,0.1)"}
         iconColor={isPositive ? "var(--color-tertiary)" : "var(--color-error)"}
         isLoading={isLoading}

@@ -9,6 +9,7 @@ import { VariantEditor } from "./VariantEditor";
 import { ImageUpload } from "./ImageUpload";
 import type { Product, ProductFormData, Category } from "@/types";
 import { generateSku } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function ProductFormModal({
   categories,
   editProduct,
 }: ProductFormModalProps) {
+  const { t } = useTranslation();
   const isEditing = !!editProduct;
 
   const {
@@ -100,25 +102,25 @@ export function ProductFormModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? `Modifier — ${editProduct?.name}` : "Nouveau produit"}
+      title={isEditing ? `${t("products.form.edit_title")} — ${editProduct?.name}` : t("products.add_product")}
       description={
         isEditing
-          ? "Modifiez les informations du produit et ses variantes."
-          : "Remplissez les informations pour créer un nouveau produit."
+          ? t("products.form.edit_desc")
+          : t("products.form.add_desc")
       }
       size="xl"
       scrollable
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
-            Annuler
+            {t("common.buttons.cancel")}
           </Button>
           <Button
             variant="primary"
             onClick={handleSubmit(handleFormSubmit)}
             isLoading={isSubmitting}
           >
-            {isEditing ? "Enregistrer" : "Créer le produit"}
+            {isEditing ? t("common.buttons.save") : t("products.form.create")}
           </Button>
         </>
       }
@@ -129,43 +131,43 @@ export function ProductFormModal({
           {/* Left: product details */}
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <Input
-              label="Nom du produit"
-              placeholder="ex: T-shirt col rond"
+              label={t("products.form.name")}
+              placeholder={t("products.form.name_placeholder")}
               error={errors.name?.message}
               {...register("name", {
-                required: "Le nom est obligatoire",
-                minLength: { value: 2, message: "Minimum 2 caractères" },
+                required: t("products.form.required_name"),
+                minLength: { value: 2, message: t("products.form.min_name") },
               })}
             />
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <Input
-                label="SKU"
-                placeholder="ex: TSH-12345"
-                hint="Généré automatiquement"
+                label={t("products.form.sku")}
+                placeholder={t("products.form.sku_placeholder")}
+                hint={t("products.form.auto_generated")}
                 error={errors.sku?.message}
-                {...register("sku", { required: "Le SKU est obligatoire" })}
+                {...register("sku", { required: t("products.form.required_sku") })}
               />
               <Input
-                label="Prix (DZD)"
+                label={`${t("products.form.price")} (DZD)`}
                 type="number"
                 min={0}
                 step={50}
                 placeholder="0"
                 error={errors.price?.message}
                 {...register("price", {
-                  required: "Le prix est obligatoire",
-                  min: { value: 0, message: "Prix invalide" },
+                  required: t("products.form.required_price"),
+                  min: { value: 0, message: t("products.form.invalid_price") },
                 })}
               />
             </div>
 
             <Select
-              label="Catégorie"
+              label={t("products.form.category")}
               error={errors.categoryId?.message}
               {...register("categoryId")}
             >
-              <option value="">Sans catégorie</option>
+              <option value="">{t("products.form.no_category")}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -174,8 +176,8 @@ export function ProductFormModal({
             </Select>
 
             <Textarea
-              label="Description"
-              placeholder="Description du produit (optionnel)"
+              label={t("products.form.description")}
+              placeholder={t("products.form.description_placeholder")}
               rows={4}
               {...register("description")}
             />

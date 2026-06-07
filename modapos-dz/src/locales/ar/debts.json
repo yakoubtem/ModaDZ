@@ -1,0 +1,68 @@
+{
+  "title": "إدارة الديون",
+  "debtors_count_label": "مدين(ين)",
+  "header_title": "جدول الديون",
+  "header_desc": "تتبع مستحقات العملاء والدفعات المعلقة. سجل عمليات الاسترداد واطلع على سجل كل مدين.",
+  "total_outstanding": "إجمالي المستحقات المعلقة",
+  "kpis": {
+    "total_debt": "إجمالي ديون العملاء",
+    "debtor_count": "عدد المدينين",
+    "recovered_month": "الديون المستردة هذا الشهر",
+    "recovery_rate": "نسبة الاسترداد"
+  },
+  "filters": {
+    "all": "الكل",
+    "with_debt": "مع دين",
+    "no_debt": "بدون دين",
+    "search_placeholder": "البحث بالاسم أو الهاتف...",
+    "filters_label": "تصفية",
+    "debt_desc": "الدين تنازلي",
+    "debt_asc": "الدين تصاعدي",
+    "name_asc": "الاسم أ-ي",
+    "name_desc": "الاسم ي-أ"
+  },
+  "status": {
+    "low": "منخفض",
+    "medium": "متوسط",
+    "high": "مرتفع"
+  },
+  "table": {
+    "debtor": "العميل",
+    "phone": "الهاتف",
+    "current_debt": "الدين الحالي",
+    "total_purchases": "إجمالي المشتريات",
+    "last_purchase": "آخر عملية شراء",
+    "list_header": "العملاء",
+    "result_count": "{count} نتيجة",
+    "sales_count": "{count} بيع",
+    "details_btn": "تفاصيل",
+    "display_info": "{from}–{to} من أصل {total} عميل",
+    "no_debtors_found": "لم يتم العثور على أي عميل",
+    "adjust_filters_desc": "حاول تعديل بحثك أو عوامل التصفية."
+  },
+  "payment_modal": {
+    "title": "تسجيل دفعة من الدين",
+    "amount": "المبلغ المدفوع (د.ج)",
+    "amount_label": "المبلغ (د.ج) *",
+    "method": "طريقة الدفع",
+    "note": "ملاحظة",
+    "note_placeholder": "ملاحظات حول هذا الدفع...",
+    "success": "تم تسجيل الدفعة بنجاح",
+    "invalid_amount": "يرجى إدخال مبلغ صالح",
+    "settle_all": "تسوية الكل",
+    "optional": "(اختياري)",
+    "saving": "جاري التسجيل...",
+    "confirm_btn": "تأكيد الدفع"
+  },
+  "customer_debts": {
+    "title": "ديون {name}",
+    "total_purchases": "إجمالي المشتريات",
+    "total_paid": "إجمالي المدفوع",
+    "remaining": "المبلغ المتبقي",
+    "payments_history": "سجل الدفعات",
+    "payments_tab": "الدفعات",
+    "no_sales_desc": "هذا العميل ليس لديه سجل مشتريات بعد.",
+    "no_payments": "لا توجد دفعات مسجلة",
+    "no_payments_desc": "سجل الدفعة الأولى باستخدام الزر أعلاه."
+  }
+}

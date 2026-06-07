@@ -5,18 +5,20 @@ import { RevenueChart } from "@/modules/dashboard/components/RevenueChart";
 import { PaymentDistributionChart } from "@/modules/dashboard/components/PaymentDistributionChart";
 import { TopProductsList } from "@/modules/dashboard/components/TopProductsList";
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Period = 7 | 30 | 90;
 
-const PERIOD_OPTIONS: { value: Period; label: string }[] = [
-  { value: 7, label: "7 jours" },
-  { value: 30, label: "30 jours" },
-  { value: 90, label: "90 jours" },
-];
-
 export function StatsPage() {
+  const { t, isRtl } = useTranslation();
   const [period, setPeriod] = useState<Period>(30);
   const { data, isLoading } = useDashboard(period);
+
+  const PERIOD_OPTIONS: { value: Period; label: string }[] = [
+    { value: 7, label: t("dashboard.stats.periods.7") },
+    { value: 30, label: t("dashboard.stats.periods.30") },
+    { value: 90, label: t("dashboard.stats.periods.90") },
+  ];
 
   // Derived KPIs from real dashboard data
   const kpis = data?.kpis;
@@ -27,42 +29,42 @@ export function StatsPage() {
 
   const STAT_CARDS = [
     {
-      label: "CA du mois",
+      label: t("dashboard.stats.kpis.month_revenue"),
       value: kpis ? formatCurrency(kpis.monthRevenue) : "—",
       icon: "trending_up",
-      sub: `${kpis?.monthSalesCount ?? 0} transactions`,
+      sub: t("dashboard.stats.kpis.transactions_count", { count: kpis?.monthSalesCount ?? 0 }),
     },
     {
-      label: "Ticket moyen",
+      label: t("dashboard.stats.kpis.avg_ticket"),
       value: kpis ? formatCurrency(avgTicket) : "—",
       icon: "receipt_long",
-      sub: "Ce mois-ci",
+      sub: t("dashboard.stats.kpis.this_month"),
     },
     {
-      label: "Transactions totales",
-      value: kpis?.monthSalesCount?.toLocaleString("fr-DZ") ?? "—",
+      label: t("dashboard.stats.kpis.total_transactions"),
+      value: kpis?.monthSalesCount?.toLocaleString(isRtl ? "ar-DZ" : "fr-DZ") ?? "—",
       icon: "point_of_sale",
-      sub: "Ce mois-ci",
+      sub: t("dashboard.stats.kpis.this_month"),
     },
     {
-      label: "CA aujourd'hui",
+      label: t("dashboard.stats.kpis.revenue_today"),
       value: kpis ? formatCurrency(kpis.todayRevenue) : "—",
       icon: "today",
-      sub: `${kpis?.todaySalesCount ?? 0} ventes`,
+      sub: t("dashboard.stats.kpis.sales_count", { count: kpis?.todaySalesCount ?? 0 }),
     },
   ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar
-        title="Statistiques"
-        description="Analyses et performances de votre boutique."
+        title={t("dashboard.stats.title")}
+        description={t("dashboard.stats.description")}
         actions={
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexDirection: isRtl ? "row-reverse" : "row" }}>
             <span style={{ fontSize: "var(--text-label-sm)", color: "var(--color-secondary)", letterSpacing: "var(--ls-label-sm)", textTransform: "uppercase" }}>
-              Période
+              {t("dashboard.stats.period")}
             </span>
-            <div style={{ display: "flex", gap: "4px", background: "var(--color-surface-container-high)", borderRadius: "var(--radius-lg)", padding: "4px" }}>
+            <div style={{ display: "flex", gap: "4px", background: "var(--color-surface-container-high)", borderRadius: "var(--radius-lg)", padding: "4px", flexDirection: isRtl ? "row-reverse" : "row" }}>
               {PERIOD_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -114,8 +116,8 @@ export function StatsPage() {
                 <div key={i} className="kpi-card skeleton" style={{ height: 130 }} />
               ))
             : STAT_CARDS.map((card) => (
-                <div key={card.label} className="kpi-card animate-fade-in">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                <div key={card.label} className="kpi-card animate-fade-in" style={{ textAlign: isRtl ? "right" : "left" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
                     <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)" }}>
                       {card.label}
                     </span>
@@ -173,7 +175,7 @@ export function StatsPage() {
           {/* Additional real stats: recent transactions summary */}
           <div
             className="glass-card"
-            style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 320, display: "flex", flexDirection: "column" }}
+            style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 320, display: "flex", flexDirection: "column", textAlign: isRtl ? "right" : "left" }}
           >
             <h3
               style={{
@@ -185,6 +187,7 @@ export function StatsPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
+                flexDirection: isRtl ? "row-reverse" : "row",
               }}
             >
               <span
@@ -197,7 +200,7 @@ export function StatsPage() {
                   flexShrink: 0,
                 }}
               />
-              Résumé de la période
+              {t("dashboard.stats.summary.title")}
             </h3>
 
             {isLoading ? (
@@ -209,10 +212,10 @@ export function StatsPage() {
             ) : (
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
                 {[
-                  { label: "Chiffre d'affaires", value: formatCurrency(kpis?.monthRevenue ?? 0), icon: "payments" },
-                  { label: "Nombre de ventes", value: (kpis?.monthSalesCount ?? 0).toLocaleString("fr-DZ"), icon: "shopping_cart" },
-                  { label: "Ticket moyen", value: formatCurrency(avgTicket), icon: "receipt_long" },
-                  { label: "Produits au catalogue", value: (kpis?.totalProducts ?? 0).toLocaleString("fr-DZ"), icon: "inventory_2" },
+                  { label: t("dashboard.stats.summary.revenue"), value: formatCurrency(kpis?.monthRevenue ?? 0), icon: "payments" },
+                  { label: t("dashboard.stats.summary.sales"), value: (kpis?.monthSalesCount ?? 0).toLocaleString(isRtl ? "ar-DZ" : "fr-DZ"), icon: "shopping_cart" },
+                  { label: t("dashboard.stats.summary.avg_ticket"), value: formatCurrency(avgTicket), icon: "receipt_long" },
+                  { label: t("dashboard.stats.summary.catalog_products"), value: (kpis?.totalProducts ?? 0).toLocaleString(isRtl ? "ar-DZ" : "fr-DZ"), icon: "inventory_2" },
                 ].map((stat) => (
                   <div
                     key={stat.label}
@@ -223,9 +226,10 @@ export function StatsPage() {
                       padding: "12px 16px",
                       borderRadius: "var(--radius-lg)",
                       background: "var(--color-surface-container-low)",
+                      flexDirection: isRtl ? "row-reverse" : "row",
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexDirection: isRtl ? "row-reverse" : "row" }}>
                       <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--color-primary)" }}>
                         {stat.icon}
                       </span>

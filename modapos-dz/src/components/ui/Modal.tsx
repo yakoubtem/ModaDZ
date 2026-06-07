@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./Button";
 import { useKeyboard } from "@/hooks/useKeyboard";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export function Modal({
 }: ModalProps) {
   const titleId = useId();
   const descId = useId();
+  const { t, isRtl } = useTranslation();
 
   useKeyboard({ Escape: () => isOpen && onClose() });
 
@@ -119,8 +121,8 @@ export function Modal({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              aria-label="Fermer"
-              className="shrink-0 -mr-1 -mt-1 no-drag"
+              aria-label={t("common.buttons.close")}
+              className={cn("shrink-0 -mt-1 no-drag", isRtl ? "-ml-1" : "-mr-1")}
             >
               <X className="w-4 h-4" />
             </Button>

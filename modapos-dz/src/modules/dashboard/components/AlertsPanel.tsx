@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/lib/utils";
 import type { RecentSale, LowStockVariant, ExpenseAlert } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface AlertsPanelProps {
   recentSales?: RecentSale[];
@@ -9,6 +10,8 @@ interface AlertsPanelProps {
 }
 
 export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }: AlertsPanelProps) {
+  const { t, isRtl } = useTranslation();
+
   if (isLoading || !recentSales || !lowStock || !expenseAlerts) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -22,7 +25,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
   const alertCount = (lowStock?.length || 0) + (expenseAlerts?.length || 0);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", textAlign: isRtl ? "right" : "left" }}>
       {/* Header */}
       <div
         style={{
@@ -30,6 +33,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
           alignItems: "center",
           justifyContent: "space-between",
           marginBottom: "24px",
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <h3
@@ -40,7 +44,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
             color: "var(--color-on-surface)",
           }}
         >
-          Alertes
+          {t("dashboard.alerts_panel.title")}
         </h3>
         {alertCount > 0 && (
           <span
@@ -65,6 +69,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
           <div
             key={`${alert.type}-${index}`}
             className={alert.severity === "danger" ? "alert-card alert-card-error" : "alert-card alert-card-gold"}
+            style={{ flexDirection: isRtl ? "row-reverse" : "row", textAlign: isRtl ? "right" : "left" }}
           >
             <span className="material-symbols-outlined" style={{ color: "var(--color-primary-container)", flexShrink: 0 }}>
               warning
@@ -90,7 +95,11 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
 
         {/* Low stock alerts */}
         {lowStock.slice(0, 3).map((item) => (
-          <div key={item.id} className="alert-card alert-card-gold">
+          <div
+            key={item.id}
+            className="alert-card alert-card-gold"
+            style={{ flexDirection: isRtl ? "row-reverse" : "row", textAlign: isRtl ? "right" : "left" }}
+          >
             <span className="material-symbols-outlined" style={{ color: "var(--color-primary-container)", flexShrink: 0 }}>
               inventory
             </span>
@@ -104,10 +113,10 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
                   marginBottom: "4px",
                 }}
               >
-                Stock faible
+                {t("dashboard.alerts_panel.low_stock")}
               </p>
               <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                {item.product.name} ({item.color}) — Reste {item.stock}
+                {item.product.name} ({item.color}) — {t("dashboard.alerts_panel.remaining_stock", { count: item.stock })}
               </p>
             </div>
           </div>
@@ -117,7 +126,11 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
         {recentSales.slice(0, 2).map((sale) => {
           const total = sale.items.reduce((s, i) => s + i.quantity, 0);
           return (
-            <div key={sale.id} className="alert-card alert-card-teal">
+            <div
+              key={sale.id}
+              className="alert-card alert-card-teal"
+              style={{ flexDirection: isRtl ? "row-reverse" : "row", textAlign: isRtl ? "right" : "left" }}
+            >
               <span className="material-symbols-outlined" style={{ color: "var(--color-tertiary)", flexShrink: 0 }}>
                 mark_email_unread
               </span>
@@ -131,10 +144,10 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
                     marginBottom: "4px",
                   }}
                 >
-                  Nouvelle vente
+                  {t("dashboard.alerts_panel.new_sale")}
                 </p>
                 <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                  {sale.customer?.name || "Client passager"} — {formatCurrency(sale.total)} · {total} art.
+                  {sale.customer?.name || t("pos.cart.customer_none")} — {formatCurrency(sale.total)} · {t("pos.cart.items_count", { count: total })}
                 </p>
               </div>
             </div>
@@ -150,11 +163,12 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
               padding: "16px",
               borderRadius: "12px",
               background: "rgba(39,104,104,0.08)",
+              flexDirection: isRtl ? "row-reverse" : "row",
             }}
           >
             <span className="material-symbols-outlined" style={{ color: "var(--color-tertiary)" }}>check_circle</span>
             <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-tertiary)" }}>
-              Tout est en ordre.
+              {t("dashboard.alerts_panel.all_clear")}
             </p>
           </div>
         )}
@@ -177,7 +191,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
           cursor: "pointer",
         }}
       >
-        Voir toutes les alertes
+        {t("dashboard.alerts_panel.view_all")}
       </button>
     </div>
   );

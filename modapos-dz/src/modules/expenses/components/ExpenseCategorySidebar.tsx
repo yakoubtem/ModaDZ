@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { formatCurrency } from "@/lib/utils";
 import type { Expense } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseCategorySidebarProps {
   expenses: Expense[];
@@ -24,6 +25,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories }: ExpenseCategorySidebarProps) {
+  const { t } = useTranslation();
   const categories = useMemo(() => {
     const map = new Map<string, number>();
     let totalAmount = 0;
@@ -97,7 +99,7 @@ export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories
             flexShrink: 0,
           }}
         />
-        Top catégories
+        {t("expenses.categories.manager_title")}
       </h3>
 
       {categories.length === 0 ? (
@@ -110,7 +112,7 @@ export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories
             padding: "24px 0",
           }}
         >
-          Aucune dépense
+          {t("expenses.empty_state.title")}
         </p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -171,7 +173,7 @@ export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories
                       fontWeight: 700,
                       color: "var(--color-primary)",
                       flexShrink: 0,
-                      marginLeft: 8,
+                      marginInlineStart: 8,
                     }}
                   >
                     {cat.percentage}%
@@ -221,7 +223,7 @@ export function ExpenseCategorySidebar({ expenses, isLoading, onManageCategories
           style={{ width: "100%", marginTop: 16, justifyContent: "center", gap: 6 }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>settings</span>
-          Gérer les catégories
+          {t("expenses.categories.manager_title")}
         </button>
       )}
     </div>

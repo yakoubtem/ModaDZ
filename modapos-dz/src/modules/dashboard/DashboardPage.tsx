@@ -6,15 +6,17 @@ import { PaymentDistributionChart } from "./components/PaymentDistributionChart"
 import { TopProductsList } from "./components/TopProductsList";
 import { AlertsPanel } from "./components/AlertsPanel";
 import { DebtWidget } from "./components/DebtWidget";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
   const { data, isLoading } = useDashboard(30);
+  const { t } = useTranslation();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar
-        title="Tableau de bord"
-        description="Aperçu en temps réel de votre activité de luxe."
+        title={t("dashboard.title")}
+        description={t("dashboard.subtitle")}
       />
 
       <main

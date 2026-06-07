@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TopBar } from "@/components/layout/AppLayout";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useProducts } from "./hooks/useProducts";
 import { useCategories } from "./hooks/useCategories";
 import { ProductTable } from "./components/ProductTable";
@@ -9,6 +10,7 @@ import { CategoryManager } from "./components/CategoryManager";
 import type { Product, ProductFormData } from "@/types";
 
 export function ProductsPage() {
+  const { t, language } = useTranslation();
   const {
     products,
     total,
@@ -44,7 +46,7 @@ export function ProductsPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <TopBar
-        title="Produits"
+        title={t("common.sidebar.products")}
         actions={
           <div style={{ display: "flex", gap: "12px" }}>
             <button
@@ -52,14 +54,14 @@ export function ProductsPage() {
               style={{ borderRadius: "var(--radius-lg)" }}
               onClick={() => setIsCategoryOpen(true)}
             >
-              Catégories
+              {t("products.buttons.categories")}
             </button>
             <button
               className="btn-primary"
               onClick={() => { setEditingProduct(null); setIsFormOpen(true); }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-              Nouveau produit
+              {t("products.buttons.new_product")}
             </button>
           </div>
         }
@@ -77,9 +79,9 @@ export function ProductsPage() {
         >
           {(() => {
             const statsCards: { label: string; value: number; icon: string; sub: string; error?: boolean; trend?: string }[] = [
-              { label: "Produits actifs", value: stats.totalProducts, icon: "inventory_2", sub: "Catalogue actif" },
-              { label: "Total variantes", value: stats.totalVariants, icon: "style", sub: "Couleurs et Tailles" },
-              { label: "Stocks bas", value: stats.lowStockVariants, icon: "warning", error: true, sub: "Nécessite réassort" },
+              { label: t("products.stats.active_products"), value: stats.totalProducts, icon: "inventory_2", sub: t("products.stats.active_catalog") },
+              { label: t("products.stats.total_variants"), value: stats.totalVariants, icon: "style", sub: t("products.stats.variants_sub") },
+              { label: t("products.stats.low_stocks"), value: stats.lowStockVariants, icon: "warning", error: true, sub: t("products.stats.reorder_needed") },
             ];
             return statsCards.map((card) => (
             <div
@@ -100,7 +102,7 @@ export function ProductsPage() {
                   marginTop: "8px",
                 }}
               >
-                {card.value?.toLocaleString("fr-DZ")}
+                {card.value?.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ")}
               </div>
               {card.trend && (
                 <div style={{ fontSize: "var(--text-label-sm)", color: "var(--color-tertiary)", display: "flex", alignItems: "center", gap: "4px" }}>
@@ -145,11 +147,11 @@ export function ProductsPage() {
             <div style={{ display: "flex", gap: "8px" }}>
               <button className="btn-border" style={{ height: 44 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>filter_list</span>
-                Filtres
+                {t("products.buttons.filters")}
               </button>
               <button className="btn-border" style={{ height: 44 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
-                Exporter
+                {t("products.buttons.export")}
               </button>
             </div>
           </div>

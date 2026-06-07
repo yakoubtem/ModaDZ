@@ -1,6 +1,7 @@
 import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { CartItemRow } from "./CartItemRow";
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CartPanelProps {
   onCheckout: () => void;
@@ -16,6 +17,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
   const total = useCartStore(cartSelectors.total);
   const isEmpty = useCartStore(cartSelectors.isEmpty);
 
+  const { t, isRtl } = useTranslation();
 
   return (
     <aside className="cart-panel">
@@ -27,6 +29,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         <h2
@@ -38,9 +41,10 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
             display: "flex",
             alignItems: "center",
             gap: "12px",
+            flexDirection: isRtl ? "row-reverse" : "row",
           }}
         >
-          Ticket de Caisse
+          {t("pos.cart.title")}
           {!isEmpty && (
             <span
               style={{
@@ -86,6 +90,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
             background: "var(--color-surface-container-low)",
             border: "1px solid rgba(208,197,175,0.2)",
             cursor: "pointer",
+            flexDirection: isRtl ? "row-reverse" : "row",
           }}
         >
           <div
@@ -94,6 +99,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
               alignItems: "center",
               gap: "12px",
               color: "var(--color-on-surface-variant)",
+              flexDirection: isRtl ? "row-reverse" : "row",
             }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>person_add</span>
@@ -105,11 +111,11 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 fontFamily: "var(--font-body)",
               }}
             >
-              Associer un client
+              {t("pos.cart.customer_select")}
             </span>
           </div>
           <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--color-outline)" }}>
-            chevron_right
+            {isRtl ? "chevron_left" : "chevron_right"}
           </span>
         </button>
       </div>
@@ -135,9 +141,9 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
             <span className="material-symbols-outlined" style={{ fontSize: 48, opacity: 0.3 }}>
               shopping_cart
             </span>
-            <p style={{ fontSize: "var(--text-body-sm)" }}>Panier vide</p>
+            <p style={{ fontSize: "var(--text-body-sm)" }}>{t("pos.cart.empty")}</p>
             <p style={{ fontSize: "var(--text-body-sm)", opacity: 0.7 }}>
-              Cliquez sur un produit pour l'ajouter
+              {t("pos.cart.click_to_add")}
             </p>
           </div>
         ) : (
@@ -158,20 +164,20 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
         >
           {/* Line items */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-              <span>Sous-total</span>
-              <span>{formatCurrency(subtotal)}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", flexDirection: isRtl ? "row-reverse" : "row" }}>
+              <span>{t("pos.cart.subtotal")}</span>
+              <span style={{ direction: "ltr" }}>{formatCurrency(subtotal)}</span>
             </div>
             {totalItemDiscounts > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                <span>Remises articles</span>
-                <span>−{formatCurrency(totalItemDiscounts)}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", flexDirection: isRtl ? "row-reverse" : "row" }}>
+                <span>{t("pos.cart.item_discounts")}</span>
+                <span style={{ direction: "ltr" }}>−{formatCurrency(totalItemDiscounts)}</span>
               </div>
             )}
             {cartDiscount > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                <span>Remise panier</span>
-                <span>−{formatCurrency(cartDiscount)}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-body-sm)", color: "var(--color-secondary)", flexDirection: isRtl ? "row-reverse" : "row" }}>
+                <span>{t("pos.cart.discount")}</span>
+                <span style={{ direction: "ltr" }}>−{formatCurrency(cartDiscount)}</span>
               </div>
             )}
 
@@ -184,6 +190,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 marginTop: "8px",
                 paddingTop: "16px",
                 borderTop: "1px solid rgba(208,197,175,0.2)",
+                flexDirection: isRtl ? "row-reverse" : "row",
               }}
             >
               <span
@@ -194,7 +201,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                   color: "var(--color-on-surface)",
                 }}
               >
-                Total
+                {t("pos.cart.total")}
               </span>
               <span
                 style={{
@@ -203,6 +210,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                   fontWeight: 700,
                   color: "var(--color-on-surface)",
                   letterSpacing: "-0.02em",
+                  direction: "ltr",
                 }}
               >
                 {formatCurrency(total)}
@@ -229,12 +237,15 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
+                flexDirection: isRtl ? "row-reverse" : "row",
                 cursor: "pointer",
                 boxShadow: "var(--shadow-soft)",
               }}
             >
-              Encaisser
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+              {t("pos.cart.checkout")}
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                {isRtl ? "arrow_back" : "arrow_forward"}
+              </span>
             </button>
             <button
               style={{
@@ -251,7 +262,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 cursor: "pointer",
               }}
             >
-              Mettre en attente
+              {t("pos.cart.suspend")}
             </button>
           </div>
         </div>

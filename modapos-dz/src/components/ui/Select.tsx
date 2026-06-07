@@ -1,5 +1,6 @@
 import { type SelectHTMLAttributes, forwardRef } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -10,6 +11,10 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, placeholder, className, id, children, ...props }, ref) => {
     const selectId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+    const { isRtl } = useTranslation();
+
+    const paddingLeft = isRtl ? "40px" : "16px";
+    const paddingRight = isRtl ? "16px" : "40px";
 
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -23,6 +28,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               color: "var(--color-on-surface-variant)",
               marginBottom: 10,
               letterSpacing: "0.02em",
+              textAlign: isRtl ? "right" : "left",
             }}
           >
             {label}
@@ -42,8 +48,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               borderRadius: "var(--radius-lg)",
               paddingTop: "14px",
               paddingBottom: "14px",
-              paddingLeft: "16px",
-              paddingRight: "40px",
+              paddingLeft,
+              paddingRight,
               fontSize: "var(--text-body-sm)",
               fontFamily: "var(--font-body)",
               color: "var(--color-on-surface)",
@@ -71,7 +77,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             )}
             {children}
           </select>
-          <ChevronDown className="absolute right-3.5 w-4 h-4 text-[var(--color-text-muted)] pointer-events-none" />
+          <ChevronDown className={`absolute w-4 h-4 text-[var(--color-text-muted)] pointer-events-none ${isRtl ? "left-3.5" : "right-3.5"}`} />
         </div>
         {error && <p className="text-xs text-[var(--color-danger)] mt-1.5">{error}</p>}
       </div>

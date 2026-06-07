@@ -1,0 +1,45 @@
+{
+  "title": "الجرد والمخزون",
+  "description": "إدارة المخزون حسب نوع المنتج.",
+  "search_placeholder": "البحث عن منتج، SKU أو باركود...",
+  "toast": {
+    "success_title": "تم تحديث المخزون",
+    "success_desc": "تم تطبيق تعديل بقيمة {delta}.",
+    "error_title": "خطأ",
+    "error_desc": "تعذر تحديث المخزون."
+  },
+  "kpis": {
+    "in_stock": "الوحدات في المخزن",
+    "low_stock": "مخزون منخفض",
+    "low_stock_sub": "≤ {threshold} وحدات",
+    "out_of_stock": "المنتجات النافدة",
+    "out_of_stock_sub": "0 وحدة"
+  },
+  "controls": {
+    "filter_all": "الكل",
+    "filter_low": "مخزون منخفض",
+    "filter_out": "نافد",
+    "no_articles": "لم يتم العثور على أي منتج للفلاتر المحددة."
+  },
+  "table": {
+    "product": "المنتج",
+    "sku": "SKU",
+    "size": "المقاس",
+    "color": "اللون",
+    "category": "الفئة",
+    "price": "السعر",
+    "stock": "المخزون",
+    "units": "{count} وحدة",
+    "adjust_btn": "تعديل",
+    "displayed_count": "تم عرض {count} خيار(ات)",
+    "refresh": "تحديث"
+  },
+  "adjust": {
+    "title": "تعديل المخزون",
+    "quantity": "الكمية الجديدة",
+    "reason": "سبب التعديل",
+    "reason_correction": "تصحيح الجرد",
+    "reason_damage": "خسارة / تلف",
+    "reason_return": "إرجاع للمورد"
+  }
+}

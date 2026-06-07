@@ -16,13 +16,7 @@ import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
 import type { CustomerDetail, Sale } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-
-// ─── Payment method labels ────────────────────────────────
-const PM_LABEL: Record<string, string> = {
-  cash: "Espèces",
-  card: "Carte",
-  transfer: "Virement",
-};
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Stat card ────────────────────────────────────────────
 function StatCard({
@@ -78,22 +72,30 @@ export function CustomerProfileModal({
   onClose,
   onEdit,
 }: CustomerProfileModalProps) {
+  const { t, isRtl } = useTranslation();
   const [activeSaleId, setActiveSaleId] = useState<number | null>(null);
 
   if (!customer) return null;
 
   const { stats } = customer;
 
+  // ─── Payment method labels ────────────────────────────────
+  const PM_LABEL: Record<string, string> = {
+    cash: t("common.payment_methods.cash"),
+    card: t("common.payment_methods.card"),
+    transfer: t("common.payment_methods.transfer"),
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={customer.name}
-      description="Profil client & historique des achats"
+      description={t("customers.details.subtitle")}
       size="xl"
       footer={
         <Button variant="ghost" onClick={onClose}>
-          Fermer
+          {t("common.buttons.close")}
         </Button>
       }
     >
@@ -121,28 +123,28 @@ export function CustomerProfileModal({
           <Button
             variant="secondary"
             size="sm"
-            className="ml-auto gap-1.5"
+            className={cn("gap-1.5", isRtl ? "mr-auto" : "ml-auto")}
             onClick={onEdit}
           >
             <Pencil className="w-3.5 h-3.5" />
-            Modifier
+            {t("common.buttons.edit")}
           </Button>
         </div>
 
         {/* ── Stats ── */}
         <div className="grid grid-cols-3 gap-3">
           <StatCard
-            label="Commandes"
+            label={t("customers.details.orders_count")}
             value={String(stats.totalOrders)}
             icon={ShoppingBag}
           />
           <StatCard
-            label="Total dépensé"
+            label={t("customers.details.total_spent")}
             value={formatCurrency(stats.totalSpent)}
             icon={TrendingUp}
           />
           <StatCard
-            label="Crédit en attente"
+            label={t("customers.details.current_debt")}
             value={formatCurrency(stats.debt)}
             icon={AlertCircle}
             highlight={stats.debt > 0}
@@ -152,13 +154,13 @@ export function CustomerProfileModal({
         {/* ── Purchase history ── */}
         <div>
           <h4 className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
-            Historique des achats
+            {t("customers.details.orders")}
           </h4>
 
           {customer.sales.length === 0 ? (
             <div className="flex flex-col items-center py-8 text-[var(--color-text-muted)]">
               <ShoppingBag className="w-8 h-8 mb-2" />
-              <p className="text-sm">Aucun achat enregistré</p>
+              <p className="text-sm">{t("customers.details.no_sales")}</p>
             </div>
           ) : (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-hidden max-h-64 overflow-y-auto">
@@ -173,7 +175,10 @@ export function CustomerProfileModal({
                         onClick={() =>
                           setActiveSaleId(isExpanded ? null : sale.id)
                         }
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-[var(--color-bg-elevated)] transition-colors text-left"
+                        className={cn(
+                          "w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-[var(--color-bg-elevated)] transition-colors",
+                          isRtl ? "text-right" : "text-left"
+                        )}
                       >
                         {/* Receipt # */}
                         <div className="flex items-center gap-2 shrink-0">
@@ -195,12 +200,12 @@ export function CustomerProfileModal({
 
                         {/* Items count */}
                         <span className="text-xs text-[var(--color-text-muted)]">
-                          {itemCount} article{itemCount > 1 ? "s" : ""}
+                          {t("customers.details.items_count", { count: itemCount })}
                         </span>
 
                         {/* Status */}
                         {sale.status === "refunded" && (
-                          <Badge variant="danger">Remboursé</Badge>
+                          <Badge variant="danger">{t("common.status.refunded")}</Badge>
                         )}
 
                         {/* Payment status badge */}
@@ -211,7 +216,7 @@ export function CustomerProfileModal({
                         />
 
                         {/* Total */}
-                        <span className="ml-auto font-semibold text-[var(--color-text-primary)] tabular-nums">
+                        <span className={cn("font-semibold text-[var(--color-text-primary)] tabular-nums", isRtl ? "mr-auto" : "ml-auto")}>
                           {formatCurrency(sale.total)}
                         </span>
                       </button>

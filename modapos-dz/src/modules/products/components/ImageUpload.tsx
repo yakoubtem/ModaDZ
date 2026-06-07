@@ -3,6 +3,7 @@ import { Upload, X, ImageIcon } from "lucide-react";
 import { useIPC } from "@/hooks/useIPC";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ImageUploadProps {
   value?: string; // imagePath stored in DB (e.g. "images/xxx.jpg")
@@ -11,6 +12,7 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
+  const { t } = useTranslation();
   const api = useIPC();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,11 +22,11 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
       const savedPath = await api<string | null>("products:selectImage");
       if (savedPath) onChange(savedPath);
     } catch {
-      toast.error("Erreur lors du chargement de l'image");
+      toast.error(t("products.form.image_upload_error"));
     } finally {
       setIsLoading(false);
     }
-  }, [api, onChange]);
+  }, [api, onChange, t]);
 
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
@@ -37,7 +39,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
   return (
     <div className={cn("flex flex-col", className)}>
       <span className="block text-[length:var(--text-label-md)] font-bold text-[var(--color-on-surface-variant)] tracking-[0.02em] mb-[10px]">
-        Image produit
+        {t("products.form.image_title")}
       </span>
 
       {value ? (
@@ -45,7 +47,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
         <div className="relative group rounded-[var(--radius-lg)] overflow-hidden border-[1.5px] border-[rgba(208,197,175,0.3)] aspect-square bg-[var(--color-sand)]">
           <img
             src={`media://${value}`}
-            alt="Aperçu produit"
+            alt={t("products.form.image_preview_alt")}
             className="w-full h-full object-cover"
           />
           {/* Overlay on hover */}
@@ -55,7 +57,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
               onClick={handleSelect}
               className="px-3 py-1.5 bg-[var(--color-tertiary)] text-white text-xs font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-tertiary)]/90 transition-colors"
             >
-              Changer
+              {t("products.form.change_image")}
             </button>
             <button
               type="button"
@@ -63,7 +65,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
               className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-[var(--radius-md)] hover:bg-red-700 transition-colors flex items-center gap-1"
             >
               <X className="w-3 h-3" />
-              Supprimer
+              {t("products.form.delete_image")}
             </button>
           </div>
         </div>
@@ -89,14 +91,14 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
                 <ImageIcon className="w-6 h-6" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium">Choisir une image</p>
+                <p className="text-sm font-medium">{t("products.form.choose_image")}</p>
                 <p className="text-xs mt-0.5 text-[var(--color-text-muted)]">
                   JPG, PNG, WEBP
                 </p>
               </div>
               <div className="flex items-center gap-1.5 text-xs">
                 <Upload className="w-3 h-3" />
-                <span>Parcourir les fichiers</span>
+                <span>{t("products.form.browse_files")}</span>
               </div>
             </>
           )}

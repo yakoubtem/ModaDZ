@@ -1,4 +1,5 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -23,6 +24,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+    const { isRtl } = useTranslation();
+
+    const paddingStart = leftIcon ? "48px" : "16px";
+    const paddingEnd = rightIcon ? "48px" : "16px";
+    const paddingLeft = isRtl ? paddingEnd : paddingStart;
+    const paddingRight = isRtl ? paddingStart : paddingEnd;
 
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,6 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               color: "var(--color-on-surface-variant)",
               marginBottom: 10,
               letterSpacing: "0.02em",
+              textAlign: isRtl ? "right" : "left",
             }}
           >
             {label}
@@ -44,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative">
           {leftIcon && (
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">
+            <span className={`absolute top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none ${isRtl ? "right-4" : "left-4"}`}>
               {leftIcon}
             </span>
           )}
@@ -62,13 +70,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               borderRadius: "var(--radius-lg)",
               paddingTop: "14px",
               paddingBottom: "14px",
-              paddingLeft: leftIcon ? "48px" : "16px",
-              paddingRight: rightIcon ? "48px" : "16px",
+              paddingLeft,
+              paddingRight,
               fontSize: "var(--text-body-sm)",
               fontFamily: "var(--font-body)",
               color: "var(--color-on-surface)",
               outline: "none",
               transition: "border-color 0.15s, box-shadow 0.15s",
+              textAlign: isRtl ? "right" : "left",
             }}
             className={className}
             onFocus={(e) => {
@@ -83,7 +92,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
 
           {rightIcon && (
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">
+            <span className={`absolute top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none ${isRtl ? "left-4" : "right-4"}`}>
               {rightIcon}
             </span>
           )}

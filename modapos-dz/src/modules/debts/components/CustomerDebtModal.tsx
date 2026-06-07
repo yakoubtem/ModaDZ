@@ -4,17 +4,9 @@ import { formatCurrency, formatDate, formatDateTime, initials } from "@/lib/util
 import { PaymentFormModal } from "./PaymentFormModal";
 import type { DebtCustomerDetail } from "@/types";
 import { PaymentStatusBadge } from "@/components/ui/PaymentStatusBadge";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // ─── Helpers ─────────────────────────────────────────────
-
-function methodLabel(method: string): string {
-  switch (method) {
-    case "cash":     return "Espèces";
-    case "card":     return "Carte";
-    case "transfer": return "Virement";
-    default:         return method;
-  }
-}
 
 function methodIcon(method: string): string {
   switch (method) {
@@ -54,11 +46,12 @@ function TabEmptyState({ icon, title, description }: { icon: string; title: stri
 // ─── Table header / cell helpers ─────────────────────────
 
 function TH({ children }: { children: React.ReactNode }) {
+  const { isRtl } = useTranslation();
   return (
     <th
       style={{
         padding: "11px 20px",
-        textAlign: "left",
+        textAlign: isRtl ? "right" : "left",
         fontSize: "var(--text-label-sm)",
         fontWeight: 700,
         letterSpacing: "0.07em",
@@ -75,6 +68,7 @@ function TH({ children }: { children: React.ReactNode }) {
 }
 
 function TD({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  const { isRtl } = useTranslation();
   return (
     <td
       style={{
@@ -82,6 +76,7 @@ function TD({ children, style }: { children: React.ReactNode; style?: React.CSSP
         borderBottom: "1px solid rgba(208,197,175,0.1)",
         fontSize: "var(--text-body-sm)",
         verticalAlign: "middle",
+        textAlign: isRtl ? "right" : "left",
         ...style,
       }}
     >
@@ -111,6 +106,7 @@ export function CustomerDebtModal({
   onClose,
   onPaymentSuccess,
 }: CustomerDebtModalProps) {
+  const { t, isRtl } = useTranslation();
   const [tab, setTab] = useState<Tab>("sales");
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
@@ -272,7 +268,7 @@ export function CustomerDebtModal({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 24 }}>
               {[
                 {
-                  label: "Total achats",
+                  label: t("debts.customer_debts.total_purchases"),
                   value: formatCurrency(detail.summary.totalPurchases),
                   icon: "shopping_bag",
                   color: "var(--color-primary)",
@@ -280,7 +276,7 @@ export function CustomerDebtModal({
                   border: "rgba(212,175,55,0.2)",
                 },
                 {
-                  label: "Total payé",
+                  label: t("debts.customer_debts.total_paid"),
                   value: formatCurrency(detail.summary.totalPaid),
                   icon: "check_circle",
                   color: "var(--color-tertiary)",
@@ -288,7 +284,7 @@ export function CustomerDebtModal({
                   border: "rgba(39,104,104,0.2)",
                 },
                 {
-                  label: "Dette restante",
+                  label: t("debts.customer_debts.remaining"),
                   value: formatCurrency(detail.summary.currentDebt),
                   icon: "account_balance_wallet",
                   color: detail.summary.currentDebt > 0 ? "var(--color-error)" : "var(--color-tertiary)",
@@ -346,8 +342,8 @@ export function CustomerDebtModal({
                 onClick={() => setTab("sales")}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>receipt_long</span>
-                Ventes
-                <span style={{ padding: "1px 7px", borderRadius: "var(--radius-full)", background: tab === "sales" ? "rgba(212,175,55,0.15)" : "rgba(208,197,175,0.2)", color: tab === "sales" ? "var(--color-primary)" : "var(--color-secondary)", fontSize: 11, fontWeight: 700 }}>
+                {t("common.sidebar.sales")}
+                <span style={{ padding: "1px 7px", borderRadius: "var(--radius-full)", background: tab === "sales" ? "rgba(212,175,55,0.15)" : "rgba(208,197,175,0.2)", color: tab === "sales" ? "var(--color-primary)" : "var(--color-secondary)", fontSize: 11, fontWeight: 700, [isRtl ? "marginRight" : "marginLeft"]: 5 }}>
                   {detail?.sales.length ?? 0}
                 </span>
               </button>
@@ -364,8 +360,8 @@ export function CustomerDebtModal({
                 onClick={() => setTab("payments")}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>payments</span>
-                Paiements
-                <span style={{ padding: "1px 7px", borderRadius: "var(--radius-full)", background: tab === "payments" ? "rgba(212,175,55,0.15)" : "rgba(208,197,175,0.2)", color: tab === "payments" ? "var(--color-primary)" : "var(--color-secondary)", fontSize: 11, fontWeight: 700 }}>
+                {t("debts.customer_debts.payments_tab")}
+                <span style={{ padding: "1px 7px", borderRadius: "var(--radius-full)", background: tab === "payments" ? "rgba(212,175,55,0.15)" : "rgba(208,197,175,0.2)", color: tab === "payments" ? "var(--color-primary)" : "var(--color-secondary)", fontSize: 11, fontWeight: 700, [isRtl ? "marginRight" : "marginLeft"]: 5 }}>
                   {detail?.payments.length ?? 0}
                 </span>
               </button>
@@ -378,7 +374,7 @@ export function CustomerDebtModal({
                 style={{ marginBottom: 0, gap: 7, padding: "9px 20px" }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 17 }}>add_circle</span>
-                Enregistrer un paiement
+                {t("debts.payment_modal.title")}
               </button>
             )}
           </div>
@@ -402,14 +398,14 @@ export function CustomerDebtModal({
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    <TH>N° Facture</TH>
-                    <TH>Date</TH>
-                    <TH>Total</TH>
-                    <TH>Payé</TH>
-                    <TH>Restant</TH>
-                    <TH>Méthode</TH>
-                    <TH>Statut</TH>
-                    <TH>Paiement</TH>
+                    <TH>{t("sales.table.receipt")}</TH>
+                    <TH>{t("sales.table.date")}</TH>
+                    <TH>{t("sales.table.total")}</TH>
+                    <TH>{t("sales.table.paid")}</TH>
+                    <TH>{t("debts.customer_debts.remaining")}</TH>
+                    <TH>{t("sales.table.payment_method")}</TH>
+                    <TH>{t("sales.table.status")}</TH>
+                    <TH>{t("sales.filters.payment_method")}</TH>
                   </tr>
                 </thead>
                 <tbody>
@@ -431,7 +427,7 @@ export function CustomerDebtModal({
                       <TD style={{ color: "var(--color-secondary)" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{methodIcon(sale.paymentMethod)}</span>
-                          {methodLabel(sale.paymentMethod)}
+                          {t("common.payment_methods." + sale.paymentMethod)}
                         </span>
                       </TD>
                       <TD>
@@ -445,7 +441,7 @@ export function CustomerDebtModal({
                           }
                           style={{ fontSize: 11 }}
                         >
-                          {sale.status === "completed" ? "Complétée" : sale.status === "refunded" ? "Remboursée" : "En attente"}
+                          {sale.status === "completed" ? t("common.status.completed") : sale.status === "refunded" ? t("common.status.refunded") : t("common.status.pending")}
                         </span>
                       </TD>
                       <TD>
@@ -462,8 +458,8 @@ export function CustomerDebtModal({
             ) : (
               <TabEmptyState
                 icon="receipt_long"
-                title="Aucune vente trouvée"
-                description="Ce client n'a pas encore d'historique d'achats."
+                title={t("sales.table.no_sales_found")}
+                description={t("debts.customer_debts.no_sales_desc")}
               />
             )
           ) : (
@@ -471,10 +467,10 @@ export function CustomerDebtModal({
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    <TH>Date</TH>
-                    <TH>Montant versé</TH>
-                    <TH>Méthode</TH>
-                    <TH>Note</TH>
+                    <TH>{t("sales.table.date")}</TH>
+                    <TH>{t("debts.customer_debts.total_paid")}</TH>
+                    <TH>{t("sales.table.payment_method")}</TH>
+                    <TH>{t("debts.payment_modal.note")}</TH>
                   </tr>
                 </thead>
                 <tbody>
@@ -489,7 +485,7 @@ export function CustomerDebtModal({
                       <TD style={{ color: "var(--color-secondary)" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{methodIcon(p.method)}</span>
-                          {methodLabel(p.method)}
+                          {t("common.payment_methods." + p.method)}
                         </span>
                       </TD>
                       <TD style={{ color: "var(--color-secondary)" }}>
@@ -502,8 +498,8 @@ export function CustomerDebtModal({
             ) : (
               <TabEmptyState
                 icon="payments"
-                title="Aucun paiement enregistré"
-                description="Enregistrez le premier paiement via le bouton ci-dessus."
+                title={t("debts.customer_debts.no_payments")}
+                description={t("debts.customer_debts.no_payments_desc")}
               />
             )
           )}

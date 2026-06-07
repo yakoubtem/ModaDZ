@@ -1,6 +1,9 @@
 // ─── Currency Formatter (DZD) ─────────────────────────────
+const getLang = () => (typeof document !== "undefined" ? document.documentElement.lang : "fr") || "fr";
+
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("fr-DZ", {
+  const lang = getLang() === "ar" ? "ar-DZ" : "fr-DZ";
+  return new Intl.NumberFormat(lang, {
     style: "currency",
     currency: "DZD",
     minimumFractionDigits: 0,
@@ -22,7 +25,8 @@ export function getPaymentStatus(
 
 // ─── Date Formatters ──────────────────────────────────────
 export function formatDate(dateStr: string): string {
-  return new Intl.DateTimeFormat("fr-DZ", {
+  const lang = getLang() === "ar" ? "ar-DZ" : "fr-DZ";
+  return new Intl.DateTimeFormat(lang, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -30,7 +34,8 @@ export function formatDate(dateStr: string): string {
 }
 
 export function formatDateTime(dateStr: string): string {
-  return new Intl.DateTimeFormat("fr-DZ", {
+  const lang = getLang() === "ar" ? "ar-DZ" : "fr-DZ";
+  return new Intl.DateTimeFormat(lang, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -47,10 +52,12 @@ export function formatRelativeTime(dateStr: string): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return "À l'instant";
-  if (minutes < 60) return `Il y a ${minutes}min`;
-  if (hours < 24) return `Il y a ${hours}h`;
-  if (days < 7) return `Il y a ${days}j`;
+  const isAr = getLang() === "ar";
+
+  if (minutes < 1) return isAr ? "الآن" : "À l'instant";
+  if (minutes < 60) return isAr ? `منذ ${minutes} د` : `Il y a ${minutes}min`;
+  if (hours < 24) return isAr ? `منذ ${hours} سا` : `Il y a ${hours}h`;
+  if (days < 7) return isAr ? `منذ ${days} ي` : `Il y a ${days}j`;
   return formatDate(dateStr);
 }
 

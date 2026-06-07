@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { ExpenseCategoryRecord } from "@/types";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseCategoryManagerProps {
   categories: ExpenseCategoryRecord[];
@@ -18,6 +19,7 @@ export function ExpenseCategoryManager({
   onUpdate,
   onArchive,
 }: ExpenseCategoryManagerProps) {
+  const { t } = useTranslation();
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
@@ -49,15 +51,17 @@ export function ExpenseCategoryManager({
     <div className="glass-card rounded-[var(--radius-xl)] p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-[var(--text-label-md)] font-[var(--fw-label-md)] tracking-[var(--ls-label-md)] text-[var(--color-secondary)]">
-          Catégories de dépenses
+          {t("expenses.categories.manager_title")}
         </h3>
-        <span className="text-xs text-[var(--color-text-muted)] font-semibold">{categories.length} catégories</span>
+        <span className="text-xs text-[var(--color-text-muted)] font-semibold">
+          {t(categories.length === 1 ? "expenses.categories.count" : "expenses.categories.count_plural", { count: categories.length })}
+        </span>
       </div>
 
       <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
         <div style={{ flex: 1 }}>
           <Input
-            placeholder="Ex: Loyer, Salaires, Marketing..."
+            placeholder={t("expenses.categories.placeholder")}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -69,7 +73,7 @@ export function ExpenseCategoryManager({
           disabled={!newName.trim()}
           style={{ height: 44, minWidth: 100 }}
         >
-          Ajouter
+          {t("expenses.categories.add_btn")}
         </Button>
       </div>
 
@@ -118,10 +122,10 @@ export function ExpenseCategoryManager({
                       />
                     </div>
                     <Button variant="success" style={{ height: 44 }} onClick={() => handleSave(cat.id)}>
-                      Enregistrer
+                      {t("common.buttons.save")}
                     </Button>
                     <Button variant="ghost" style={{ height: 44 }} onClick={() => setEditingId(null)}>
-                      Annuler
+                      {t("common.buttons.cancel")}
                     </Button>
                   </div>
                 ) : (
@@ -137,14 +141,14 @@ export function ExpenseCategoryManager({
                         setEditingName(cat.name);
                       }}
                     >
-                      Modifier
+                      {t("expenses.categories.edit")}
                     </Button>
                     <Button
                       variant="danger"
                       size="sm"
                       onClick={() => onArchive(cat.id, true)}
                     >
-                      Archiver
+                      {t("expenses.categories.archive")}
                     </Button>
                   </>
                 )}
@@ -155,7 +159,7 @@ export function ExpenseCategoryManager({
           {grouped.archived.length > 0 && (
             <div className="pt-4 border-t border-[var(--color-border)]">
               <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-                Archivées
+                {t("expenses.categories.archived")}
               </p>
               <div className="space-y-3">
                 {grouped.archived.map((cat) => (
@@ -179,7 +183,7 @@ export function ExpenseCategoryManager({
                       size="sm"
                       onClick={() => onArchive(cat.id, false)}
                     >
-                      Réactiver
+                      {t("expenses.categories.reactivate")}
                     </Button>
                   </div>
                 ))}

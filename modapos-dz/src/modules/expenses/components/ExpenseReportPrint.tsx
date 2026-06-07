@@ -1,6 +1,7 @@
 import type { Expense, ExpenseAnalytics, ProfitabilitySummary } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ExpenseCharts } from "./ExpenseCharts";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ExpenseReportPrintProps {
   storeName?: string;
@@ -23,15 +24,17 @@ export function ExpenseReportPrint({
   analytics,
   profitability,
 }: ExpenseReportPrintProps) {
+  const { t, isRtl } = useTranslation();
+
   return (
-    <section id="expense-report" className="print-only">
+    <section id="expense-report" className="print-only" dir={isRtl ? "rtl" : "ltr"}>
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Rapport des depenses</h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">Periode: {rangeLabel}</p>
+            <h1 className="text-2xl font-bold">{t("expenses.report.title")}</h1>
+            <p className="text-sm text-[var(--color-text-secondary)]">{t("expenses.report.period", { period: rangeLabel })}</p>
           </div>
-          <div className="text-right text-sm">
+          <div className={`text-sm ${isRtl ? "text-left" : "text-right"}`}>
             <p className="font-semibold">{storeName || "ModaDZ"}</p>
             {storePhone && <p>{storePhone}</p>}
             {storeAddress && <p>{storeAddress}</p>}
@@ -40,19 +43,19 @@ export function ExpenseReportPrint({
 
         <div className="grid grid-cols-4 gap-3">
           <div className="border border-[var(--color-border)] rounded-[var(--radius-md)] p-3">
-            <p className="text-xs text-[var(--color-text-secondary)] uppercase">Total depenses</p>
+            <p className="text-xs text-[var(--color-text-secondary)] uppercase">{t("expenses.report.total_expenses")}</p>
             <p className="text-lg font-bold">{formatCurrency(totalExpenses)}</p>
           </div>
           <div className="border border-[var(--color-border)] rounded-[var(--radius-md)] p-3">
-            <p className="text-xs text-[var(--color-text-secondary)] uppercase">Revenu</p>
+            <p className="text-xs text-[var(--color-text-secondary)] uppercase">{t("expenses.report.revenue")}</p>
             <p className="text-lg font-bold">{formatCurrency(profitability?.revenue ?? 0)}</p>
           </div>
           <div className="border border-[var(--color-border)] rounded-[var(--radius-md)] p-3">
-            <p className="text-xs text-[var(--color-text-secondary)] uppercase">Benefice net</p>
+            <p className="text-xs text-[var(--color-text-secondary)] uppercase">{t("expenses.report.net_profit")}</p>
             <p className="text-lg font-bold">{formatCurrency(profitability?.netProfit ?? 0)}</p>
           </div>
           <div className="border border-[var(--color-border)] rounded-[var(--radius-md)] p-3">
-            <p className="text-xs text-[var(--color-text-secondary)] uppercase">Marge</p>
+            <p className="text-xs text-[var(--color-text-secondary)] uppercase">{t("expenses.report.margin")}</p>
             <p className="text-lg font-bold">{profitability?.marginPct ?? 0}%</p>
           </div>
         </div>
@@ -67,11 +70,11 @@ export function ExpenseReportPrint({
           <table className="table-base">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Titre</th>
-                <th>Categorie</th>
-                <th>Fournisseur</th>
-                <th style={{ textAlign: "right" }}>Montant</th>
+                <th>{t("expenses.table.date")}</th>
+                <th>{t("expenses.table.title")}</th>
+                <th>{t("expenses.table.category")}</th>
+                <th>{t("expenses.table.supplier")}</th>
+                <th style={{ textAlign: isRtl ? "left" : "right" }}>{t("expenses.table.amount")}</th>
               </tr>
             </thead>
             <tbody>
@@ -81,7 +84,7 @@ export function ExpenseReportPrint({
                   <td>{exp.title}</td>
                   <td>{exp.category}</td>
                   <td>{exp.supplier || "-"}</td>
-                  <td style={{ textAlign: "right" }}>{formatCurrency(exp.amount)}</td>
+                  <td style={{ textAlign: isRtl ? "left" : "right" }}>{formatCurrency(exp.amount)}</td>
                 </tr>
               ))}
             </tbody>

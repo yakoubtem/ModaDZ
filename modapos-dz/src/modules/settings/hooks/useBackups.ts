@@ -2,8 +2,10 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useIPC } from "@/hooks/useIPC";
 import type { BackupItem } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function useBackups() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const invoke = useIPC();
   const [backups, setBackups] = useState<BackupItem[]>([]);
@@ -39,25 +41,25 @@ export function useBackups() {
     try {
       await invoke("backups:restore", { currentUserId: user.id, id, filename });
       // In a real app we might want to tell the user the app needs to restart
-      alert("Sauvegarde restaurée avec succès. Veuillez relancer l'application pour appliquer les changements.");
+      alert(t("settings.backups.alerts.restore_success"));
       return true;
     } catch (err) {
       console.error(err);
       return false;
     }
-  }, [invoke, user]);
+  }, [invoke, user, t]);
 
   const exportBackup = useCallback(async (id: number, filename?: string) => {
     if (!user?.id) return false;
     try {
       const res = await invoke("backups:exportZip", { currentUserId: user.id, id, filename });
-      if (res) alert("Export réussi !");
+      if (res) alert(t("settings.backups.alerts.export_success"));
       return !!res;
     } catch (err: any) {
-      alert("Erreur lors de l'export: " + err.message);
+      alert(t("settings.backups.alerts.export_error", { error: err.message }));
       return false;
     }
-  }, [invoke, user]);
+  }, [invoke, user, t]);
 
   useEffect(() => {
     fetchBackups();

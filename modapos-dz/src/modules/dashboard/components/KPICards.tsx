@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/lib/utils";
 import type { DashboardStats } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface KPICardsProps {
   kpis?: DashboardStats;
@@ -8,63 +9,64 @@ interface KPICardsProps {
 
 const CARDS = [
   {
-    label: "Revenu du jour",
+    labelKey: "dashboard.kpis.revenue_today",
     icon: "payments",
     trend: null,
     trendDir: null,
-    trendVs: "Ventes du jour",
+    trendVsKey: "dashboard.kpis.sales_today",
     valueKey: "todayRevenue" as const,
     format: "currency",
   },
   {
-    label: "Revenu du mois",
+    labelKey: "dashboard.kpis.revenue_month",
     icon: "account_balance_wallet",
     trend: null,
     trendDir: null,
-    trendVs: "Mois en cours",
+    trendVsKey: "dashboard.month_in_progress",
     valueKey: "monthRevenue" as const,
     format: "currency",
   },
   {
-    label: "Dépenses du mois",
+    labelKey: "dashboard.kpis.expenses",
     icon: "receipt_long",
     trend: null,
     trendDir: null,
-    trendVs: "Mois en cours",
+    trendVsKey: "dashboard.month_in_progress",
     valueKey: "monthExpenses" as const,
     format: "currency",
   },
   {
-    label: "Bénéfice net",
+    labelKey: "dashboard.kpis.net_profit",
     icon: "trending_up",
     trend: null,
     trendDir: null,
-    trendVs: "Mois en cours",
+    trendVsKey: "dashboard.month_in_progress",
     valueKey: "netProfitMonth" as const,
     format: "currency",
   },
   {
-    label: "Catalogue",
+    labelKey: "dashboard.kpis.products",
     icon: "inventory_2",
     trend: null,
     trendDir: null,
-    trendVs: "Produits actifs",
+    trendVsKey: "dashboard.active_products",
     valueKey: "totalProducts" as const,
     format: "number",
   },
   {
-    label: "Clients",
+    labelKey: "dashboard.kpis.customers",
     icon: "group",
     trend: null,
     trendDir: null,
-    trendVs: "Total enregistrés",
+    trendVsKey: "dashboard.total_registered",
     valueKey: "totalCustomers" as const,
     format: "number",
   },
 ];
 
-
 export function KPICards({ kpis, isLoading }: KPICardsProps) {
+  const { t, isRtl } = useTranslation();
+
   if (isLoading || !kpis) {
     return (
       <>
@@ -82,12 +84,12 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
         const value =
           card.format === "currency"
             ? formatCurrency(raw)
-            : (raw?.toLocaleString("fr-DZ") ?? "—");
+            : (raw?.toLocaleString(isRtl ? "ar-DZ" : "fr-DZ") ?? "—");
 
         return (
-          <div key={card.label} className="kpi-card animate-fade-in">
+          <div key={card.labelKey} className="kpi-card animate-fade-in" style={{ textAlign: isRtl ? "right" : "left" }}>
             {/* Top row */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
               <span
                 style={{
                   fontSize: "var(--text-label-md)",
@@ -96,7 +98,7 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
                   color: "var(--color-secondary)",
                 }}
               >
-                {card.label}
+                {t(card.labelKey)}
               </span>
               <div className="kpi-icon">
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
@@ -114,17 +116,19 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
                 color: "var(--color-on-surface)",
                 marginBottom: "8px",
                 letterSpacing: "-0.01em",
+                direction: "ltr",
+                textAlign: isRtl ? "right" : "left",
               }}
             >
               {value}
             </div>
 
             {/* Trend */}
-            <div style={{ display: "flex", alignItems: "center", fontSize: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", fontSize: "14px", flexDirection: isRtl ? "row-reverse" : "row" }}>
               {card.trend && (
                 <span
                   style={{
-                    color: "var(--color-tertiary)",
+                    color: "var(--color-teal)",
                     fontWeight: 600,
                     display: "flex",
                     alignItems: "center",
@@ -137,8 +141,8 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
                   {card.trend}
                 </span>
               )}
-              <span style={{ color: "var(--color-secondary)", marginLeft: card.trend ? "8px" : 0 }}>
-                {card.trendVs}
+              <span style={{ color: "var(--color-secondary)", marginLeft: isRtl ? 0 : (card.trend ? "8px" : 0), marginRight: isRtl ? (card.trend ? "8px" : 0) : 0 }}>
+                {t(card.trendVsKey)}
               </span>
             </div>
           </div>
