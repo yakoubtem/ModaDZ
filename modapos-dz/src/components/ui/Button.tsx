@@ -10,7 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary:
-    "bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] active:scale-[0.98] active:shadow-[var(--shadow-xs)]",
+    "bg-[var(--color-accent)] text-[var(--color-on-primary-container)] font-semibold hover:bg-[var(--color-accent-hover)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] active:scale-[0.98] active:shadow-[var(--shadow-xs)]",
   secondary:
     "bg-[var(--color-secondary)] text-white hover:bg-neutral-800 shadow-[var(--shadow-xs)] active:scale-[0.98]",
   ghost:

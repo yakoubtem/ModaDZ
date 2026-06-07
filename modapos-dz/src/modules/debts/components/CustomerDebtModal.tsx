@@ -10,10 +10,10 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 function methodIcon(method: string): string {
   switch (method) {
-    case "cash":     return "payments";
-    case "card":     return "credit_card";
+    case "cash": return "payments";
+    case "card": return "credit_card";
     case "transfer": return "account_balance";
-    default:         return "help";
+    default: return "help";
   }
 }
 
@@ -178,8 +178,8 @@ export function CustomerDebtModal({
                       detail.summary.currentDebt > 50000
                         ? "rgba(186,26,26,0.1)"
                         : detail.summary.currentDebt > 0
-                        ? "rgba(180,83,9,0.08)"
-                        : "rgba(39,104,104,0.1)",
+                          ? "rgba(180,83,9,0.08)"
+                          : "rgba(39,104,104,0.1)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -190,8 +190,8 @@ export function CustomerDebtModal({
                       detail.summary.currentDebt > 50000
                         ? "var(--color-error)"
                         : detail.summary.currentDebt > 0
-                        ? "var(--color-warning)"
-                        : "var(--color-tertiary)",
+                          ? "var(--color-warning)"
+                          : "var(--color-tertiary)",
                     flexShrink: 0,
                   }}
                 >
@@ -436,8 +436,8 @@ export function CustomerDebtModal({
                             sale.status === "completed"
                               ? "chip chip-success"
                               : sale.status === "refunded"
-                              ? "chip chip-error"
-                              : "chip chip-default"
+                                ? "chip chip-error"
+                                : "chip chip-default"
                           }
                           style={{ fontSize: 11 }}
                         >
