@@ -1,4 +1,4 @@
-import { Minus, Plus, Trash2, Package } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import type { CartItem } from "@/types";
 import { formatCurrency } from "@/lib/utils";
@@ -21,15 +21,14 @@ export function CartItemRow({ item }: CartItemRowProps) {
       <div className="flex items-start gap-2.5">
         {/* Thumbnail */}
         <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--color-bg-overlay)] flex items-center justify-center shrink-0 overflow-hidden border border-[var(--color-border)]">
-          {item.imagePath ? (
-            <img
-              src={`media://${item.imagePath}`}
-              alt={item.productName}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <Package className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
-          )}
+          <img
+            src={item.imagePath ? `media://${item.imagePath}` : "/default-product.png"}
+            alt={item.productName}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/default-product.png";
+            }}
+          />
         </div>
 
         {/* Name + variant */}

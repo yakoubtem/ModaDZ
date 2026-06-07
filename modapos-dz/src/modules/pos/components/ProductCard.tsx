@@ -53,32 +53,20 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
           overflow: "hidden",
         }}
       >
-        {product.imagePath ? (
-          <img
-            src={`media://${product.imagePath}`}
-            alt={product.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              transition: "transform 0.5s ease",
-            }}
-            className="product-card-img"
-          />
-        ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-outline)",
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 48 }}>image</span>
-          </div>
-        )}
+        <img
+          src={product.imagePath ? `media://${product.imagePath}` : "/default-product.png"}
+          alt={product.name}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transition: "transform 0.5s ease",
+          }}
+          className="product-card-img"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/default-product.png";
+          }}
+        />
 
         {/* Stock badge */}
         {!isOutOfStock && (

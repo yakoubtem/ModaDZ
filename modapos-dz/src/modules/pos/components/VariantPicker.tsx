@@ -92,15 +92,16 @@ export function VariantPicker({ product, onClose }: VariantPickerProps) {
       size="sm"
     >
       {/* Product image */}
-      {product.imagePath && (
-        <div className="mb-4 flex justify-center">
-          <img
-            src={`media://${product.imagePath}`}
-            alt={product.name}
-            className="w-24 h-24 object-cover rounded-[var(--radius-lg)] border border-[var(--color-border)]"
-          />
-        </div>
-      )}
+      <div className="mb-4 flex justify-center">
+        <img
+          src={product.imagePath ? `media://${product.imagePath}` : "/default-product.png"}
+          alt={product.name}
+          className="w-24 h-24 object-cover rounded-[var(--radius-lg)] border border-[var(--color-border)]"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/default-product.png";
+          }}
+        />
+      </div>
 
       {/* Variants grid */}
       {product.variants.length === 0 ? (

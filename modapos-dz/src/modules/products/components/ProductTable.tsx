@@ -4,7 +4,6 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  Package,
   AlertTriangle,
 } from "lucide-react";
 import type { Product } from "@/types";
@@ -25,28 +24,10 @@ interface ProductTableProps {
 }
 
 function ProductImage({ imagePath, name }: { imagePath?: string; name: string }) {
-  if (!imagePath) {
-    return (
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: "var(--radius-md)",
-          background: "rgba(79,70,53,0.08)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--color-outline)",
-          flexShrink: 0,
-        }}
-      >
-        <Package style={{ width: 16, height: 16 }} />
-      </div>
-    );
-  }
+  const src = imagePath ? `media://${imagePath}` : "/default-product.png";
   return (
     <img
-      src={`media://${imagePath}`}
+      src={src}
       alt={name}
       style={{
         width: 40,
@@ -57,7 +38,7 @@ function ProductImage({ imagePath, name }: { imagePath?: string; name: string })
         border: "1px solid rgba(208,197,175,0.3)",
       }}
       onError={(e) => {
-        (e.target as HTMLImageElement).style.display = "none";
+        (e.target as HTMLImageElement).src = "/default-product.png";
       }}
     />
   );
