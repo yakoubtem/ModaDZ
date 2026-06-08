@@ -1,5 +1,6 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 // ─── Receipt number generator ─────────────────────────────
 function generateReceiptNumber(saleId: number): string {
@@ -211,7 +212,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
 
       // ── 5. Patch receiptNumber (needs the new ID) ──
       const receiptNumber = generateReceiptNumber(sale.id);
-      return tx.sale.update({
+      const completedSale = await tx.sale.update({
         where: { id: sale.id },
         data: { receiptNumber },
         include: {
@@ -228,11 +229,22 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
           user: { select: { id: true, name: true } },
         },
       });
+
+      await logActivity(
+        tx,
+        data.userId,
+        "CREATE",
+        "Sale",
+        String(completedSale.id),
+        `Enregistrement de la vente ${completedSale.receiptNumber} pour un montant de ${completedSale.total} DZD`
+      );
+
+      return completedSale;
     });
   });
 
   // ─── Refund ──────────────────────────────────────────────
-  ipcMain.handle("sales:refund", async (_e, id: number) => {
+  ipcMain.handle("sales:refund", async (_e, id: number, currentUserId?: number) => {
     return prisma.$transaction(async (tx) => {
       const sale = await tx.sale.findUnique({
         where: { id },
@@ -248,10 +260,21 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         });
       }
 
-      return tx.sale.update({
+      const refundedSale = await tx.sale.update({
         where: { id },
         data: { status: "refunded" },
       });
+
+      await logActivity(
+        tx,
+        currentUserId,
+        "REFUND",
+        "Sale",
+        String(id),
+        `Remboursement de la vente Réf: ${refundedSale.receiptNumber || id} pour un montant de ${refundedSale.total} DZD`
+      );
+
+      return refundedSale;
     });
   });
 

@@ -1,0 +1,61 @@
+{
+  "title": "المشتريات",
+  "subtitle": "تسجيل عمليات توريد المخزون وإدارة فواتير المشتريات",
+  "search_placeholder": "البحث عن عملية شراء بالمرجع...",
+  "add_purchase": "تسجيل عملية شراء",
+  "purchase_details": "تفاصيل الشراء",
+  "kpis": {
+    "total_purchases_amount": "إجمالي المشتريات",
+    "total_debts": "ديون الموردين",
+    "month_purchases_amount": "مشتريات الشهر",
+    "avg_purchase_amount": "متوسط سلة المشتريات"
+  },
+  "table": {
+    "reference": "المرجع",
+    "supplier": "المورد",
+    "date": "التاريخ",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "total": "الإجمالي",
+    "amount_paid": "المدفوع",
+    "remaining_debt": "الديون",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "no_purchases": "لا توجد أي عملية شراء مسجلة",
+    "pagination": "عرض من {from} إلى {to} من أصل {total} عملية شراء"
+  },
+  "form": {
+    "select_supplier": "اختر المورد",
+    "select_product": "اختر المنتج",
+    "select_variant": "اختر المقاس / اللون",
+    "quantity": "الكمية",
+    "cost_price": "سعر التكلفة (وحدة)",
+    "add_item": "إضافة السلعة",
+    "discount_label": "الخصم الإجمالي (دج)",
+    "amount_paid_label": "المبلغ المدفوع (دج)",
+    "notes_label": "ملاحظات",
+    "subtotal_label": "المجموع الفرعي:",
+    "total_label": "الإجمالي النهائي:",
+    "remaining_debt_label": "الديون المتبقية:",
+    "live_calculations": "حسابات فورية",
+    "items_list": "سلع الطلبية",
+    "barcode_placeholder": "مسح أو إدخال الرمز الشريطي"
+  },
+  "status": {
+    "paid": "مدفوع",
+    "partial": "جزئي",
+    "unpaid": "غير مدفوع"
+  },
+  "errors": {
+    "amount_paid_negative": "لا يمكن أن يكون المبلغ المدفوع سالباً.",
+    "amount_paid_too_high": "لا يمكن أن يكون المبلغ المدفوع أكبر من الإجمالي.",
+    "no_items": "يرجى إضافة سلعة واحدة على الأقل للشراء.",
+    "supplier_required": "يرجى اختيار مورد.",
+    "create_error": "خطأ أثناء تأكيد عملية الشراء."
+  },
+  "toasts": {
+    "load_error": "فشل تحميل المشتريات.",
+    "create_success": "تم تسجيل عملية الشراء بنجاح وتحديث المخزون.",
+    "create_error": "خطأ أثناء تسجيل عملية الشراء."
+  }
+}

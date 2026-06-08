@@ -12,6 +12,9 @@
     "users": "Utilisateurs",
     "settings": "Paramètres",
     "backups": "Sauvegardes",
+    "suppliers": "Fournisseurs",
+    "purchases": "Achats",
+    "activity": "Journal d'activité",
     "new_transaction": "Nouvelle transaction",
     "profile": "Profil utilisateur"
   },

@@ -1,5 +1,6 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 // Helper for IPC protection
 async function requireAdmin(userId?: number) {
@@ -37,26 +38,53 @@ export function registerUserHandlers(ipcMain: IpcMain) {
 
   ipcMain.handle("users:create", async (_e, params: { currentUserId?: number; data: any }) => {
     await requireAdmin(params.currentUserId);
-    return prisma.user.create({
+    const user = await prisma.user.create({
       data: params.data,
       select: { id: true, name: true, username: true, role: true, createdAt: true },
     });
+    await logActivity(
+      prisma,
+      params.currentUserId,
+      "CREATE",
+      "User",
+      String(user.id),
+      `Création de l'utilisateur ${user.name} (${user.username}, rôle: ${user.role})`
+    );
+    return user;
   });
 
   ipcMain.handle("users:update", async (_e, params: { currentUserId?: number; id: number; data: any }) => {
     await requireAdmin(params.currentUserId);
-    return prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: params.id },
       data: params.data,
       select: { id: true, name: true, username: true, role: true },
     });
+    await logActivity(
+      prisma,
+      params.currentUserId,
+      "UPDATE",
+      "User",
+      String(user.id),
+      `Modification de l'utilisateur ${user.name} (${user.username}, rôle: ${user.role})`
+    );
+    return user;
   });
 
   ipcMain.handle("users:delete", async (_e, params: { currentUserId?: number; id: number }) => {
     await requireAdmin(params.currentUserId);
-    return prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: params.id },
       data: { isActive: false },
     });
+    await logActivity(
+      prisma,
+      params.currentUserId,
+      "DELETE",
+      "User",
+      String(params.id),
+      `Désactivation (suppression) de l'utilisateur ${user.name}`
+    );
+    return user;
   });
 }

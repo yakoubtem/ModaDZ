@@ -9,15 +9,6 @@ interface KPICardsProps {
 
 const CARDS = [
   {
-    labelKey: "dashboard.kpis.revenue_today",
-    icon: "payments",
-    trend: null,
-    trendDir: null,
-    trendVsKey: "dashboard.kpis.sales_today",
-    valueKey: "todayRevenue" as const,
-    format: "currency",
-  },
-  {
     labelKey: "dashboard.kpis.revenue_month",
     icon: "account_balance_wallet",
     trend: null,
@@ -25,6 +16,30 @@ const CARDS = [
     trendVsKey: "dashboard.month_in_progress",
     valueKey: "monthRevenue" as const,
     format: "currency",
+    iconBg: "rgba(212, 175, 55, 0.15)",
+    iconColor: "var(--color-primary)",
+  },
+  {
+    labelKey: "dashboard.kpis.cogs",
+    icon: "inventory",
+    trend: null,
+    trendDir: null,
+    trendVsKey: "dashboard.month_in_progress",
+    valueKey: "monthCOGS" as const,
+    format: "currency",
+    iconBg: "rgba(2, 132, 199, 0.12)",
+    iconColor: "var(--color-info)",
+  },
+  {
+    labelKey: "dashboard.kpis.gross_profit",
+    icon: "trending_up",
+    trend: null,
+    trendDir: null,
+    trendVsKey: "dashboard.month_in_progress",
+    valueKey: "monthGrossProfit" as const,
+    format: "currency",
+    iconBg: "rgba(39, 104, 104, 0.12)",
+    iconColor: "var(--color-tertiary)",
   },
   {
     labelKey: "dashboard.kpis.expenses",
@@ -34,33 +49,19 @@ const CARDS = [
     trendVsKey: "dashboard.month_in_progress",
     valueKey: "monthExpenses" as const,
     format: "currency",
+    iconBg: "rgba(186, 26, 26, 0.1)",
+    iconColor: "var(--color-error)",
   },
   {
     labelKey: "dashboard.kpis.net_profit",
-    icon: "trending_up",
+    icon: "payments",
     trend: null,
     trendDir: null,
     trendVsKey: "dashboard.month_in_progress",
     valueKey: "netProfitMonth" as const,
     format: "currency",
-  },
-  {
-    labelKey: "dashboard.kpis.products",
-    icon: "inventory_2",
-    trend: null,
-    trendDir: null,
-    trendVsKey: "dashboard.active_products",
-    valueKey: "totalProducts" as const,
-    format: "number",
-  },
-  {
-    labelKey: "dashboard.kpis.customers",
-    icon: "group",
-    trend: null,
-    trendDir: null,
-    trendVsKey: "dashboard.total_registered",
-    valueKey: "totalCustomers" as const,
-    format: "number",
+    iconBg: "rgba(39, 104, 104, 0.15)",
+    iconColor: "var(--color-tertiary)",
   },
 ];
 
@@ -70,7 +71,7 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
   if (isLoading || !kpis) {
     return (
       <>
-        {[...Array(4)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <div key={i} className="kpi-card skeleton" style={{ height: 140 }} />
         ))}
       </>
@@ -100,8 +101,14 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
               >
                 {t(card.labelKey)}
               </span>
-              <div className="kpi-icon">
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              <div
+                className="kpi-icon"
+                style={{
+                  background: card.iconBg,
+                  color: card.iconColor,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: card.iconColor }}>
                   {card.icon}
                 </span>
               </div>

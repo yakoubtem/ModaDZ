@@ -21,6 +21,11 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "expenses.view",
     "expenses.create", // Create expenses (no expenses.delete)
     "reports.view",
+    "suppliers.view",
+    "suppliers.manage",
+    "purchases.view",
+    "purchases.manage",
+    "activity.view",
   ],
 
   cashier: [

@@ -14,6 +14,9 @@ import { ExpensesPage } from "@/modules/expenses/ExpensesPage";
 import { UsersPage } from "@/modules/users/UsersPage";
 import { BackupsPage } from "@/modules/settings/BackupsPage";
 import { AccessDenied } from "@/components/AccessDenied";
+import { SuppliersPage } from "@/modules/suppliers/SuppliersPage";
+import { PurchasesPage } from "@/modules/purchases/PurchasesPage";
+import { ActivityPage } from "@/modules/activity/ActivityPage";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -62,6 +65,9 @@ export default function App() {
         <Route path="sales"      element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
         <Route path="debts"      element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />
         <Route path="expenses"   element={<PermissionGuard permission="expenses.view"><ExpensesPage /></PermissionGuard>} />
+        <Route path="suppliers"  element={<PermissionGuard permission="suppliers.view"><SuppliersPage /></PermissionGuard>} />
+        <Route path="purchases"  element={<PermissionGuard permission="purchases.view"><PurchasesPage /></PermissionGuard>} />
+        <Route path="activity"   element={<PermissionGuard permission="activity.view"><ActivityPage /></PermissionGuard>} />
         <Route path="stats"      element={<PermissionGuard permission="reports.view"><StatsPage /></PermissionGuard>} />
         <Route path="users"      element={<PermissionGuard permission="users.manage"><UsersPage /></PermissionGuard>} />
         <Route path="settings"   element={<PermissionGuard permission="settings.manage"><SettingsPage /></PermissionGuard>} />

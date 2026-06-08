@@ -1,0 +1,44 @@
+{
+  "title": "Fournisseurs",
+  "subtitle": "Gérez vos fournisseurs et suivez vos achats et dettes",
+  "search_placeholder": "Rechercher un fournisseur (nom, téléphone)...",
+  "add_supplier": "Ajouter un fournisseur",
+  "edit_supplier": "Modifier le fournisseur",
+  "delete_supplier": "Supprimer le fournisseur",
+  "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce fournisseur ? Cette action est irréversible.",
+  "table": {
+    "name": "Nom",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "address": "Adresse",
+    "total_purchases": "Achats",
+    "total_amount": "Total Achats",
+    "remaining_debt": "Dette",
+    "last_purchase": "Dernier Achat",
+    "actions": "Actions",
+    "no_suppliers": "Aucun fournisseur trouvé",
+    "pagination": "Affichage de {from} à {to} sur {total} fournisseurs"
+  },
+  "kpis": {
+    "total_suppliers": "Total Fournisseurs",
+    "total_amount_purchased": "Total des achats",
+    "remaining_debt": "Dette fournisseurs",
+    "active_suppliers": "Fournisseurs actifs"
+  },
+  "form": {
+    "name_placeholder": "Nom du fournisseur",
+    "phone_placeholder": "Numéro de téléphone",
+    "email_placeholder": "Adresse e-mail",
+    "address_placeholder": "Adresse physique",
+    "notes_placeholder": "Notes ou informations complémentaires"
+  },
+  "toasts": {
+    "load_error": "Impossible de charger les fournisseurs.",
+    "create_success": "Fournisseur créé avec succès.",
+    "create_error": "Erreur lors de la création du fournisseur.",
+    "update_success": "Fournisseur mis à jour avec succès.",
+    "update_error": "Erreur lors de la mise à jour du fournisseur.",
+    "delete_success": "Fournisseur supprimé avec succès.",
+    "delete_error": "Erreur lors de la suppression du fournisseur. Assurez-vous qu'il n'a aucun achat associé."
+  }
+}

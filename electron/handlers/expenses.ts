@@ -2,6 +2,7 @@ import { IpcMain, dialog, app } from "electron";
 import path from "path";
 import fs from "fs";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -267,13 +268,13 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
   // ─── expenses:create ──────────────────────────────────
   ipcMain.handle(
     "expenses:create",
-    async (_e, data: ExpenseCreatePayload) => {
+    async (_e, data: ExpenseCreatePayload & { currentUserId?: number }) => {
       if (!data.title?.trim()) throw new Error("Le titre est requis");
       if (!data.amount || data.amount <= 0) throw new Error("Le montant doit être supérieur à 0");
       if (!data.category) throw new Error("La catégorie est requise");
       if (!data.expenseDate) throw new Error("La date est requise");
 
-      return prisma.expense.create({
+      const expense = await prisma.expense.create({
         data: {
           title: data.title.trim(),
           description: data.description?.trim() || null,
@@ -286,13 +287,24 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
           expenseDate: new Date(data.expenseDate),
         },
       });
+
+      await logActivity(
+        prisma,
+        data.currentUserId,
+        "CREATE",
+        "Expense",
+        String(expense.id),
+        `Création de la dépense ${expense.title} pour un montant de ${expense.amount} DZD`
+      );
+
+      return expense;
     }
   );
 
   // ─── expenses:update ──────────────────────────────────
   ipcMain.handle(
     "expenses:update",
-    async (_e, data: ExpenseUpdatePayload) => {
+    async (_e, data: ExpenseUpdatePayload & { currentUserId?: number }) => {
       if (!data.id) throw new Error("ID requis");
       if (!data.title?.trim()) throw new Error("Le titre est requis");
       if (!data.amount || data.amount <= 0) throw new Error("Le montant doit être supérieur à 0");
@@ -302,7 +314,7 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       const existing = await prisma.expense.findUnique({ where: { id: data.id } });
       if (!existing) throw new Error("Dépense introuvable");
 
-      return prisma.expense.update({
+      const expense = await prisma.expense.update({
         where: { id: data.id },
         data: {
           title: data.title.trim(),
@@ -316,18 +328,40 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
           expenseDate: new Date(data.expenseDate),
         },
       });
+
+      await logActivity(
+        prisma,
+        data.currentUserId,
+        "UPDATE",
+        "Expense",
+        String(expense.id),
+        `Modification de la dépense ${expense.title} d'un montant de ${expense.amount} DZD`
+      );
+
+      return expense;
     }
   );
 
   // ─── expenses:delete ──────────────────────────────────
-  ipcMain.handle("expenses:delete", async (_e, id: number) => {
+  ipcMain.handle("expenses:delete", async (_e, id: number, currentUserId?: number) => {
     const existing = await prisma.expense.findUnique({ where: { id } });
     if (!existing) throw new Error("Dépense introuvable");
     if (existing.receiptPath) {
       const fullPath = path.join(app.getPath("userData"), existing.receiptPath);
       if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
     }
-    return prisma.expense.delete({ where: { id } });
+    const result = await prisma.expense.delete({ where: { id } });
+
+    await logActivity(
+      prisma,
+      currentUserId,
+      "DELETE",
+      "Expense",
+      String(id),
+      `Suppression de la dépense ${existing.title} d'un montant de ${existing.amount} DZD`
+    );
+
+    return result;
   });
 
   // ─── Receipt Upload ─────────────────────────────────────

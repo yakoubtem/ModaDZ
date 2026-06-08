@@ -5,6 +5,8 @@
     "revenue_today": "إيرادات اليوم",
     "sales_today": "مبيعات اليوم",
     "revenue_month": "إيرادات الشهر",
+    "cogs": "تكلفة البضاعة (COGS)",
+    "gross_profit": "الربح الإجمالي",
     "net_profit": "صافي الأرباح",
     "expenses": "مصاريف الشهر",
     "products": "المنتجات في المخزن",

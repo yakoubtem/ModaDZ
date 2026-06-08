@@ -2,6 +2,7 @@ import { IpcMain, dialog, app } from "electron";
 import fs from "fs";
 import path from "path";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 interface GetAllParams {
   page?: number;
@@ -76,18 +77,30 @@ export function registerProductHandlers(ipcMain: IpcMain) {
     });
   });
 
-  // ─── Create ───────────────────────────────────────────────
   ipcMain.handle("products:create", async (_e, data: ProductInput) => {
-    const { variants, ...productData } = data;
+    const { variants, currentUserId, ...productData } = data as any;
     try {
-      return await prisma.product.create({
-        data: {
-          ...productData,
-          variants: {
-            create: (variants ?? []).map(({ id: _id, ...v }) => v),
+      return await prisma.$transaction(async (tx) => {
+        const product = await tx.product.create({
+          data: {
+            ...productData,
+            variants: {
+              create: (variants ?? []).map(({ id: _id, ...v }: any) => v),
+            },
           },
-        },
-        include: { category: true, variants: true },
+          include: { category: true, variants: true },
+        });
+
+        await logActivity(
+          tx,
+          currentUserId,
+          "CREATE",
+          "Product",
+          String(product.id),
+          `Création du produit ${product.name} (SKU: ${product.sku})`
+        );
+
+        return product;
       });
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -97,11 +110,10 @@ export function registerProductHandlers(ipcMain: IpcMain) {
     }
   });
 
-  // ─── Update (smart variant upsert) ────────────────────────
   ipcMain.handle(
     "products:update",
     async (_e, id: number, data: ProductInput) => {
-      const { variants, ...productData } = data;
+      const { variants, currentUserId, ...productData } = data as any;
 
       try {
         return await prisma.$transaction(async (tx) => {
@@ -127,8 +139,8 @@ export function registerProductHandlers(ipcMain: IpcMain) {
           });
           const existingIds = existing.map((v) => v.id);
           const submittedIds = (variants ?? [])
-            .filter((v) => v.id !== undefined)
-            .map((v) => v.id as number);
+            .filter((v: any) => v.id !== undefined)
+            .map((v: any) => v.id as number);
 
           // Delete variants no longer in the form (only if not referenced by sales)
           const toDelete = existingIds.filter((vid) => !submittedIds.includes(vid));
@@ -164,11 +176,22 @@ export function registerProductHandlers(ipcMain: IpcMain) {
             }
           }
 
-          return tx.product.update({
+          const product = await tx.product.update({
             where: { id },
             data: productData,
             include: { category: true, variants: true },
           });
+
+          await logActivity(
+            tx,
+            currentUserId,
+            "UPDATE",
+            "Product",
+            String(product.id),
+            `Modification du produit ${product.name} (SKU: ${product.sku})`
+          );
+
+          return product;
         });
       } catch (error: any) {
         if (error.code === "P2002") {
@@ -180,11 +203,20 @@ export function registerProductHandlers(ipcMain: IpcMain) {
   );
 
   // ─── Soft Delete ─────────────────────────────────────────
-  ipcMain.handle("products:delete", async (_e, id: number) => {
-    return prisma.product.update({
+  ipcMain.handle("products:delete", async (_e, id: number, currentUserId?: number) => {
+    const product = await prisma.product.update({
       where: { id },
       data: { isActive: false },
     });
+    await logActivity(
+      prisma,
+      currentUserId,
+      "DELETE",
+      "Product",
+      String(product.id),
+      `Désactivation (suppression) du produit ${product.name} (SKU: ${product.sku})`
+    );
+    return product;
   });
 
   // ─── Search (for POS quick lookup) ───────────────────────

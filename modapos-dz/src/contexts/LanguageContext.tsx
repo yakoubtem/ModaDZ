@@ -12,6 +12,9 @@ import debtsFr from "@/locales/fr/debts.json";
 import expensesFr from "@/locales/fr/expenses.json";
 import usersFr from "@/locales/fr/users.json";
 import settingsFr from "@/locales/fr/settings.json";
+import suppliersFr from "@/locales/fr/suppliers.json";
+import purchasesFr from "@/locales/fr/purchases.json";
+import activityFr from "@/locales/fr/activity.json";
 
 import commonAr from "@/locales/ar/common.json";
 import dashboardAr from "@/locales/ar/dashboard.json";
@@ -24,6 +27,9 @@ import debtsAr from "@/locales/ar/debts.json";
 import expensesAr from "@/locales/ar/expenses.json";
 import usersAr from "@/locales/ar/users.json";
 import settingsAr from "@/locales/ar/settings.json";
+import suppliersAr from "@/locales/ar/suppliers.json";
+import purchasesAr from "@/locales/ar/purchases.json";
+import activityAr from "@/locales/ar/activity.json";
 
 export type Language = "fr" | "ar";
 
@@ -40,6 +46,9 @@ const translations = {
     expenses: expensesFr,
     users: usersFr,
     settings: settingsFr,
+    suppliers: suppliersFr,
+    purchases: purchasesFr,
+    activity: activityFr,
   },
   ar: {
     common: commonAr,
@@ -53,6 +62,9 @@ const translations = {
     expenses: expensesAr,
     users: usersAr,
     settings: settingsAr,
+    suppliers: suppliersAr,
+    purchases: purchasesAr,
+    activity: activityAr,
   },
 } as const;
 

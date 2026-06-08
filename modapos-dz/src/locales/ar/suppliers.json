@@ -1,0 +1,44 @@
+{
+  "title": "الموردين",
+  "subtitle": "إدارة الموردين ومتابعة المشتريات والديون",
+  "search_placeholder": "البحث عن مورد (الاسم، الهاتف)...",
+  "add_supplier": "إضافة مورد",
+  "edit_supplier": "تعديل المورد",
+  "delete_supplier": "حذف المورد",
+  "delete_confirm": "هل أنت متأكد من حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.",
+  "table": {
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "total_purchases": "المشتريات",
+    "total_amount": "إجمالي المشتريات",
+    "remaining_debt": "الديون",
+    "last_purchase": "آخر شراء",
+    "actions": "الإجراءات",
+    "no_suppliers": "لم يتم العثور على أي مورد",
+    "pagination": "عرض من {from} إلى {to} من أصل {total} مورد"
+  },
+  "kpis": {
+    "total_suppliers": "إجمالي الموردين",
+    "total_amount_purchased": "إجمالي المشتريات",
+    "remaining_debt": "ديون الموردين",
+    "active_suppliers": "الموردين النشطين"
+  },
+  "form": {
+    "name_placeholder": "اسم المورد",
+    "phone_placeholder": "رقم الهاتف",
+    "email_placeholder": "البريد الإلكتروني",
+    "address_placeholder": "العنوان الجغرافي",
+    "notes_placeholder": "ملاحظات أو معلومات إضافية"
+  },
+  "toasts": {
+    "load_error": "فشل تحميل الموردين.",
+    "create_success": "تم إنشاء المورد بنجاح.",
+    "create_error": "خطأ أثناء إنشاء المورد.",
+    "update_success": "تم تحديث المورد بنجاح.",
+    "update_error": "خطأ أثناء تحديث المورد.",
+    "delete_success": "تم حذف المورد بنجاح.",
+    "delete_error": "خطأ أثناء حذف المورد. تأكد من عدم وجود مشتريات مرتبطة به."
+  }
+}

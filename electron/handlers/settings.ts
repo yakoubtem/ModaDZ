@@ -1,5 +1,6 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 async function requireAdmin(userId?: number) {
   if (!userId) throw new Error("Accès refusé: non authentifié");
@@ -28,7 +29,7 @@ export function registerSettingsHandlers(ipcMain: IpcMain) {
         await requireAdmin(params.currentUserId);
       }
       // Upsert all keys
-      return prisma.$transaction(
+      const result = await prisma.$transaction(
         Object.entries(params.updates).map(([key, value]) =>
           prisma.setting.upsert({
             where: { key },
@@ -37,6 +38,18 @@ export function registerSettingsHandlers(ipcMain: IpcMain) {
           })
         )
       );
+
+      const updatedKeys = keys.join(", ");
+      await logActivity(
+        prisma,
+        params.currentUserId,
+        "UPDATE",
+        "Settings",
+        "system",
+        `Modification des paramètres : [${updatedKeys}]`
+      );
+
+      return result;
     }
   );
 }

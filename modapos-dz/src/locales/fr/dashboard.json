@@ -5,6 +5,8 @@
     "revenue_today": "Chiffre d'affaires aujourd'hui",
     "sales_today": "Ventes aujourd'hui",
     "revenue_month": "Chiffre d'affaires mensuel",
+    "cogs": "Coût marchandises (COGS)",
+    "gross_profit": "Bénéfice brut",
     "net_profit": "Bénéfice net",
     "expenses": "Dépenses mensuelles",
     "products": "Produits en stock",

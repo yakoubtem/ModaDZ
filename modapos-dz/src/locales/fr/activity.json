@@ -1,0 +1,28 @@
+{
+  "title": "Journal d'activité",
+  "subtitle": "Suivi des actions utilisateurs et contrôle anti-fraude en temps réel",
+  "search_placeholder": "Rechercher par description, action...",
+  "table": {
+    "date": "Date & Heure",
+    "user": "Utilisateur",
+    "action": "Action",
+    "module": "Module",
+    "description": "Description",
+    "no_logs": "Aucune activité enregistrée",
+    "pagination": "Affichage de {from} à {to} sur {total} événements"
+  },
+  "filters": {
+    "all_users": "Tous les utilisateurs",
+    "all_modules": "Tous les modules",
+    "select_user": "Filtrer par utilisateur",
+    "select_module": "Filtrer par module",
+    "from_date": "Date de début",
+    "to_date": "Date de fin",
+    "export_btn": "Exporter CSV"
+  },
+  "toasts": {
+    "load_error": "Impossible de charger le journal d'activité.",
+    "export_success": "Journal exporté avec succès.",
+    "export_error": "Erreur lors de l'exportation."
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "title": "Achats",
+  "subtitle": "Enregistrez vos approvisionnements et gérez vos factures d'achats",
+  "search_placeholder": "Rechercher un achat par référence...",
+  "add_purchase": "Enregistrer un achat",
+  "purchase_details": "Détails de l'achat",
+  "kpis": {
+    "total_purchases_amount": "Montant total achats",
+    "total_debts": "Dette fournisseurs",
+    "month_purchases_amount": "Achats du mois",
+    "avg_purchase_amount": "Panier moyen achat"
+  },
+  "table": {
+    "reference": "Référence",
+    "supplier": "Fournisseur",
+    "date": "Date",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "total": "Total",
+    "amount_paid": "Payé",
+    "remaining_debt": "Dette",
+    "status": "Statut",
+    "actions": "Actions",
+    "no_purchases": "Aucun achat enregistré",
+    "pagination": "Affichage de {from} à {to} sur {total} achats"
+  },
+  "form": {
+    "select_supplier": "Sélectionner un fournisseur",
+    "select_product": "Sélectionner un produit",
+    "select_variant": "Sélectionner la taille / couleur",
+    "quantity": "Quantité",
+    "cost_price": "Prix de revient (U)",
+    "add_item": "Ajouter l'article",
+    "discount_label": "Remise totale (DZD)",
+    "amount_paid_label": "Montant payé (DZD)",
+    "notes_label": "Notes",
+    "subtotal_label": "Sous-total :",
+    "total_label": "Total final :",
+    "remaining_debt_label": "Dette restante :",
+    "live_calculations": "Calculs en temps réel",
+    "items_list": "Articles de la commande",
+    "barcode_placeholder": "Scanner ou saisir code-barres"
+  },
+  "status": {
+    "paid": "Payé",
+    "partial": "Partiel",
+    "unpaid": "Non payé"
+  },
+  "errors": {
+    "amount_paid_negative": "Le montant payé ne peut pas être négatif.",
+    "amount_paid_too_high": "Le montant payé ne peut pas être supérieur au total.",
+    "no_items": "Veuillez ajouter au moins un produit à l'achat.",
+    "supplier_required": "Veuillez sélectionner un fournisseur.",
+    "create_error": "Erreur lors de la validation de l'achat."
+  },
+  "toasts": {
+    "load_error": "Impossible de charger les achats.",
+    "create_success": "Achat enregistré avec succès. Stock mis à jour.",
+    "create_error": "Erreur lors de l'enregistrement de l'achat."
+  }
+}

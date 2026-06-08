@@ -4,7 +4,6 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  AlertTriangle,
 } from "lucide-react";
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
@@ -47,21 +46,71 @@ function ProductImage({ imagePath, name }: { imagePath?: string; name: string })
 function StockSummary({ variants }: { variants: Product["variants"] }) {
   const { t } = useTranslation();
   const totalStock = variants.reduce((s, v) => s + v.stock, 0);
-  const lowStock = variants.filter((v) => v.stock <= 5);
+  const hasOut = totalStock <= 0 || variants.every(v => v.stock <= 0);
+  const hasLow = variants.some((v) => v.stock <= 5 && v.stock > 0);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <span style={{ fontSize: 14, color: "var(--color-on-surface)" }}>
+      <span style={{ fontSize: 14, color: "var(--color-on-surface)", fontWeight: 500 }}>
         {t("products.table.units", { count: totalStock })}
       </span>
       <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>
         {t("products.table.variants_count", { count: variants.length })}
       </span>
-      {lowStock.length > 0 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-warning)" }}>
-          <AlertTriangle style={{ width: 12, height: 12 }} />
-          {t("products.table.low_stock_count", { count: lowStock.length })}
-        </div>
+      {hasOut ? (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "2px 8px",
+            borderRadius: "var(--radius-full)",
+            fontSize: "11px",
+            fontWeight: 600,
+            background: "rgba(186,26,26,0.1)",
+            color: "var(--color-error)",
+            width: "fit-content",
+            marginTop: "4px"
+          }}
+        >
+          <span>🔴</span> Rupture
+        </span>
+      ) : hasLow ? (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "2px 8px",
+            borderRadius: "var(--radius-full)",
+            fontSize: "11px",
+            fontWeight: 600,
+            background: "rgba(212,175,55,0.1)",
+            color: "#b39126",
+            width: "fit-content",
+            marginTop: "4px"
+          }}
+        >
+          <span>🟡</span> Stock faible
+        </span>
+      ) : (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "2px 8px",
+            borderRadius: "var(--radius-full)",
+            fontSize: "11px",
+            fontWeight: 600,
+            background: "rgba(39,104,104,0.08)",
+            color: "var(--color-tertiary)",
+            width: "fit-content",
+            marginTop: "4px"
+          }}
+        >
+          <span>🟢</span> En stock
+        </span>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
+import { logActivity } from "./activityLogs";
 
 // ─── Helper: compute customer stats from their sales ─────
 function computeStats(sales: Array<{ total: number; amountPaid: number; createdAt: Date }>) {
@@ -108,21 +109,44 @@ export function registerCustomerHandlers(ipcMain: IpcMain) {
   // ─── Create ──────────────────────────────────────────────
   ipcMain.handle(
     "customers:create",
-    async (_e, data: { name: string; phone?: string; email?: string; notes?: string }) => {
-      return prisma.customer.create({ data });
+    async (_e, data: { name: string; phone?: string; email?: string; notes?: string; currentUserId?: number }) => {
+      const { currentUserId, ...customerData } = data;
+      const customer = await prisma.customer.create({ data: customerData });
+      await logActivity(
+        prisma,
+        currentUserId,
+        "CREATE",
+        "Customer",
+        String(customer.id),
+        `Création du client ${customer.name}`
+      );
+      return customer;
     }
   );
 
   // ─── Update ──────────────────────────────────────────────
   ipcMain.handle(
     "customers:update",
-    async (_e, id: number, data: { name?: string; phone?: string; email?: string; notes?: string }) => {
-      return prisma.customer.update({ where: { id }, data });
+    async (_e, id: number, data: { name?: string; phone?: string; email?: string; notes?: string; currentUserId?: number }) => {
+      const { currentUserId, ...customerData } = data;
+      const customer = await prisma.customer.update({ where: { id }, data: customerData });
+      await logActivity(
+        prisma,
+        currentUserId,
+        "UPDATE",
+        "Customer",
+        String(customer.id),
+        `Modification du client ${customer.name}`
+      );
+      return customer;
     }
   );
 
   // ─── Delete ──────────────────────────────────────────────
-  ipcMain.handle("customers:delete", async (_e, id: number) => {
+  ipcMain.handle("customers:delete", async (_e, id: number, currentUserId?: number) => {
+    const customer = await prisma.customer.findUnique({ where: { id } });
+    if (!customer) throw new Error("Client introuvable");
+
     const count = await prisma.sale.count({ where: { customerId: id } });
     if (count > 0) {
       // Detach rather than block — set customerId to null on all sales
@@ -131,6 +155,18 @@ export function registerCustomerHandlers(ipcMain: IpcMain) {
         data: { customerId: null },
       });
     }
-    return prisma.customer.delete({ where: { id } });
+
+    const result = await prisma.customer.delete({ where: { id } });
+
+    await logActivity(
+      prisma,
+      currentUserId,
+      "DELETE",
+      "Customer",
+      String(id),
+      `Suppression du client ${customer.name}`
+    );
+
+    return result;
   });
 }

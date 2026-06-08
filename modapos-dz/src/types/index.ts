@@ -33,6 +33,7 @@ export interface Product {
   sku: string;
   description?: string;
   price: number;
+  costPrice?: number;
   categoryId?: number;
   category?: Category;
   variants: ProductVariant[];
@@ -228,6 +229,8 @@ export interface DashboardStats {
   monthRevenue: number;
   monthSalesCount: number;
   monthExpenses: number;
+  monthCOGS: number;
+  monthGrossProfit: number;
   netProfitMonth: number;
   totalProducts: number;
   totalCustomers: number;
@@ -526,4 +529,123 @@ export interface PaginatedExpenses {
   page: number;
   pageSize: number;
 }
+
+// ─── Suppliers Management Types ──────────────────────────────
+export interface Supplier {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SupplierWithStats extends Supplier {
+  totalPurchases: number;
+  totalAmount: number;
+  remainingDebt: number;
+  lastPurchaseDate?: string | null;
+}
+
+export interface PaginatedSuppliers {
+  suppliers: SupplierWithStats[];
+  total: number;
+  page: number;
+  pageSize: number;
+  summary?: {
+    totalAmount: number;
+    remainingDebt: number;
+    activeCount: number;
+  };
+}
+
+export interface SupplierFormData {
+  name: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+}
+
+// ─── Purchase Management Types ──────────────────────────────
+export interface PurchaseItem {
+  id: number;
+  purchaseId: number;
+  productId: number;
+  product?: Product;
+  variantId: number;
+  variant?: ProductVariant;
+  quantity: number;
+  costPrice: number;
+  total: number;
+}
+
+export interface Purchase {
+  id: number;
+  supplierId: number;
+  supplier?: Supplier;
+  reference: string;
+  subtotal: number;
+  discount: number;
+  total: number;
+  amountPaid: number;
+  notes?: string | null;
+  createdAt: string;
+  items: PurchaseItem[];
+  status: string;
+}
+
+export interface PaginatedPurchases {
+  purchases: Purchase[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PurchaseItemFormData {
+  productId: number;
+  variantId: number;
+  quantity: number;
+  costPrice: number;
+}
+
+export interface PurchaseFormData {
+  supplierId: number;
+  reference: string;
+  items: PurchaseItemFormData[];
+  subtotal: number;
+  discount: number;
+  total: number;
+  amountPaid: number;
+  notes?: string;
+}
+
+export interface PurchaseSummary {
+  totalPurchasesAmount: number;
+  totalDebts: number;
+  monthPurchasesAmount: number;
+  avgPurchaseAmount: number;
+}
+
+// ─── Activity Log Types ─────────────────────────────────────
+export interface ActivityLog {
+  id: number;
+  userId?: number | null;
+  user?: { id: number; name: string } | null;
+  action: string;
+  entityType: string;
+  entityId?: string | null;
+  description: string;
+  createdAt: string;
+}
+
+export interface PaginatedActivityLogs {
+  logs: ActivityLog[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 

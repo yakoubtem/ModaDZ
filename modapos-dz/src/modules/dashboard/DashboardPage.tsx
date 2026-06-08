@@ -6,6 +6,7 @@ import { PaymentDistributionChart } from "./components/PaymentDistributionChart"
 import { TopProductsList } from "./components/TopProductsList";
 import { AlertsPanel } from "./components/AlertsPanel";
 import { DebtWidget } from "./components/DebtWidget";
+import { RestockWidget } from "./components/RestockWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
@@ -114,6 +115,13 @@ export function DashboardPage() {
                   expenseAlerts={data?.expenseAlerts}
                   isLoading={isLoading}
                 />
+              </div>
+
+              <div
+                className="glass-card"
+                style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column" }}
+              >
+                <RestockWidget lowStock={data?.lowStockVariants} isLoading={isLoading} />
               </div>
 
               {/* ── Créances clients widget ── */}

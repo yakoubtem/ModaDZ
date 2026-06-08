@@ -20,6 +20,7 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       todaySales,
       monthSales,
       monthExpenses,
+      monthSaleItems,
       totalProducts,
       lowStockVariants,
       totalCustomers,
@@ -43,6 +44,27 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       prisma.expense.aggregate({
         where: { expenseDate: { gte: startOfMonth } },
         _sum: { amount: true },
+      }),
+      // 2c. Month's sale items (for COGS)
+      prisma.saleItem.findMany({
+        where: {
+          sale: {
+            status: "completed",
+            createdAt: { gte: startOfMonth },
+          },
+        },
+        select: {
+          quantity: true,
+          variant: {
+            select: {
+              product: {
+                select: {
+                  costPrice: true,
+                },
+              },
+            },
+          },
+        },
       }),
       // 3. Products
       prisma.product.count({ where: { isActive: true } }),
@@ -180,14 +202,25 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         ? Math.min(100, Math.round((dashRecovered / dashMonthGenerated) * 100))
         : 0;
 
+    const monthRevenue = monthSales._sum.total ?? 0;
+    const monthExpensesTotal = monthExpenses._sum.amount ?? 0;
+    const monthCOGS = monthSaleItems.reduce((sum: number, item: any) => {
+      const cost = item.variant?.product?.costPrice ?? 0;
+      return sum + item.quantity * cost;
+    }, 0);
+    const monthGrossProfit = monthRevenue - monthCOGS;
+    const netProfitMonth = monthGrossProfit - monthExpensesTotal;
+
     return {
       kpis: {
         todayRevenue: todaySales._sum.total ?? 0,
         todaySalesCount: todaySales._count.id,
-        monthRevenue: monthSales._sum.total ?? 0,
+        monthRevenue,
         monthSalesCount: monthSales._count.id,
-        monthExpenses: monthExpenses._sum.amount ?? 0,
-        netProfitMonth: (monthSales._sum.total ?? 0) - (monthExpenses._sum.amount ?? 0),
+        monthExpenses: monthExpensesTotal,
+        monthCOGS,
+        monthGrossProfit,
+        netProfitMonth,
         totalProducts,
         totalCustomers,
       },

@@ -12,6 +12,9 @@
     "users": "المستخدمين",
     "settings": "الإعدادات",
     "backups": "النسخ الاحتياطي",
+    "suppliers": "الموردين",
+    "purchases": "المشتريات",
+    "activity": "سجل النشاطات",
     "new_transaction": "عملية جديدة",
     "profile": "ملف المستخدم"
   },
