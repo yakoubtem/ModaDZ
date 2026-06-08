@@ -1,10 +1,12 @@
 import { create } from "zustand";
-import type { CartItem, PaymentMethod } from "@/types";
+import type { CartItem, PaymentMethod, Customer } from "@/types";
 
 // ─── State shape ──────────────────────────────────────────
 interface CartState {
   items: CartItem[];
   cartDiscount: number; // global cart discount in DZD
+
+  selectedCustomer: Customer | null;
 
   // ── Item actions ──────────────────────────────────────────
   addItem: (item: Omit<CartItem, "quantity" | "discount">) => void;
@@ -13,6 +15,7 @@ interface CartState {
   updateItemDiscount: (variantId: number, discount: number) => void;
 
   // ── Cart-level actions ────────────────────────────────────
+  setSelectedCustomer: (customer: Customer | null) => void;
   setCartDiscount: (discount: number) => void;
   clearCart: () => void;
 }
@@ -66,10 +69,14 @@ export const useCartStore = create<CartState>((set, get) => ({
       ),
     })),
 
+  selectedCustomer: null,
+
+  setSelectedCustomer: (selectedCustomer) => set({ selectedCustomer }),
+
   setCartDiscount: (discount) =>
     set({ cartDiscount: Math.max(0, discount) }),
 
-  clearCart: () => set({ items: [], cartDiscount: 0 }),
+  clearCart: () => set({ items: [], cartDiscount: 0, selectedCustomer: null }),
 }));
 
 // ─── Selectors ────────────────────────────────────────────

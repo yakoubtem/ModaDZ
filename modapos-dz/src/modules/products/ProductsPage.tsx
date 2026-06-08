@@ -7,10 +7,13 @@ import { ProductTable } from "./components/ProductTable";
 import { ProductSearchBar } from "./components/ProductSearchBar";
 import { ProductFormModal } from "./components/ProductFormModal";
 import { CategoryManager } from "./components/CategoryManager";
-import type { Product, ProductFormData } from "@/types";
+import type { Product, ProductFormData, PaginatedProducts } from "@/types";
+import { useIPC } from "@/hooks/useIPC";
+import { toast } from "sonner";
 
 export function ProductsPage() {
   const { t, language } = useTranslation();
+  const api = useIPC();
   const {
     products,
     total,
@@ -42,6 +45,50 @@ export function ProductsPage() {
     return create(data);
   };
   const handleFormClose = () => { setIsFormOpen(false); setEditingProduct(null); };
+
+  const handleExport = async () => {
+    try {
+      const result = await api<PaginatedProducts>("products:getAll", {
+        page: 1,
+        pageSize: 100000,
+        search,
+        categoryId,
+      });
+
+      if (!result.products || result.products.length === 0) {
+        toast.error("Aucun produit à exporter");
+        return;
+      }
+
+      const headers = ["ID", "Nom", "SKU", "Prix", "Catégorie", "Description", "Variantes (Taille - Couleur - Stock)"];
+      let csv = headers.join(",") + "\n";
+
+      result.products.forEach((p) => {
+        const variantsStr = (p.variants || [])
+          .map((v) => `${v.size} - ${v.color} (${v.stock})`)
+          .join(" | ");
+
+        const row = [
+          p.id,
+          `"${p.name.replace(/"/g, '""')}"`,
+          `"${p.sku.replace(/"/g, '""')}"`,
+          p.price,
+          `"${(p.category?.name || "").replace(/"/g, '""')}"`,
+          `"${(p.description || "").replace(/"/g, '""')}"`,
+          `"${variantsStr.replace(/"/g, '""')}"`,
+        ].join(",");
+        csv += row + "\n";
+      });
+
+      const ok = await api<boolean>("products:exportCSV", csv, "export_produits.csv");
+      if (ok) {
+        toast.success("Produits exportés avec succès");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Erreur lors de l'exportation des produits");
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -145,11 +192,11 @@ export function ProductsPage() {
               />
             </div>
             <div style={{ display: "flex", gap: "8px" }}>
-              <button className="btn-border" style={{ height: 44 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>filter_list</span>
-                {t("products.buttons.filters")}
-              </button>
-              <button className="btn-border" style={{ height: 44 }}>
+              <button
+                className="btn-border"
+                style={{ height: 44 }}
+                onClick={handleExport}
+              >
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
                 {t("products.buttons.export")}
               </button>

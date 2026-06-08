@@ -250,4 +250,25 @@ export function registerProductHandlers(ipcMain: IpcMain) {
       return false;
     }
   });
+
+  // ─── Export CSV ───────────────────────────────────────────
+  ipcMain.handle("products:exportCSV", async (_e, csvContent: string, defaultFilename: string) => {
+    try {
+      const result = await dialog.showSaveDialog({
+        title: "Exporter les produits",
+        defaultPath: defaultFilename,
+        filters: [{ name: "CSV Files", extensions: ["csv"] }],
+      });
+
+      if (result.canceled || !result.filePath) return false;
+
+      // Add UTF-8 BOM to make Excel display Arabic/French accents correctly
+      const bom = "\uFEFF";
+      fs.writeFileSync(result.filePath, bom + csvContent, "utf-8");
+      return true;
+    } catch (err) {
+      console.error("Failed to save CSV file:", err);
+      return false;
+    }
+  });
 }

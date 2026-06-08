@@ -58,6 +58,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const cartDiscount = useCartStore((s) => s.cartDiscount);
   const total = useCartStore(cartSelectors.total);
   const totalItemDiscounts = useCartStore(cartSelectors.totalItemDiscounts);
+  const cartCustomer = useCartStore((s) => s.selectedCustomer);
+  const setCartCustomer = useCartStore((s) => s.setSelectedCustomer);
 
   // Receipt settings (store info + printer width)
   const { settings: receiptSettings } = useReceiptSettings();
@@ -94,12 +96,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       setPaymentMethod("cash");
       setAmountPaid("");
       setNotes("");
-      setCustomerQuery("");
+      setCustomerQuery(cartCustomer ? cartCustomer.name : "");
       setCustomerResults([]);
-      setSelectedCustomer(null);
+      setSelectedCustomer(cartCustomer);
       setCompletedSale(null);
     }
-  }, [isOpen]);
+  }, [isOpen, cartCustomer]);
 
   // Customer search debounce
   useEffect(() => {
@@ -208,6 +210,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   // ── Customer selector helpers ───────────────────────────────────────────────
   const selectCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
+    setCartCustomer(customer);
     setCustomerQuery(customer.name);
     setShowCustomerDropdown(false);
     setCustomerResults([]);
@@ -215,6 +218,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   const clearCustomer = () => {
     setSelectedCustomer(null);
+    setCartCustomer(null);
     setCustomerQuery("");
     setCustomerResults([]);
   };
