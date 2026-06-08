@@ -90,6 +90,36 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
           </div>
         )}
 
+        {/* Floating Add to Cart button */}
+        {!isOutOfStock && (
+          <button
+            onClick={(e) => { e.stopPropagation(); handleClick(); }}
+            style={{
+              position: "absolute",
+              bottom: 8,
+              right: isRtl ? "auto" : 8,
+              left: isRtl ? 8 : "auto",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              background: "rgba(255, 255, 255, 0.95)",
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(208, 197, 175, 0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--color-on-surface)",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              transition: "transform 0.2s ease, background-color 0.2s ease, color 0.2s ease",
+              zIndex: 10,
+            }}
+            className="product-add-btn"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add_shopping_cart</span>
+          </button>
+        )}
+
         {/* Out of stock overlay */}
         {isOutOfStock && (
           <div
@@ -123,7 +153,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
       {/* Info */}
       <div
         style={{
-          padding: "16px",
+          padding: "12px 14px 14px",
           opacity: isOutOfStock ? 0.7 : 1,
           textAlign: isRtl ? "right" : "left",
         }}
@@ -133,7 +163,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
             fontSize: "var(--text-body-lg)",
             fontWeight: 600,
             color: "var(--color-on-surface)",
-            marginBottom: "4px",
+            marginBottom: product.category?.name ? "2px" : "6px",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -141,51 +171,32 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
         >
           {product.name}
         </h3>
-        <p
-          style={{
-            fontSize: "var(--text-body-sm)",
-            color: "var(--color-secondary)",
-            marginBottom: "12px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {product.category?.name ?? ""}
-        </p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexDirection: isRtl ? "row-reverse" : "row" }}>
+        {product.category?.name && (
+          <p
+            style={{
+              fontSize: "var(--text-body-sm)",
+              color: "var(--color-secondary)",
+              marginBottom: "8px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {product.category.name}
+          </p>
+        )}
+        <div style={{ display: "flex", flexDirection: isRtl ? "row-reverse" : "row" }}>
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "var(--text-headline-md)",
+              fontSize: "20px",
               fontWeight: 700,
-              color: "var(--color-on-surface)",
+              color: "var(--color-primary)",
               direction: "ltr",
             }}
           >
             {formatCurrency(product.price)}
           </span>
-          {!isOutOfStock && (
-            <button
-              onClick={(e) => { e.stopPropagation(); handleClick(); }}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                background: "var(--color-surface-container-high)",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--color-on-surface)",
-                cursor: "pointer",
-                transition: "background 0.2s, color 0.2s",
-              }}
-              className="product-add-btn"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>add_shopping_cart</span>
-            </button>
-          )}
         </div>
       </div>
 
@@ -194,6 +205,7 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
         .product-card:hover .product-add-btn {
           background: var(--color-primary) !important;
           color: white !important;
+          transform: scale(1.08);
         }
       `}</style>
     </div>
