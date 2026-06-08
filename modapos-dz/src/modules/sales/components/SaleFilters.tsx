@@ -31,7 +31,7 @@ function TabFilter({
               padding: "6px 14px",
               borderRadius: "var(--radius-full)",
               border: isActive
-                ? "1.5px solid var(--color-primary-container)"
+                ? "1.5px solid var(--color-primary)"
                 : "1.5px solid rgba(208,197,175,0.4)",
               background: isActive
                 ? "var(--color-accent-subtle)"

@@ -71,7 +71,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
             className={alert.severity === "danger" ? "alert-card alert-card-error" : "alert-card alert-card-gold"}
             style={{ flexDirection: isRtl ? "row-reverse" : "row", textAlign: isRtl ? "right" : "left" }}
           >
-            <span className="material-symbols-outlined" style={{ color: "var(--color-primary-container)", flexShrink: 0 }}>
+            <span className="material-symbols-outlined" style={{ color: "var(--color-primary)", flexShrink: 0 }}>
               warning
             </span>
             <div>
@@ -100,7 +100,7 @@ export function AlertsPanel({ recentSales, lowStock, expenseAlerts, isLoading }:
             className="alert-card alert-card-gold"
             style={{ flexDirection: isRtl ? "row-reverse" : "row", textAlign: isRtl ? "right" : "left" }}
           >
-            <span className="material-symbols-outlined" style={{ color: "var(--color-primary-container)", flexShrink: 0 }}>
+            <span className="material-symbols-outlined" style={{ color: "var(--color-primary)", flexShrink: 0 }}>
               inventory
             </span>
             <div>

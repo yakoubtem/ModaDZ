@@ -99,7 +99,7 @@ export function LoginPage() {
             }}
           >
             ModaDZ
-            <span style={{ color: "var(--color-primary-container)" }}>.</span>
+            <span style={{ color: "var(--color-primary)" }}>.</span>
           </h1>
         </div>
 
@@ -148,7 +148,7 @@ export function LoginPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--color-primary-container)",
+                    color: "var(--color-primary)",
                     boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                     flexShrink: 0,
                   }}

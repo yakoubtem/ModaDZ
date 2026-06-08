@@ -336,7 +336,7 @@ export function CustomerDebtModal({
                   fontFamily: "var(--font-body)", fontSize: "var(--text-label-md)",
                   fontWeight: tab === "sales" ? 700 : 500,
                   color: tab === "sales" ? "var(--color-on-surface)" : "var(--color-secondary)",
-                  borderBottom: tab === "sales" ? "2px solid var(--color-primary-container)" : "2px solid transparent",
+                  borderBottom: tab === "sales" ? "2px solid var(--color-primary)" : "2px solid transparent",
                   transition: "all 0.15s ease", whiteSpace: "nowrap",
                 }}
                 onClick={() => setTab("sales")}
@@ -354,7 +354,7 @@ export function CustomerDebtModal({
                   fontFamily: "var(--font-body)", fontSize: "var(--text-label-md)",
                   fontWeight: tab === "payments" ? 700 : 500,
                   color: tab === "payments" ? "var(--color-on-surface)" : "var(--color-secondary)",
-                  borderBottom: tab === "payments" ? "2px solid var(--color-primary-container)" : "2px solid transparent",
+                  borderBottom: tab === "payments" ? "2px solid var(--color-primary)" : "2px solid transparent",
                   transition: "all 0.15s ease", whiteSpace: "nowrap",
                 }}
                 onClick={() => setTab("payments")}

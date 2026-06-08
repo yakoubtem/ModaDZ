@@ -51,7 +51,7 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
                 width: 8,
                 height: 8,
                 borderRadius: "50%",
-                background: "var(--color-primary-container)",
+                background: "var(--color-primary)",
                 display: "inline-block",
               }}
             />
@@ -248,18 +248,11 @@ export function CartPanel({ onCheckout }: CartPanelProps) {
               </span>
             </button>
             <button
+              className="btn-outline"
               style={{
                 width: "100%",
                 height: 48,
-                background: "transparent",
-                color: "var(--color-primary-container)",
-                border: "1px solid rgba(212,175,55,0.5)",
-                borderRadius: "var(--radius-lg)",
-                fontSize: "var(--text-label-md)",
-                fontWeight: "var(--fw-label-md)",
-                letterSpacing: "var(--ls-label-md)",
-                fontFamily: "var(--font-body)",
-                cursor: "pointer",
+                justifyContent: "center",
               }}
             >
               {t("pos.cart.suspend")}
