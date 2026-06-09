@@ -14,6 +14,7 @@ export function LicenseGeneratorPage() {
   const [email, setEmail] = useState("");
   const [plan, setPlan] = useState<"trial7" | "trial30" | "monthly" | "yearly" | "lifetime">("yearly");
   const [expiryDate, setExpiryDate] = useState("");
+  const [machineId, setMachineId] = useState("");
   const [generatedKey, setGeneratedKey] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -43,6 +44,10 @@ export function LicenseGeneratorPage() {
       toast.error("Veuillez choisir une date d'expiration.");
       return;
     }
+    if (!machineId) {
+      toast.error("Veuillez renseigner l'identifiant machine (Machine ID).");
+      return;
+    }
 
     setIsGenerating(true);
     try {
@@ -50,6 +55,7 @@ export function LicenseGeneratorPage() {
         const res = (await window.api.invoke("license:generateKey", {
           plan,
           expiryDate: new Date(expiryDate).toISOString(),
+          machineId: machineId.trim(),
         })) as { success: boolean; licenseKey?: string; error?: string };
 
         if (res.success && res.licenseKey) {
@@ -278,6 +284,22 @@ export function LicenseGeneratorPage() {
               />
             </div>
 
+            {/* Machine ID */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", color: "var(--color-secondary)" }}>
+                Identifiant Machine (Machine ID) *
+              </label>
+              <input
+                type="text"
+                required
+                className="input-glass"
+                style={{ padding: "10px 14px", borderRadius: "10px", border: "1px solid rgba(208,197,175,0.4)", outline: "none", width: "100%", background: "var(--color-surface)", fontFamily: "monospace" }}
+                placeholder="Collez le Machine ID unique du client"
+                value={machineId}
+                onChange={(e) => setMachineId(e.target.value)}
+              />
+            </div>
+
             <button
               type="submit"
               disabled={isGenerating}
@@ -435,6 +457,12 @@ export function LicenseGeneratorPage() {
                     <tr style={{ borderBottom: "1px solid #ddd" }}>
                       <td style={{ padding: "12px", fontWeight: "bold" }}>Téléphone</td>
                       <td style={{ padding: "12px" }}>{phone}</td>
+                    </tr>
+                  )}
+                  {machineId && (
+                    <tr style={{ borderBottom: "1px solid #ddd" }}>
+                      <td style={{ padding: "12px", fontWeight: "bold" }}>Machine ID</td>
+                      <td style={{ padding: "12px", fontFamily: "monospace", fontSize: "11px", wordBreak: "break-all" }}>{machineId}</td>
                     </tr>
                   )}
                   {email && (

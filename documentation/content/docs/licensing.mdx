@@ -53,9 +53,39 @@ Pour empêcher les utilisateurs de reculer indéfiniment la date de leur systèm
 
 ---
 
-## 5. Outil Interne : Générateur de Licences (Admins)
+## 5. Génération de Clés de Licence (Admins & Développeurs)
 
-Pour les techniciens et administrateurs de ModaDZ, un générateur de clés sécurisé est intégré directement dans l'application :
-- **Accès** : Connectez-vous avec un compte administrateur et pressez le raccourci clavier `Ctrl + Alt + L`.
-- **Fonctionnement** : Saisissez le nom du client, le type de forfait choisi, et la date de validité pour générer une clé d'activation officielle signée.
-- **Export Certificat** : Cliquez sur **Exporter en PDF** pour imprimer un reçu au format A4 contenant la clé d'activation et les instructions à remettre au client.
+Pour les techniciens et administrateurs de ModaDZ, toutes les clés générées doivent obligatoirement être liées au **Machine ID** unique du client pour empêcher toute réutilisation non autorisée sur d'autres PC.
+
+### Méthode 1 : Le Script en ligne de commande CLI (Recommandé)
+Un script de génération sécurisé est disponible à la racine du projet sous `scripts/generate-key.js`. Il permet de créer instantanément des clés valides liées à l'empreinte matérielle d'une machine depuis votre terminal.
+
+**Usage :**
+```powershell
+node scripts/generate-key.js <plan> <durée_en_années> <machine_id_du_client>
+```
+
+**Forfaits possibles (`<plan>`) :**
+*   `trial7` : Essai gratuit de 7 jours
+*   `trial30` : Essai gratuit de 30 jours
+*   `monthly` : Licence mensuelle (30 jours)
+*   `yearly` : Licence annuelle (365 jours)
+*   `lifetime` : Licence à vie (100 ans)
+
+**Exemples :**
+*   **Générer une licence à vie (Lifetime) :**
+    ```powershell
+    node scripts/generate-key.js lifetime 100 A84934C0C9136377284230247ED62AC5E77EE7B758743DF81A17621E22E2C282
+    ```
+*   **Générer une licence annuelle (1 an) :**
+    ```powershell
+    node scripts/generate-key.js yearly 1 A84934C0C9136377284230247ED62AC5E77EE7B758743DF81A17621E22E2C282
+    ```
+
+---
+
+### Méthode 2 : L'Interface Admin intégrée (Dans l'application)
+Un générateur graphique de clés est également accessible directement dans l'application :
+- **Accès** : Connectez-vous avec un compte **administrateur** et accédez à l'écran de génération ou pressez le raccourci clavier `Ctrl + Alt + L`.
+- **Fonctionnement** : Remplissez les informations du client, collez son **Machine ID** et configurez le type de forfait.
+- **Export Certificat** : Cliquez sur **Exporter en PDF** pour imprimer un reçu A4 officiel contenant la clé d'activation et les conditions d'utilisation à remettre au client.
