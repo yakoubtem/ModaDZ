@@ -1,0 +1,59 @@
+---
+title: Codes-barres & Étiquettes
+description: Générer des codes-barres automatiques, gérer les impressions d'étiquettes individuelles ou en lot, et configurer les formats de planches d'autocollants.
+---
+
+# Génération & Impression de Codes-barres
+
+ModaDZ intègre un système robuste de génération et d'impression de codes-barres pour faciliter le marquage de vos vêtements, chaussures, et accessoires. Ce module permet de générer des étiquettes à l'unité ou en planche A4 de manière autonome et hors ligne.
+
+---
+
+## 1. Choix du type de Code-barres
+
+Lors de la création ou de la modification d'un produit, vous pouvez spécifier son type de code-barres par défaut :
+
+- **Code 128 (Interne)** : Format recommandé pour les articles étiquetés en interne. Le logiciel génère automatiquement une référence unique de type `MDZ-000XXX` pour chaque variante (taille / couleur).
+- **EAN-13 (Standard international)** : Recommandé pour les articles disposant déjà d'un code-barres constructeur à 13 chiffres, ou générés automatiquement sous le préfixe interne `200` avec calcul automatique de la somme de contrôle.
+- **QR Code** : Idéal si vous souhaitez encoder des URL ou des données complexes lisibles par des smartphones ou des douchettes modernes.
+- **Manuel** : Permet de saisir manuellement un code-barres personnalisé existant sur l'étiquette d'origine du vêtement.
+
+---
+
+## 2. Impression Individuelle (Aperçu Rapide)
+
+Pour imprimer l'étiquette d'un article unique :
+1. Rendez-vous dans **Produits** ou **Inventaire**.
+2. Cliquez sur l'icône **Imprimer** en bout de ligne de l'article ou de la variante souhaitée.
+3. Un panneau de configuration s'ouvre :
+   - Ajustez la **Quantité** d'étiquettes.
+   - Choisissez le **Format** (ex: Étiquette thermique *50x30mm* ou Planches A4).
+   - Activez/Désactivez les options d'affichage : Prix, Logo de la boutique, Nom de l'article, Nom de la variante (ex: *L / Rouge*).
+4. Cliquez sur **Imprimer** pour envoyer le document vers votre imprimante thermique de table ou de bureau.
+
+---
+
+## 3. Impression en Lot (Batch Queue)
+
+Pour le marquage de nouveaux stocks, ModaDZ propose une file d'attente d'impression en lot très pratique :
+
+### Alimenter la File d'Impression
+Vous pouvez envoyer des articles vers le lot d'impression depuis plusieurs endroits du système :
+- **Depuis l'Inventaire** : Cochez les cases en début de ligne de plusieurs articles, puis cliquez sur le bouton groupé **Ajouter au lot d'impression** en haut du tableau.
+- **Depuis les Réceptions d'Achats** : À la validation d'une nouvelle réception de commande fournisseur, ModaDZ vous propose automatiquement de rediriger les quantités reçues vers la file d'attente d'impression.
+- **Depuis le panneau de Code-barres** : Allez dans **Code-barres > Impression en Lot**, recherchez les produits et ajoutez-les directement un par un en spécifiant les quantités.
+
+### Lancement de l'Impression de Planches
+Une fois votre lot constitué :
+1. Allez dans **Code-barres & Étiquettes > Impression en Lot**.
+2. Validez la liste et ajustez les quantités si nécessaire.
+3. Choisissez le format de sortie (ex: **Planche A4 24 étiquettes** ou **Planche A4 30 étiquettes**).
+4. Cliquez sur **Imprimer le lot**. Une mise en page optimisée génère la planche prête à être imprimée sur du papier autocollant A4 standard découpé.
+
+---
+
+## 4. Historique d'Impression & Statistiques
+
+Toutes les impressions d'étiquettes sont journalisées à des fins d'audit :
+- **Historique** : Consultez qui a imprimé quelle quantité d'étiquettes, à quelle date, et sur quel format.
+- **Statistiques de Caisse** : Visualisez sur le tableau de bord quels sont les articles les plus étiquetés dans votre magasin ce mois-ci.

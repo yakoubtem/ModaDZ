@@ -1,0 +1,61 @@
+---
+title: Licence & Activation
+description: Activer ModaDZ, gérer votre abonnement commercial, comprendre le verrouillage matériel et utiliser l'outil d'activation hors ligne.
+---
+
+# Licence Commerciale & Activation
+
+ModaDZ est un logiciel commercial soumis à licence d'utilisation. Le système fonctionne de manière **entièrement hors ligne**, sans dépendance à un serveur cloud externe pour valider votre droit d'utilisation, protégeant ainsi l'intégrité de vos données de caisse.
+
+---
+
+## 1. Types de Licences disponibles
+
+Le logiciel prend en charge différents forfaits pour s'adapter à la taille de votre commerce :
+
+- **Essai Gratuit 7 / 30 Jours** : Destiné à l'évaluation du produit. Utilisable une seule fois par machine physique.
+- **Licence Mensuelle (30 jours)** : Idéal pour les boutiques saisonnières ou les tests à court terme.
+- **Licence Annuelle (365 jours)** : Option standard recommandée offrant un an complet de mises à jour et de support.
+- **Licence À Vie (Lifetime)** : Licence permanente sans date d'expiration.
+
+---
+
+## 2. Empreinte Matérielle & Verrouillage (Machine ID)
+
+Pour empêcher l'utilisation illégale de la même base de données sur plusieurs ordinateurs non autorisés, chaque licence est verrouillée à une signature matérielle unique appelée **Machine ID** :
+- Le Machine ID combine l'adresse MAC de vos cartes réseau, le modèle de votre processeur (CPU) et l'identifiant unique de votre carte mère (UUID).
+- Si vous copiez le fichier de base de données SQLite sur un autre ordinateur, ModaDZ détectera le changement d'empreinte matérielle et basculera immédiatement en **Mode Non Activé**, bloquant l'accès aux données de ventes jusqu'à la saisie d'une clé valide.
+
+---
+
+## 3. Dispositifs de Sécurité Anti-Contournement
+
+Le système intègre plusieurs protections cryptographiques actives :
+
+### Protection contre les modifications de Base de Données
+Toute tentative de modifier manuellement la date d'expiration de la licence ou de forcer le champ d'activation dans le fichier SQLite est détectée. Le logiciel calcule une signature HMAC-SHA256 cryptée à partir des données de licence. Si la signature présente dans la table des paramètres ne correspond pas au calcul, ModaDZ passe instantanément en **Mode Verrouillé**.
+
+### Détection de recul d'horloge (Clock Rollback)
+Pour empêcher les utilisateurs de reculer indéfiniment la date de leur système d'exploitation pour bypasser l'expiration :
+- À chaque démarrage et vérification, ModaDZ compare l'heure courante de l'ordinateur avec la date de la dernière vente ou du dernier journal d'activité enregistré dans la base de données.
+- Si l'heure système est antérieure à ces événements historiques, l'application est bloquée avec un message d'avertissement vous invitant à corriger l'heure de votre PC.
+
+---
+
+## 4. Seuils d'Expiration & Période de Grâce
+
+- **Plus de 30 jours restants** : L'utilisation se déroule normalement sans aucune interruption.
+- **Moins de 30 jours restants** : Une **bannière orange d'avertissement** s'affiche discrètement en haut de l'écran principal pour vous rappeler le nombre de jours restants.
+- **Expiration de la clé (Période de Grâce de 3 jours)** : Si la date limite est dépassée, vous bénéficiez d'une période de grâce de 3 jours. Une **bannière rouge d'urgence** s'affiche indiquant le nombre d'heures ou de jours restants avant le verrouillage.
+- **Verrouillage Complet** : Après les 3 jours de grâce (ou en cas de fraude/tampering), l'application passe en **Mode Verrouillé** :
+  - La navigation latérale et toutes les fonctionnalités de vente (POS), produits et inventaires sont désactivées.
+  - La seule action autorisée est l'accès à l'onglet **Paramètres > Licence** pour saisir une nouvelle clé de licence valide.
+
+---
+
+## 5. Outil Interne : Générateur de Licences (Admins)
+
+Pour les techniciens et administrateurs de ModaDZ, un générateur de clés sécurisé est intégré directement dans l'application :
+- **Accès** : Connectez-vous avec un compte administrateur et pressez le raccourci clavier `Ctrl + Alt + L`.
+- **Fonctionnement** : Saisissez le nom du client, le type de forfait choisi, et la date de validité pour générer une clé d'activation officielle signée.
+- **Export Certificat** : Cliquez sur **Exporter en PDF** pour imprimer un reçu au format A4 contenant la clé d'activation et les instructions à remettre au client.

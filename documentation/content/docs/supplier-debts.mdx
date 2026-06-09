@@ -1,0 +1,61 @@
+---
+title: Dettes Fournisseurs
+description: Suivre les balances fournisseurs, enregistrer les versements de dettes achats et consulter l'historique des paiements.
+---
+
+# Gestion des Dettes Fournisseurs
+
+Pour assurer une gestion saine de votre trésorerie, ModaDZ intègre un système complet de suivi des dettes fournisseurs (comptabilité fournisseurs). Ce module permet de comptabiliser vos crédits d'achats de marchandises et d'organiser vos remboursements de manière structurée.
+
+---
+
+## 1. Origine d'une Dette Fournisseur
+
+Une dette fournisseur est créée automatiquement chaque fois que vous enregistrez un nouvel achat de stock à crédit ou partiellement payé :
+
+$$\text{Dette Fournisseur} = \text{Montant Total de l'Achat} - \text{Montant Payé}$$
+
+### Exemple de transaction :
+- Total de l'achat de vêtements : **120 000 DA**
+- Montant réglé à la livraison (acompte) : **50 000 DA**
+- Dette générée : **70 000 DA** (Statut d'achat : *Partiellement Payé*)
+
+Le solde global dû au fournisseur est mis à jour instantanément dans sa fiche profil.
+
+---
+
+## 2. Consultation des Dettes & Échéances
+
+Pour obtenir une vue d'ensemble de vos engagements financiers :
+1. Allez dans **Achats > Dettes Fournisseurs**.
+2. Vous visualisez :
+   - **Total dû global** : La somme cumulée de toutes vos dettes en cours auprès de tous vos fournisseurs.
+   - **Nombre de fournisseurs créanciers** : Le nombre d'acteurs auprès de qui vous avez un solde négatif.
+   - **Classement des dettes** : Vos fournisseurs triés par le montant que vous leur devez, facilitant la priorisation des versements.
+
+---
+
+## 3. Enregistrer un Versement (Remboursement)
+
+Lorsque vous versez de l'argent à un fournisseur pour éponger une ardoise d'achats :
+
+1. Cliquez sur **Enregistrer un Versement** depuis la page des dettes fournisseurs ou directement depuis le profil du fournisseur concerné.
+2. Remplissez les informations du versement :
+   - **Fournisseur** : Sélectionnez le créancier.
+   - **Montant** : Saisissez la somme versée (ex: *30 000 DA*).
+   - **Mode de paiement** : Sélectionnez le canal utilisé (Espèces, Virement CCP, Chèque).
+   - **Note** : Ajoutez une remarque descriptive si nécessaire (ex: *Règlement de la facture d'avril*).
+3. Cliquez sur **Enregistrer**.
+
+Le versement réduit immédiatement le solde dû au fournisseur, et le statut des achats associés passe automatiquement à **Payé** ou reste **Partiellement Payé** selon le montant total réglé.
+
+---
+
+## 4. Historique des Paiements Fournisseurs
+
+Chaque transaction de versement est conservée de manière indélébile dans l'onglet **Historique des Paiements** :
+- Date et heure du versement.
+- Opérateur (caissier ou administrateur) ayant validé la sortie d'argent.
+- Mode de paiement et remarques.
+- Montant exact du règlement.
+- Lien direct vers le bon de réception d'achat d'origine.
