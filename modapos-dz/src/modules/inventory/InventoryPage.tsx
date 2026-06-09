@@ -5,6 +5,8 @@ import { formatCurrency } from "@/lib/utils";
 import { toastSuccess, toastError } from "@/components/ui/toast";
 import { Badge } from "@/components/ui/Badge";
 import { useTranslation } from "@/hooks/useTranslation";
+import { LabelPrintModal } from "@/modules/labels/components/LabelPrintModal";
+import type { Product, ProductVariant } from "@/types";
 
 interface InventoryVariant {
   id: number;
@@ -35,6 +37,57 @@ export function InventoryPage() {
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
   const [adjustingId, setAdjustingId] = useState<number | null>(null);
   const [adjustValue, setAdjustValue] = useState("");
+  
+  // Selection and Print states
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [printingProduct, setPrintingProduct] = useState<Product | null>(null);
+  const [printingVariant, setPrintingVariant] = useState<ProductVariant | null>(null);
+
+  const handleBulkAddToBatch = () => {
+    try {
+      const saved = localStorage.getItem("modadz-labels-batch");
+      const currentQueue = saved ? JSON.parse(saved) : [];
+      
+      const newItems = [];
+      for (const variantId of selectedIds) {
+        const variant = variants.find((v) => v.id === variantId);
+        if (variant) {
+          const prod: Product = {
+            id: variant.product.id,
+            name: variant.product.name,
+            sku: variant.product.sku,
+            price: variant.product.price,
+            variants: [],
+            isActive: true,
+            createdAt: "",
+            updatedAt: "",
+          };
+          const v: ProductVariant = {
+            id: variant.id,
+            productId: variant.productId,
+            size: variant.size,
+            color: variant.color,
+            stock: variant.stock,
+            barcode: variant.barcode || undefined,
+          };
+          
+          const exists = currentQueue.some((item: any) => item.variant.id === v.id);
+          if (!exists) {
+            newItems.push({ product: prod, variant: v, quantity: 1 });
+          }
+        }
+      }
+      
+      localStorage.setItem("modadz-labels-batch", JSON.stringify([...currentQueue, ...newItems]));
+      toastSuccess(
+        "Lot d'impression mis à jour",
+        `${newItems.length} variante(s) ajoutée(s) avec succès au lot d'impression.`
+      );
+      setSelectedIds(new Set());
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchInventory = useCallback(async () => {
     try {
@@ -227,6 +280,33 @@ export function InventoryPage() {
               />
             </div>
 
+            {/* Bulk label printing button */}
+            {selectedIds.size > 0 && (
+              <button
+                className="btn-primary animate-fade-in"
+                onClick={handleBulkAddToBatch}
+                style={{
+                  height: 48,
+                  padding: "0 20px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "var(--color-primary)",
+                  color: "white",
+                  borderRadius: "var(--radius-lg)",
+                  fontSize: "var(--text-body-sm)",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  border: "none",
+                  boxShadow: "var(--shadow-soft)",
+                }}
+              >
+                <span className="material-symbols-outlined">qr_code</span>
+                Ajouter ({selectedIds.size}) au lot d'impression
+              </button>
+            )}
+
+
             {/* Stock filter tabs */}
             <div
               style={{
@@ -315,6 +395,20 @@ export function InventoryPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-body-sm)" }}>
                 <thead>
                   <tr style={{ background: "rgba(245,243,238,0.7)", borderBottom: "1px solid rgba(208,197,175,0.3)" }}>
+                    <th style={{ padding: "14px 20px", width: 40, textAlign: isRtl ? "right" : "left" }}>
+                      <input
+                        type="checkbox"
+                        checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds(new Set(filtered.map(v => v.id)));
+                          } else {
+                            setSelectedIds(new Set());
+                          }
+                        }}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </th>
                     {[
                       t("inventory.table.product"),
                       t("inventory.table.sku"),
@@ -360,6 +454,24 @@ export function InventoryPage() {
                         onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(212, 175, 55, 0.06)")}
                         onMouseLeave={(e) => (e.currentTarget.style.background = isOut ? "rgba(186, 26, 26, 0.03)" : isLow ? "rgba(212, 175, 55, 0.03)" : "transparent")}
                       >
+                        {/* Checkbox column */}
+                        <td style={{ padding: "14px 20px", textAlign: isRtl ? "right" : "left" }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.has(variant.id)}
+                            onChange={(e) => {
+                              const next = new Set(selectedIds);
+                              if (e.target.checked) {
+                                next.add(variant.id);
+                              } else {
+                                next.delete(variant.id);
+                              }
+                              setSelectedIds(next);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </td>
+
                         {/* Product name */}
                         <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500, textAlign: isRtl ? "right" : "left" }}>
                           {variant.product.name}
@@ -462,15 +574,45 @@ export function InventoryPage() {
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => { setAdjustingId(variant.id); setAdjustValue(""); }}
-                              className="btn-border"
-                              style={{ padding: "6px 14px", fontSize: 12 }}
-                            >
-                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>tune</span>
-                              {t("inventory.table.adjust_btn")}
-                            </button>
+                            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                              <button
+                                onClick={() => {
+                                  const prod = {
+                                    id: variant.product.id,
+                                    name: variant.product.name,
+                                    sku: variant.product.sku,
+                                    price: variant.product.price,
+                                    barcodeType: "auto",
+                                    variants: [],
+                                  } as any;
+                                  const v: ProductVariant = {
+                                    id: variant.id,
+                                    productId: variant.productId,
+                                    size: variant.size,
+                                    color: variant.color,
+                                    stock: variant.stock,
+                                    barcode: variant.barcode || undefined,
+                                  };
+                                  setPrintingProduct(prod);
+                                  setPrintingVariant(v);
+                                }}
+                                className="btn-border"
+                                style={{ padding: "6px 10px", fontSize: 12 }}
+                                title={t("labels.buttons.print") || "Imprimer étiquette"}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>qr_code</span>
+                              </button>
+                              <button
+                                onClick={() => { setAdjustingId(variant.id); setAdjustValue(""); }}
+                                className="btn-border"
+                                style={{ padding: "6px 14px", fontSize: 12 }}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>tune</span>
+                                {t("inventory.table.adjust_btn")}
+                              </button>
+                            </div>
                           )}
+
                         </td>
                       </tr>
                     );
@@ -513,6 +655,17 @@ export function InventoryPage() {
           )}
         </div>
       </main>
+
+      <LabelPrintModal
+        isOpen={!!printingProduct}
+        onClose={() => {
+          setPrintingProduct(null);
+          setPrintingVariant(null);
+        }}
+        product={printingProduct}
+        selectedVariant={printingVariant}
+      />
     </div>
   );
 }
+

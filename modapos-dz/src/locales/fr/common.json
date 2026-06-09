@@ -17,6 +17,7 @@
     "supplierDebts": "Dettes Fournisseurs",
     "cashRegister": "Caisse",
     "activity": "Journal d'activité",
+    "labels": "Code-barres & Étiquettes",
     "new_transaction": "Nouvelle transaction",
     "profile": "Profil utilisateur"
   },

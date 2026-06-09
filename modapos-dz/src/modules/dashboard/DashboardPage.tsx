@@ -9,6 +9,7 @@ import { DebtWidget } from "./components/DebtWidget";
 import { RestockWidget } from "./components/RestockWidget";
 import { SupplierDebtWidget } from "./components/SupplierDebtWidget";
 import { OpenRegistersWidget } from "./components/OpenRegistersWidget";
+import { MostPrintedProductsWidget } from "./components/MostPrintedProductsWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
@@ -148,6 +149,14 @@ export function DashboardPage() {
                 upcomingPayments={data?.supplierDebtWidget?.upcomingPayments ?? []}
                 isLoading={isLoading}
               />
+
+              {/* ── Étiquettes les plus imprimées ── */}
+              <div
+                className="glass-card"
+                style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column" }}
+              >
+                <MostPrintedProductsWidget isLoading={isLoading} />
+              </div>
             </div>
           </div>
         </section>

@@ -32,6 +32,9 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "cashRegister.manage",
     "cashRegister.close",
     "activity.view",
+    "labels.view",
+    "labels.print",
+    "labels.manage",
   ],
 
   cashier: [
@@ -43,6 +46,8 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "debts.payment", // Receive debt payments
     "cashRegister.view",
     "cashRegister.manage",
+    "labels.view",
+    "labels.print",
   ],
 };
 

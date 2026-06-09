@@ -1,0 +1,88 @@
+{
+  "title": "Gestion des Étiquettes & Code-barres",
+  "subtitle": "Générez, configurez et imprimez des étiquettes de code-barres pour vos produits.",
+  "tabs": {
+    "quickPrint": "Impression Rapide",
+    "batchPrint": "Impression en Lot",
+    "history": "Historique d'Impression"
+  },
+  "stats": {
+    "todayCount": "Imprimées aujourd'hui",
+    "monthCount": "Imprimées ce mois",
+    "topProducts": "Produits les plus imprimés",
+    "title": "Statistiques d'impression"
+  },
+  "config": {
+    "title": "Configuration de l'Étiquette",
+    "quantity": "Quantité à imprimer",
+    "format": "Format de l'étiquette",
+    "barcodeType": "Type de code-barres",
+    "showPrice": "Afficher le Prix",
+    "showSku": "Afficher le SKU",
+    "showName": "Afficher le Nom du produit",
+    "showLogo": "Afficher le Logo du magasin",
+    "preview": "Aperçu de l'étiquette",
+    "settings": "Paramètres d'affichage"
+  },
+  "formats": {
+    "40x30": "Sticker 40x30 mm",
+    "50x30": "Sticker 50x30 mm",
+    "60x40": "Sticker 60x40 mm",
+    "80x50": "Sticker 80x50 mm",
+    "a4_24": "Feuille A4 (24 étiquettes)",
+    "a4_30": "Feuille A4 (30 étiquettes)",
+    "thermal": "Thermique (Continu)"
+  },
+  "types": {
+    "auto": "Code128 (Automatique)",
+    "ean13": "EAN-13 (13 chiffres)",
+    "qr": "Code QR",
+    "custom": "Personnalisé / Existant"
+  },
+  "table": {
+    "product": "Produit",
+    "sku": "SKU",
+    "price": "Prix",
+    "quantity": "Quantité",
+    "format": "Format",
+    "barcodeType": "Type",
+    "printedAt": "Date d'impression",
+    "user": "Opérateur",
+    "actions": "Actions",
+    "barcode": "Code-barres",
+    "size": "Taille",
+    "color": "Couleur",
+    "stock": "Stock"
+  },
+  "quickPrint": {
+    "searchPlaceholder": "Rechercher un produit par nom ou SKU...",
+    "selectVariant": "Sélectionner la variante à imprimer",
+    "noProduct": "Veuillez sélectionner un produit"
+  },
+  "batch": {
+    "title": "File d'attente d'impression en lot",
+    "empty": "Aucun produit dans la file d'attente. Recherchez des produits et ajoutez-les ci-dessous.",
+    "addProduct": "Ajouter un produit",
+    "clearQueue": "Vider la file d'attente",
+    "printAll": "Imprimer le lot",
+    "itemsCount": "{count} produit(s) dans le lot",
+    "addSuccess": "Variante ajoutée au lot d'impression",
+    "remove": "Retirer",
+    "quantityShort": "Qté"
+  },
+  "messages": {
+    "printSuccess": "Impression envoyée avec succès",
+    "printError": "Erreur lors du traitement de l'impression",
+    "historyLoadError": "Impossible de charger l'historique d'impression",
+    "statsLoadError": "Impossible de charger les statistiques d'impression",
+    "noPrinterSelected": "Aucune imprimante sélectionnée",
+    "exportSuccess": "Export PDF réussi"
+  },
+  "buttons": {
+    "print": "Imprimer",
+    "exportPdf": "Exporter PDF",
+    "addToBatch": "Ajouter au lot",
+    "close": "Fermer",
+    "cancel": "Annuler"
+  }
+}

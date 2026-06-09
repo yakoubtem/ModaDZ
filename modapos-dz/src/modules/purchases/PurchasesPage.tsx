@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TopBar } from "@/components/layout/AppLayout";
 import { usePurchases } from "./hooks/usePurchases";
 import { PurchaseTable } from "./components/PurchaseTable";
@@ -9,6 +10,9 @@ import { PurchaseKPICards } from "./components/PurchaseKPICards";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useIPC } from "@/hooks/useIPC";
+import { Modal } from "@/components/ui/Modal";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import type { Purchase, PaginatedPurchases } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -17,6 +21,7 @@ export function PurchasesPage() {
   const { t, isRtl } = useTranslation();
   const { can } = useAuth();
   const api = useIPC();
+  const navigate = useNavigate();
 
   const {
     purchases,
@@ -47,6 +52,10 @@ export function PurchasesPage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
 
+  // Labels printing after purchase registration
+  const [itemsToPrint, setItemsToPrint] = useState<any[]>([]);
+  const [isPrintPromptOpen, setIsPrintPromptOpen] = useState(false);
+
   const handleOpenForm = async () => {
     setIsFormOpen(true);
     await loadFormData();
@@ -63,8 +72,79 @@ export function PurchasesPage() {
   };
 
   const handleFormSubmit = async (data: any): Promise<boolean> => {
-    return create(data);
+    const success = await create(data);
+    if (success) {
+      try {
+        const batchItems: any[] = [];
+        for (const item of data.items || []) {
+          const prod = products.find((p) => p.id === item.productId);
+          const variant = prod?.variants?.find((v) => v.id === item.variantId);
+          if (prod && variant) {
+            batchItems.push({
+              product: prod,
+              variant: variant,
+              quantity: item.quantity,
+            });
+          }
+        }
+        
+        if (batchItems.length > 0) {
+          setItemsToPrint(batchItems);
+          setIsPrintPromptOpen(true);
+        }
+      } catch (err) {
+        console.error("Failed to build printing items queue:", err);
+      }
+    }
+    return success;
   };
+
+  const handleAddToBatchQueue = () => {
+    try {
+      const saved = localStorage.getItem("modadz-labels-batch");
+      const currentQueue = saved ? JSON.parse(saved) : [];
+      
+      const updatedQueue = [...currentQueue];
+      for (const item of itemsToPrint) {
+        const idx = updatedQueue.findIndex((q) => q.variant.id === item.variant.id);
+        if (idx >= 0) {
+          updatedQueue[idx].quantity += item.quantity;
+        } else {
+          updatedQueue.push(item);
+        }
+      }
+      
+      localStorage.setItem("modadz-labels-batch", JSON.stringify(updatedQueue));
+      toast.success(`${itemsToPrint.length} produit(s) ajouté(s) au lot d'impression.`);
+      setIsPrintPromptOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handlePrintImmediately = () => {
+    try {
+      const saved = localStorage.getItem("modadz-labels-batch");
+      const currentQueue = saved ? JSON.parse(saved) : [];
+      
+      const updatedQueue = [...currentQueue];
+      for (const item of itemsToPrint) {
+        const idx = updatedQueue.findIndex((q) => q.variant.id === item.variant.id);
+        if (idx >= 0) {
+          updatedQueue[idx].quantity += item.quantity;
+        } else {
+          updatedQueue.push(item);
+        }
+      }
+      
+      localStorage.setItem("modadz-labels-batch", JSON.stringify(updatedQueue));
+      setIsPrintPromptOpen(false);
+      navigate("/labels");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
   const handleExport = async () => {
     const headers = [
@@ -234,6 +314,63 @@ export function PurchasesPage() {
           setSelectedPurchase(null);
         }}
       />
+
+      {/* Label Printing Prompt Modal */}
+      <Modal
+        isOpen={isPrintPromptOpen}
+        onClose={() => setIsPrintPromptOpen(false)}
+        title="Imprimer les étiquettes de réception"
+        size="md"
+        footer={
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", width: "100%" }}>
+            <Button variant="ghost" onClick={() => setIsPrintPromptOpen(false)}>
+              Plus tard
+            </Button>
+            <Button
+              variant="ghost"
+              style={{ border: "1px solid var(--color-primary)", color: "var(--color-primary)" }}
+              onClick={handleAddToBatchQueue}
+            >
+              Ajouter au lot
+            </Button>
+            <Button variant="primary" onClick={handlePrintImmediately}>
+              Imprimer maintenant
+            </Button>
+          </div>
+        }
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+            Achat enregistré avec succès ! Voulez-vous imprimer les étiquettes de code-barres pour les articles reçus ?
+          </p>
+          <div
+            style={{
+              maxHeight: 240,
+              overflowY: "auto",
+              border: "1px solid var(--color-surface-variant)",
+              borderRadius: "var(--radius-lg)",
+              padding: 12,
+              background: "rgba(245,243,238,0.2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            {itemsToPrint.map((item) => (
+              <div key={item.variant.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12 }}>
+                <div>
+                  <span style={{ fontWeight: 600, color: "var(--color-on-surface)" }}>{item.product.name}</span>
+                  <span style={{ color: "var(--color-secondary)", marginLeft: 6 }}>
+                    ({item.variant.size} / {item.variant.color})
+                  </span>
+                </div>
+                <Badge variant="accent">Qté: {item.quantity}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
+

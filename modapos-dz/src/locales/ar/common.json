@@ -17,6 +17,7 @@
     "supplierDebts": "ديون الموردين",
     "cashRegister": "الخزينة",
     "activity": "سجل النشاطات",
+    "labels": "الملصقات والباركود",
     "new_transaction": "عملية جديدة",
     "profile": "ملف المستخدم"
   },

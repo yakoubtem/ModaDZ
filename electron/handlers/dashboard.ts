@@ -26,7 +26,9 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
       totalCustomers,
       recentSales,
       salesPeriod,
-      topVariantsQuery
+      topVariantsQuery,
+      todayLabels,
+      monthLabels
     ] = await Promise.all([
       // 1. Today's stats
       prisma.sale.aggregate({
@@ -102,8 +104,21 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         },
         orderBy: { _sum: { quantity: 'desc' } },
         take: 5
+      }),
+      // 9. Label prints today
+      prisma.labelPrintHistory.aggregate({
+        where: { printedAt: { gte: today, lt: tomorrow } },
+        _sum: { quantity: true }
+      }),
+      // 10. Label prints this month
+      prisma.labelPrintHistory.aggregate({
+        where: { printedAt: { gte: startOfMonth } },
+        _sum: { quantity: true }
       })
     ]);
+
+    const todayLabelsCount = todayLabels._sum.quantity ?? 0;
+    const monthLabelsCount = monthLabels._sum.quantity ?? 0;
 
     // Format revenue chart
     const chartMap = new Map<string, number>();
@@ -352,6 +367,10 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         debtorCount: dashSupplierDebtorCount,
         topSupplierDebts,
         upcomingPayments,
+      },
+      labelsWidget: {
+        todayCount: todayLabelsCount,
+        monthCount: monthLabelsCount,
       },
       openRegisters: await (async () => {
         const openSessions = await prisma.cashSession.findMany({

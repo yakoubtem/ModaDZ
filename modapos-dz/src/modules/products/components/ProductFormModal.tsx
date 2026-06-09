@@ -45,6 +45,7 @@ export function ProductFormModal({
       description: "",
       categoryId: "",
       imagePath: undefined,
+      barcodeType: "auto",
       variants: [],
     },
   });
@@ -62,6 +63,7 @@ export function ProductFormModal({
         description: editProduct.description ?? "",
         categoryId: editProduct.categoryId?.toString() ?? "",
         imagePath: editProduct.imagePath ?? undefined,
+        barcodeType: editProduct.barcodeType || "auto",
         variants: editProduct.variants.map((v) => ({
           id: v.id,
           size: v.size,
@@ -78,6 +80,7 @@ export function ProductFormModal({
         description: "",
         categoryId: "",
         imagePath: undefined,
+        barcodeType: "auto",
         variants: [],
       });
     }
@@ -174,6 +177,18 @@ export function ProductFormModal({
                 </option>
               ))}
             </Select>
+
+            <Select
+              label={t("labels.config.barcodeType")}
+              error={(errors as any).barcodeType?.message}
+              {...register("barcodeType")}
+            >
+              <option value="auto">{t("labels.types.auto")}</option>
+              <option value="ean13">{t("labels.types.ean13")}</option>
+              <option value="qr">{t("labels.types.qr")}</option>
+              <option value="custom">{t("labels.types.custom")}</option>
+            </Select>
+
 
             <Textarea
               label={t("products.form.description")}

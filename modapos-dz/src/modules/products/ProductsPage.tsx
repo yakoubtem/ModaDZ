@@ -7,6 +7,7 @@ import { ProductTable } from "./components/ProductTable";
 import { ProductSearchBar } from "./components/ProductSearchBar";
 import { ProductFormModal } from "./components/ProductFormModal";
 import { CategoryManager } from "./components/CategoryManager";
+import { LabelPrintModal } from "@/modules/labels/components/LabelPrintModal";
 import type { Product, ProductFormData, PaginatedProducts } from "@/types";
 import { useIPC } from "@/hooks/useIPC";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ export function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [printingProduct, setPrintingProduct] = useState<Product | null>(null);
 
   const handleEdit = (product: Product) => { setEditingProduct(product); setIsFormOpen(true); };
   const handleDelete = (product: Product) => { remove(product.id); };
@@ -213,6 +215,7 @@ export function ProductsPage() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onPageChange={handlePageChange}
+            onPrintLabels={(p) => setPrintingProduct(p)}
           />
         </div>
       </main>
@@ -223,6 +226,11 @@ export function ProductsPage() {
         onSubmit={handleFormSubmit}
         categories={categories}
         editProduct={editingProduct}
+      />
+      <LabelPrintModal
+        isOpen={!!printingProduct}
+        onClose={() => setPrintingProduct(null)}
+        product={printingProduct}
       />
       <CategoryManager
         isOpen={isCategoryOpen}

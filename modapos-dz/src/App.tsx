@@ -19,6 +19,7 @@ import { PurchasesPage } from "@/modules/purchases/PurchasesPage";
 import { ActivityPage } from "@/modules/activity/ActivityPage";
 import { SupplierDebtsPage } from "@/modules/supplierDebts/SupplierDebtsPage";
 import { CashRegisterPage } from "@/modules/cashRegister/CashRegisterPage";
+import { LabelsPage } from "@/modules/labels/LabelsPage";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="pos"        element={<PermissionGuard permission="pos.use"><POSPage /></PermissionGuard>} />
         <Route path="products"   element={<PermissionGuard permission="products.view"><ProductsPage /></PermissionGuard>} />
         <Route path="inventory"  element={<PermissionGuard permission="inventory.view"><InventoryPage /></PermissionGuard>} />
+        <Route path="labels"     element={<PermissionGuard permission="labels.view"><LabelsPage /></PermissionGuard>} />
         <Route path="customers"  element={<PermissionGuard permission="customers.view"><CustomersPage /></PermissionGuard>} />
         <Route path="sales"      element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
         <Route path="debts"      element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />

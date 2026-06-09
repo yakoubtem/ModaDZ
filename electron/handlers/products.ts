@@ -29,6 +29,22 @@ interface ProductInput {
   variants?: VariantInput[];
 }
 
+function generateBarcodeValue(barcodeType: string, variantId: number): string {
+  if (barcodeType === "ean13") {
+    const base = `200${String(variantId).padStart(9, "0")}`;
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+      const digit = parseInt(base.charAt(i), 10);
+      sum += digit * (i % 2 === 0 ? 1 : 3);
+    }
+    const checkDigit = (10 - (sum % 10)) % 10;
+    return `${base}${checkDigit}`;
+  } else {
+    // Code128 / QR fallback: MDZ-XXXXXX
+    return `MDZ-${String(variantId).padStart(6, "0")}`;
+  }
+}
+
 export function registerProductHandlers(ipcMain: IpcMain) {
   // ─── Get All (paginated + filtered) ───────────────────────
   ipcMain.handle("products:getAll", async (_e, params?: GetAllParams) => {
@@ -82,14 +98,32 @@ export function registerProductHandlers(ipcMain: IpcMain) {
     try {
       return await prisma.$transaction(async (tx) => {
         const product = await tx.product.create({
-          data: {
-            ...productData,
-            variants: {
-              create: (variants ?? []).map(({ id: _id, ...v }: any) => v),
-            },
-          },
-          include: { category: true, variants: true },
+          data: productData,
         });
+
+        const createdVariants = [];
+        for (const v of variants ?? []) {
+          const variant = await tx.productVariant.create({
+            data: {
+              productId: product.id,
+              size: v.size,
+              color: v.color,
+              stock: v.stock,
+              barcode: v.barcode && v.barcode.trim() ? v.barcode.trim() : null,
+            },
+          });
+
+          if (!variant.barcode) {
+            const generated = generateBarcodeValue(productData.barcodeType || "auto", variant.id);
+            const updated = await tx.productVariant.update({
+              where: { id: variant.id },
+              data: { barcode: generated },
+            });
+            createdVariants.push(updated);
+          } else {
+            createdVariants.push(variant);
+          }
+        }
 
         await logActivity(
           tx,
@@ -97,10 +131,13 @@ export function registerProductHandlers(ipcMain: IpcMain) {
           "CREATE",
           "Product",
           String(product.id),
-          `Création du produit ${product.name} (SKU: ${product.sku})`
+          `Création du produit ${product.name} (SKU: ${product.sku}) avec ${createdVariants.length} variante(s)`
         );
 
-        return product;
+        return {
+          ...product,
+          variants: createdVariants,
+        };
       });
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -151,28 +188,46 @@ export function registerProductHandlers(ipcMain: IpcMain) {
             }
           }
 
+          const updatedVariants = [];
           // Upsert submitted variants
           for (const variant of variants ?? []) {
             if (variant.id) {
-              await tx.productVariant.update({
+              let finalBarcode = variant.barcode && variant.barcode.trim() ? variant.barcode.trim() : null;
+              if (!finalBarcode) {
+                finalBarcode = generateBarcodeValue(productData.barcodeType || "auto", variant.id);
+              }
+
+              const updated = await tx.productVariant.update({
                 where: { id: variant.id },
                 data: {
                   size: variant.size,
                   color: variant.color,
                   stock: variant.stock,
-                  barcode: variant.barcode ?? null,
+                  barcode: finalBarcode,
                 },
               });
+              updatedVariants.push(updated);
             } else {
-              await tx.productVariant.create({
+              const created = await tx.productVariant.create({
                 data: {
                   productId: id,
                   size: variant.size,
                   color: variant.color,
                   stock: variant.stock,
-                  barcode: variant.barcode ?? null,
+                  barcode: variant.barcode && variant.barcode.trim() ? variant.barcode.trim() : null,
                 },
               });
+
+              if (!created.barcode) {
+                const generated = generateBarcodeValue(productData.barcodeType || "auto", created.id);
+                const updated = await tx.productVariant.update({
+                  where: { id: created.id },
+                  data: { barcode: generated },
+                });
+                updatedVariants.push(updated);
+              } else {
+                updatedVariants.push(created);
+              }
             }
           }
 
@@ -191,7 +246,10 @@ export function registerProductHandlers(ipcMain: IpcMain) {
             `Modification du produit ${product.name} (SKU: ${product.sku})`
           );
 
-          return product;
+          return {
+            ...product,
+            variants: updatedVariants,
+          };
         });
       } catch (error: any) {
         if (error.code === "P2002") {

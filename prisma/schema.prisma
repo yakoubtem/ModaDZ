@@ -21,6 +21,7 @@ model User {
   sales     Sale[]
   supplierPayments SupplierPayment[]
   cashSessions     CashSession[]
+  labelPrints      LabelPrintHistory[]
 }
 
 // ─── Categories ──────────────────────────────────────────
@@ -46,6 +47,8 @@ model Product {
   purchaseItems PurchaseItem[]
   imagePath     String?
   isActive      Boolean          @default(true)
+  barcodeType   String           @default("auto") // auto | ean13 | qr | custom
+  labelPrints   LabelPrintHistory[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -259,4 +262,18 @@ model CashMovement {
   createdAt DateTime     @default(now())
   createdBy Int          // links to User.id
   session   CashSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model LabelPrintHistory {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  userId      Int
+  quantity    Int
+  format      String   // 40x30, 50x30, 60x40, 80x50, a4_24, a4_30, thermal
+  barcodeType String
+  printedAt   DateTime @default(now())
+  printerName String?
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

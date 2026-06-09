@@ -4,6 +4,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Printer,
 } from "lucide-react";
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
@@ -20,6 +21,7 @@ interface ProductTableProps {
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
   onPageChange: (page: number) => void;
+  onPrintLabels?: (product: Product) => void;
 }
 
 function ProductImage({ imagePath, name }: { imagePath?: string; name: string }) {
@@ -125,6 +127,7 @@ export function ProductTable({
   onEdit,
   onDelete,
   onPageChange,
+  onPrintLabels,
 }: ProductTableProps) {
   const { t, isRtl } = useTranslation();
   const { can } = useAuth();
@@ -283,6 +286,35 @@ export function ProductTable({
                     </div>
                   ) : (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+                      {can("labels.print") && onPrintLabels && (
+                        <button
+                          onClick={() => onPrintLabels(product)}
+                          title={t("labels.buttons.print") || "Imprimer étiquettes"}
+                          style={{
+                            width: 36,
+                            height: 36,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "var(--radius-md)",
+                            background: "none",
+                            border: "1px solid rgba(208,197,175,0.2)",
+                            cursor: "pointer",
+                            color: "var(--color-secondary)",
+                            transition: "all 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = "var(--color-primary)";
+                            e.currentTarget.style.background = "rgba(208,197,175,0.15)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = "var(--color-secondary)";
+                            e.currentTarget.style.background = "none";
+                          }}
+                        >
+                          <Printer style={{ width: 14, height: 14 }} />
+                        </button>
+                      )}
                       <button
                         onClick={() => onEdit(product)}
                         title={t("common.buttons.edit")}

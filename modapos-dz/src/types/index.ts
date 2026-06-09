@@ -38,6 +38,7 @@ export interface Product {
   category?: Category;
   variants: ProductVariant[];
   imagePath?: string;
+  barcodeType?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -195,6 +196,7 @@ export interface ProductFormData {
   description?: string;
   categoryId?: string;
   imagePath?: string;
+  barcodeType?: string;
   variants: VariantFormRow[];
 }
 
@@ -826,6 +828,49 @@ export interface CashRegisterStatistics {
 
 export type CashSessionFilter = "all" | "open" | "closed";
 export type CashMovementTypeFilter = "all" | "sale" | "refund" | "expense" | "supplier_payment" | "cash_in" | "cash_out";
+
+// ─── Barcode & Label Printing Types ───────────────────────
+export type BarcodeType = "auto" | "ean13" | "qr" | "custom";
+export type LabelFormat = "40x30" | "50x30" | "60x40" | "80x50" | "a4_24" | "a4_30" | "thermal";
+
+export interface LabelPrintHistory {
+  id: number;
+  productId: number;
+  userId: number;
+  quantity: number;
+  format: string;
+  barcodeType: string;
+  printedAt: string;
+  printerName?: string | null;
+  product?: {
+    id: number;
+    name: string;
+    sku: string;
+  };
+  user?: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface LabelPrintStats {
+  todayCount: number;
+  monthCount: number;
+  topProducts: Array<{
+    id: number;
+    name: string;
+    sku: string;
+    price: number;
+    quantityPrinted: number;
+  }>;
+}
+
+export interface PaginatedLabelHistory {
+  history: LabelPrintHistory[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
 
 
 

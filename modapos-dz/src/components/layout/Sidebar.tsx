@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { key: "common.sidebar.pos",        path: "/pos",        icon: "point_of_sale",          permission: "pos.use" },
   { key: "common.sidebar.products",   path: "/products",   icon: "inventory_2",            permission: "products.view" },
   { key: "common.sidebar.inventory",  path: "/inventory",  icon: "warehouse",              permission: "inventory.view" },
+  { key: "common.sidebar.labels",     path: "/labels",     icon: "qr_code",                permission: "labels.view" },
   { key: "common.sidebar.customers",  path: "/customers",  icon: "group",                  permission: "customers.view" },
   { key: "common.sidebar.sales",      path: "/sales",      icon: "payments",               permission: "sales.view" },
   { key: "common.sidebar.debts",      path: "/debts",      icon: "account_balance_wallet", permission: "debts.view" },

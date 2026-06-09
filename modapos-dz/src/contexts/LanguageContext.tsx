@@ -17,6 +17,7 @@ import purchasesFr from "@/locales/fr/purchases.json";
 import activityFr from "@/locales/fr/activity.json";
 import supplierDebtsFr from "@/locales/fr/supplierDebts.json";
 import cashRegisterFr from "@/locales/fr/cashRegister.json";
+import labelsFr from "@/locales/fr/labels.json";
 
 import commonAr from "@/locales/ar/common.json";
 import dashboardAr from "@/locales/ar/dashboard.json";
@@ -34,6 +35,7 @@ import purchasesAr from "@/locales/ar/purchases.json";
 import activityAr from "@/locales/ar/activity.json";
 import supplierDebtsAr from "@/locales/ar/supplierDebts.json";
 import cashRegisterAr from "@/locales/ar/cashRegister.json";
+import labelsAr from "@/locales/ar/labels.json";
 
 export type Language = "fr" | "ar";
 
@@ -55,6 +57,7 @@ const translations = {
     activity: activityFr,
     supplierDebts: supplierDebtsFr,
     cashRegister: cashRegisterFr,
+    labels: labelsFr,
   },
   ar: {
     common: commonAr,
@@ -73,8 +76,9 @@ const translations = {
     activity: activityAr,
     supplierDebts: supplierDebtsAr,
     cashRegister: cashRegisterAr,
+    labels: labelsAr,
   },
-} as const;
+};
 
 interface LanguageContextType {
   language: Language;
