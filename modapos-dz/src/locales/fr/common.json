@@ -14,6 +14,7 @@
     "backups": "Sauvegardes",
     "suppliers": "Fournisseurs",
     "purchases": "Achats",
+    "supplierDebts": "Dettes Fournisseurs",
     "activity": "Journal d'activité",
     "new_transaction": "Nouvelle transaction",
     "profile": "Profil utilisateur"

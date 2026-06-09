@@ -25,6 +25,9 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "suppliers.manage",
     "purchases.view",
     "purchases.manage",
+    "supplierDebts.view",
+    "supplierDebts.manage",
+    "supplierPayments.create",
     "activity.view",
   ],
 

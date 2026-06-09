@@ -33,6 +33,17 @@
     "total_due": "Total dû",
     "debtors": "Débiteurs"
   },
+  "supplier_debt_widget": {
+    "title": "Dettes fournisseurs",
+    "total_due": "Total dû",
+    "suppliers": "Fournisseurs",
+    "top_suppliers": "Top 10 Dettes Fournisseurs",
+    "upcoming_payments": "Prochains Règlements",
+    "remaining": "Reste",
+    "reference": "Réf",
+    "no_debts": "Aucune dette fournisseur en cours.",
+    "no_upcoming": "Aucun règlement imminent."
+  },
   "alerts_panel": {
     "title": "Alertes",
     "low_stock": "Stock faible",

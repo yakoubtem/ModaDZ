@@ -7,6 +7,7 @@ import { TopProductsList } from "./components/TopProductsList";
 import { AlertsPanel } from "./components/AlertsPanel";
 import { DebtWidget } from "./components/DebtWidget";
 import { RestockWidget } from "./components/RestockWidget";
+import { SupplierDebtWidget } from "./components/SupplierDebtWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
@@ -129,6 +130,15 @@ export function DashboardPage() {
                 totalDebt={data?.debtWidget?.totalDebt ?? 0}
                 debtorCount={data?.debtWidget?.debtorCount ?? 0}
                 recoveryRate={data?.debtWidget?.recoveryRate ?? 0}
+                isLoading={isLoading}
+              />
+
+              {/* ── Dettes fournisseurs widget ── */}
+              <SupplierDebtWidget
+                totalSupplierDebt={data?.supplierDebtWidget?.totalSupplierDebt ?? 0}
+                debtorCount={data?.supplierDebtWidget?.debtorCount ?? 0}
+                topSupplierDebts={data?.supplierDebtWidget?.topSupplierDebts ?? []}
+                upcomingPayments={data?.supplierDebtWidget?.upcomingPayments ?? []}
                 isLoading={isLoading}
               />
             </div>

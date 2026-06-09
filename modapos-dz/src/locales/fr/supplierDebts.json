@@ -1,0 +1,91 @@
+{
+  "title": "Dettes Fournisseurs",
+  "debtors_count_label": "fournisseur(s) créditeur(s)",
+  "header_title": "Dettes Fournisseurs",
+  "header_desc": "Suivez les soldes des fournisseurs, enregistrez les règlements (FIFO) et consultez l'historique et le relevé de compte de chaque fournisseur.",
+  "total_outstanding": "Dette totale fournisseurs",
+  "kpis": {
+    "total_debt": "Total dû fournisseurs",
+    "debtor_count": "Fournisseurs débiteurs",
+    "paid_month": "Montant payé ce mois",
+    "avg_debt": "Dette moyenne fournisseur"
+  },
+  "filters": {
+    "all": "Tous",
+    "with_debt": "Avec dette",
+    "no_debt": "Sans dette",
+    "search_placeholder": "Rechercher par fournisseur ou téléphone...",
+    "filters_label": "Filtres",
+    "debt_desc": "Dette décroissante",
+    "debt_asc": "Dette croissante",
+    "name_asc": "Nom A–Z",
+    "name_desc": "Nom Z–A"
+  },
+  "status": {
+    "low": "Faible",
+    "medium": "Moyenne",
+    "high": "Élevée"
+  },
+  "table": {
+    "supplier": "Fournisseur",
+    "phone": "Téléphone",
+    "current_debt": "Dette actuelle",
+    "total_purchases": "Total achats",
+    "total_paid": "Total payé",
+    "last_purchase": "Dernier achat",
+    "list_header": "Fournisseurs",
+    "result_count": "{count} fournisseur(s)",
+    "purchases_count": "{count} achat(s)",
+    "details_btn": "Relevé de compte",
+    "display_info": "{from}–{to} sur {total} fournisseurs",
+    "no_debtors_found": "Aucun fournisseur trouvé",
+    "adjust_filters_desc": "Essayez d'ajuster votre recherche ou vos filtres."
+  },
+  "payment_modal": {
+    "title": "Enregistrer un règlement fournisseur",
+    "amount": "Montant réglé (DZD)",
+    "amount_label": "Montant (DZD) *",
+    "method": "Mode de règlement",
+    "reference": "Référence de transaction",
+    "reference_placeholder": "N° chèque, virement, reçu...",
+    "note": "Notes",
+    "note_placeholder": "Remarque sur ce règlement...",
+    "success": "Règlement fournisseur enregistré avec succès",
+    "invalid_amount": "Veuillez saisir un montant valide",
+    "settle_all": "Tout solder",
+    "optional": "(optionnelle)",
+    "saving": "Enregistrement...",
+    "confirm_btn": "Confirmer le règlement"
+  },
+  "supplier_debts": {
+    "title": "Fiche Fournisseur — {name}",
+    "total_purchases": "Total des achats",
+    "total_paid": "Total payé",
+    "remaining": "Reste dû",
+    "payments_history": "Historique des règlements",
+    "payments_tab": "Règlements",
+    "statement_tab": "Relevé de compte",
+    "timeline": "Timeline",
+    "no_purchases_desc": "Ce fournisseur n'a pas encore d'historique d'achats.",
+    "no_payments": "Aucun règlement enregistré",
+    "no_payments_desc": "Enregistrez le premier règlement via le bouton ci-dessus.",
+    "no_statement_desc": "Aucune transaction enregistrée.",
+    "last_payment_date": "Dernier paiement"
+  },
+  "statement": {
+    "title": "RELEVÉ DE COMPTE FOURNISSEUR",
+    "supplier": "Fournisseur",
+    "period": "Période",
+    "opening_balance": "Solde d'ouverture",
+    "closing_balance": "Solde de clôture",
+    "date": "Date",
+    "type": "Opération",
+    "ref": "Référence",
+    "amount": "Montant (DZD)",
+    "balance": "Solde courant (DZD)",
+    "purchase_desc": "Achat Réf: {ref}",
+    "payment_desc": "Règlement ({method}) — Réf: {ref}",
+    "purchase": "Achat",
+    "payment": "Paiement"
+  }
+}

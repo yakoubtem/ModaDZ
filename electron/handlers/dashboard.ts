@@ -202,6 +202,60 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         ? Math.min(100, Math.round((dashRecovered / dashMonthGenerated) * 100))
         : 0;
 
+    // ── Supplier Debt widget for dashboard ────────────────────────────
+    const allSupplierPurchases = await prisma.purchase.findMany({
+      select: { supplierId: true, total: true, amountPaid: true },
+    });
+    let dashTotalSupplierDebt = 0;
+    const debtBySupplier = new Map<number, number>();
+    for (const p of allSupplierPurchases) {
+      const remaining = Math.max(0, p.total - p.amountPaid);
+      if (remaining > 0) {
+        dashTotalSupplierDebt += remaining;
+        debtBySupplier.set(p.supplierId, (debtBySupplier.get(p.supplierId) ?? 0) + remaining);
+      }
+    }
+    const dashSupplierDebtorCount = debtBySupplier.size;
+
+    // Get supplier names for top supplier debts
+    const suppliersForWidget = await prisma.supplier.findMany({
+      where: { id: { in: Array.from(debtBySupplier.keys()) } },
+      select: { id: true, name: true },
+    });
+    const supplierNameMap = new Map(suppliersForWidget.map((s) => [s.id, s.name]));
+
+    const topSupplierDebts = Array.from(debtBySupplier.entries())
+      .map(([id, currentDebt]) => ({
+        id,
+        name: supplierNameMap.get(id) || `Fournisseur #${id}`,
+        currentDebt,
+      }))
+      .sort((a, b) => b.currentDebt - a.currentDebt)
+      .slice(0, 10);
+
+    // Upcoming payments (purchases with remaining balance, largest first)
+    const purchasesWithSupplier = await prisma.purchase.findMany({
+      include: {
+        supplier: {
+          select: { name: true },
+        },
+      },
+    });
+
+    const upcomingPayments = purchasesWithSupplier
+      .map((p) => ({
+        id: p.id,
+        reference: p.reference,
+        supplierName: p.supplier.name,
+        total: p.total,
+        amountPaid: p.amountPaid,
+        remaining: Math.max(0, p.total - p.amountPaid),
+        createdAt: p.createdAt.toISOString(),
+      }))
+      .filter((p) => p.remaining > 0)
+      .sort((a, b) => b.remaining - a.remaining) // largest outstanding balance first
+      .slice(0, 5); // display top 5 upcoming payments
+
     const monthRevenue = monthSales._sum.total ?? 0;
     const monthExpensesTotal = monthExpenses._sum.amount ?? 0;
     const monthCOGS = monthSaleItems.reduce((sum: number, item: any) => {
@@ -292,6 +346,12 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         totalDebt: dashTotalDebt,
         debtorCount: dashDebtorCount,
         recoveryRate: dashRecoveryRate,
+      },
+      supplierDebtWidget: {
+        totalSupplierDebt: dashTotalSupplierDebt,
+        debtorCount: dashSupplierDebtorCount,
+        topSupplierDebts,
+        upcomingPayments,
       },
     };
   });

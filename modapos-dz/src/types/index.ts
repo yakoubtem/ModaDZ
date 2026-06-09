@@ -284,6 +284,20 @@ export interface DashboardSummary {
     debtorCount: number;
     recoveryRate: number;
   };
+  supplierDebtWidget: {
+    totalSupplierDebt: number;
+    debtorCount: number;
+    topSupplierDebts: { id: number; name: string; currentDebt: number }[];
+    upcomingPayments: {
+      id: number;
+      reference: string;
+      supplierName: string;
+      total: number;
+      amountPaid: number;
+      remaining: number;
+      createdAt: string;
+    }[];
+  };
 }
 
 
@@ -647,5 +661,99 @@ export interface PaginatedActivityLogs {
   page: number;
   pageSize: number;
 }
+
+// ─── Supplier Debt Management Module ───────────────────────
+
+export interface SupplierPayment {
+  id: number;
+  supplierId: number;
+  purchaseId?: number | null;
+  amount: number;
+  paymentMethod: string;
+  reference?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  createdBy: number;
+  user?: Pick<User, "id" | "name">;
+}
+
+/** A row in the supplier debts table — one entry per supplier */
+export interface SupplierDebtSummary {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  createdAt: string;
+  totalPurchases: number;
+  totalPaid: number;
+  currentDebt: number;
+  lastPurchaseDate?: string;
+  purchasesCount: number;
+}
+
+/** KPI statistics for the supplier debt dashboard */
+export interface SupplierDebtStatistics {
+  totalDebt: number;
+  debtorCount: number;
+  paidThisMonth: number;
+  avgDebtPerDebtor: number;
+}
+
+/** Purchase row inside the supplier debt modal */
+export interface DebtPurchaseRow {
+  id: number;
+  reference: string;
+  total: number;
+  amountPaid: number;
+  remaining: number;
+  status: string;
+  createdAt: string;
+}
+
+/** Full data for the supplier debt detail modal */
+export interface DebtSupplierDetail {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  summary: {
+    totalPurchases: number;
+    totalPaid: number;
+    currentDebt: number;
+    lastPaymentDate?: string | null;
+  };
+  purchases: DebtPurchaseRow[];
+  payments: SupplierPayment[];
+  timeline: Array<{
+    id: number;
+    date: string;
+    type: string; // "purchase" | "payment"
+    reference: string;
+    amount: number;
+    runningBalance: number;
+  }>;
+}
+
+export interface AddSupplierPaymentPayload {
+  supplierId: number;
+  amount: number;
+  method: string;
+  reference?: string;
+  notes?: string;
+  createdBy: number;
+}
+
+export interface PaginatedSupplierDebts {
+  suppliers: SupplierDebtSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export type SupplierDebtFilter = "all" | "with_debt" | "no_debt" | "gt_10k" | "gt_50k";
+export type SupplierDebtSort = "debt_asc" | "debt_desc" | "name_asc" | "name_desc";
+
 
 

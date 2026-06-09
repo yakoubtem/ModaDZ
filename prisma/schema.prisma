@@ -19,6 +19,7 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   sales     Sale[]
+  supplierPayments SupplierPayment[]
 }
 
 // ─── Categories ──────────────────────────────────────────
@@ -169,6 +170,7 @@ model Supplier {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   purchases    Purchase[]
+  supplierPayments SupplierPayment[]
 }
 
 // ─── Purchases ────────────────────────────────────────────
@@ -184,6 +186,7 @@ model Purchase {
   notes           String?
   createdAt       DateTime       @default(now())
   items           PurchaseItem[]
+  supplierPayments SupplierPayment[]
 }
 
 model PurchaseItem {
@@ -208,4 +211,22 @@ model ActivityLog {
   entityId    String?
   description String
   createdAt   DateTime @default(now())
+}
+
+// ─── Supplier Payments ────────────────────────────────────
+model SupplierPayment {
+  id            Int      @id @default(autoincrement())
+  supplierId    Int
+  purchaseId    Int?
+  amount        Float
+  paymentMethod String   @default("cash") // cash | card | transfer
+  reference     String?
+  notes         String?
+  allocations   String?  // JSON representing allocations: [{"purchaseId": 1, "amount": 1000}]
+  createdAt     DateTime @default(now())
+  createdBy     Int      // links to User.id
+
+  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  purchase      Purchase? @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+  user          User     @relation(fields: [createdBy], references: [id])
 }

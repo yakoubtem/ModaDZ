@@ -1,0 +1,91 @@
+{
+  "title": "ديون الموردين",
+  "debtors_count_label": "مورد(ين) دائن(ين)",
+  "header_title": "ديون الموردين",
+  "header_desc": "متابعة أرصدة الموردين، تسجيل المدفوعات (FIFO) والاطلاع على سجل وكشف حساب كل مورد.",
+  "total_outstanding": "إجمالي ديون الموردين",
+  "kpis": {
+    "total_debt": "إجمالي المستحق للموردين",
+    "debtor_count": "عدد الموردين الدائنين",
+    "paid_month": "المبلغ المدفوع هذا الشهر",
+    "avg_debt": "متوسط دين المورد"
+  },
+  "filters": {
+    "all": "الكل",
+    "with_debt": "عليهم دين",
+    "no_debt": "بدون دين",
+    "search_placeholder": "بحث باسم المورد أو الهاتف...",
+    "filters_label": "تصفية",
+    "debt_desc": "الدين تنازلي",
+    "debt_asc": "الدين تصاعدي",
+    "name_asc": "الاسم أ–ي",
+    "name_desc": "الاسم ي–أ"
+  },
+  "status": {
+    "low": "منخفض",
+    "medium": "متوسط",
+    "high": "مرتفع"
+  },
+  "table": {
+    "supplier": "المورد",
+    "phone": "الهاتف",
+    "current_debt": "الدين الحالي",
+    "total_purchases": "إجمالي المشتريات",
+    "total_paid": "إجمالي المدفوع",
+    "last_purchase": "آخر شراء",
+    "list_header": "الموردين",
+    "result_count": "{count} مورد(ين)",
+    "purchases_count": "{count} عملية شراء",
+    "details_btn": "كشف الحساب",
+    "display_info": "{from}–{to} من {total} موردين",
+    "no_debtors_found": "لم يتم العثور على موردين",
+    "adjust_filters_desc": "حاول تعديل البحث أو الفلاتر."
+  },
+  "payment_modal": {
+    "title": "تسجيل دفعة لمورد",
+    "amount": "المبلغ المدفوع (د.ج)",
+    "amount_label": "المبلغ (د.ج) *",
+    "method": "طريقة الدفع",
+    "reference": "مرجع المعاملة",
+    "reference_placeholder": "رقم الشيك، التحويل، الوصل...",
+    "note": "ملاحظات",
+    "note_placeholder": "ملاحظة حول هذه الدفعة...",
+    "success": "تم تسجيل دفعة المورد بنجاح",
+    "invalid_amount": "يرجى إدخال مبلغ صحيح",
+    "settle_all": "تسديد كامل الحساب",
+    "optional": "(اختياري)",
+    "saving": "جاري الحفظ...",
+    "confirm_btn": "تأكيد الدفع"
+  },
+  "supplier_debts": {
+    "title": "ملف المورد — {name}",
+    "total_purchases": "إجمالي المشتريات",
+    "total_paid": "إجمالي المدفوع",
+    "remaining": "المتبقي للمورد",
+    "payments_history": "سجل المدفوعات للمورد",
+    "payments_tab": "المدفوعات",
+    "statement_tab": "كشف الحساب",
+    "timeline": "الخط الزمني",
+    "no_purchases_desc": "هذا المورد ليس لديه سجل مشتريات بعد.",
+    "no_payments": "لم يتم تسجيل أي مدفوعات",
+    "no_payments_desc": "قم بتسجيل أول دفعة باستخدام الزر أعلاه.",
+    "no_statement_desc": "لا توجد معاملات مسجلة.",
+    "last_payment_date": "آخر تاريخ دفع"
+  },
+  "statement": {
+    "title": "كشف حساب مورد",
+    "supplier": "المورد",
+    "period": "الفترة",
+    "opening_balance": "الرصيد الافتتاحي",
+    "closing_balance": "الرصيد الختامي",
+    "date": "التاريخ",
+    "type": "العملية",
+    "ref": "المرجع",
+    "amount": "المبلغ (د.ج)",
+    "balance": "الرصيد الحالي (د.ج)",
+    "purchase_desc": "شراء مرجع: {ref}",
+    "payment_desc": "دفع ({method}) — مرجع: {ref}",
+    "purchase": "شراء",
+    "payment": "دفع"
+  }
+}

@@ -33,6 +33,17 @@
     "total_due": "إجمالي المستحقات",
     "debtors": "المدينين"
   },
+  "supplier_debt_widget": {
+    "title": "ديون الموردين",
+    "total_due": "إجمالي الديون",
+    "suppliers": "الموردين",
+    "top_suppliers": "أعلى 10 ديون للموردين",
+    "upcoming_payments": "المدفوعات القادمة",
+    "remaining": "المتبقي",
+    "reference": "المرجع",
+    "no_debts": "لا توجد ديون معلقة للموردين.",
+    "no_upcoming": "لا توجد مدفوعات قادمة."
+  },
   "alerts_panel": {
     "title": "التنبيهات",
     "low_stock": "مخزون منخفض",

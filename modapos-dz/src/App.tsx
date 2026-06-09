@@ -17,6 +17,7 @@ import { AccessDenied } from "@/components/AccessDenied";
 import { SuppliersPage } from "@/modules/suppliers/SuppliersPage";
 import { PurchasesPage } from "@/modules/purchases/PurchasesPage";
 import { ActivityPage } from "@/modules/activity/ActivityPage";
+import { SupplierDebtsPage } from "@/modules/supplierDebts/SupplierDebtsPage";
 import { useAuth } from "@/modules/auth/AuthContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="customers"  element={<PermissionGuard permission="customers.view"><CustomersPage /></PermissionGuard>} />
         <Route path="sales"      element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
         <Route path="debts"      element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />
+        <Route path="supplier-debts" element={<PermissionGuard permission="supplierDebts.view"><SupplierDebtsPage /></PermissionGuard>} />
         <Route path="expenses"   element={<PermissionGuard permission="expenses.view"><ExpensesPage /></PermissionGuard>} />
         <Route path="suppliers"  element={<PermissionGuard permission="suppliers.view"><SuppliersPage /></PermissionGuard>} />
         <Route path="purchases"  element={<PermissionGuard permission="purchases.view"><PurchasesPage /></PermissionGuard>} />
