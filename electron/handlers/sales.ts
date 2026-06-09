@@ -1,6 +1,7 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { logAutomaticCashMovement } from "./cashRegister";
 
 // ─── Receipt number generator ─────────────────────────────
 function generateReceiptNumber(saleId: number): string {
@@ -230,6 +231,15 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         },
       });
 
+      if (data.paymentMethod === "cash") {
+        await logAutomaticCashMovement(tx, {
+          userId: data.userId,
+          type: "sale",
+          amount: amountPaid,
+          reason: `Vente POS Réf: ${receiptNumber}`,
+        });
+      }
+
       await logActivity(
         tx,
         data.userId,
@@ -264,6 +274,15 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         where: { id },
         data: { status: "refunded" },
       });
+
+      if (sale.paymentMethod === "cash") {
+        await logAutomaticCashMovement(tx, {
+          userId: currentUserId || sale.userId,
+          type: "refund",
+          amount: -sale.amountPaid,
+          reason: `Remboursement vente Réf: ${sale.receiptNumber || id}`,
+        });
+      }
 
       await logActivity(
         tx,

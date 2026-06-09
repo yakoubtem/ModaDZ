@@ -1,5 +1,6 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
+import { logAutomaticCashMovement } from "./cashRegister";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -8,6 +9,7 @@ interface AddPaymentPayload {
   amount: number;
   method: string;
   note?: string;
+  userId?: number;
 }
 
 interface GetAllDebtsParams {
@@ -311,6 +313,15 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
             note: note ?? null,
           },
         });
+
+        if (method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: payload.userId || 1,
+            type: "cash_in",
+            amount: amount,
+            reason: `Règlement dette client #${customerId}`,
+          });
+        }
 
         return payment;
       });

@@ -1,6 +1,7 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { logAutomaticCashMovement } from "./cashRegister";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -377,6 +378,15 @@ export function registerSupplierDebtHandlers(ipcMain: IpcMain) {
           },
         });
 
+        if (method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: createdBy,
+            type: "supplier_payment",
+            amount: -amount,
+            reason: `Règlement fournisseur (Réf: ${reference || payment.id})`,
+          });
+        }
+
         // Log Activity
         await logActivity(
           tx,
@@ -476,6 +486,24 @@ export function registerSupplierDebtHandlers(ipcMain: IpcMain) {
           },
         });
 
+        if (payment.paymentMethod === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId,
+            type: "cash_in",
+            amount: payment.amount,
+            reason: `Correction règlement fournisseur (Annulation) Réf: ${payment.reference || id}`,
+          });
+        }
+
+        if (method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId,
+            type: "supplier_payment",
+            amount: -amount,
+            reason: `Règlement fournisseur (Correction) Réf: ${reference || id}`,
+          });
+        }
+
         // Log Activity
         await logActivity(
           tx,
@@ -522,6 +550,15 @@ export function registerSupplierDebtHandlers(ipcMain: IpcMain) {
         await tx.supplierPayment.delete({
           where: { id },
         });
+
+        if (payment.paymentMethod === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId,
+            type: "cash_in",
+            amount: payment.amount,
+            reason: `Annulation règlement fournisseur Réf: ${payment.reference || payment.id}`,
+          });
+        }
 
         // Log Activity
         await logActivity(

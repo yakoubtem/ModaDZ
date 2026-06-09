@@ -15,6 +15,7 @@
     "suppliers": "Fournisseurs",
     "purchases": "Achats",
     "supplierDebts": "Dettes Fournisseurs",
+    "cashRegister": "Caisse",
     "activity": "Journal d'activité",
     "new_transaction": "Nouvelle transaction",
     "profile": "Profil utilisateur"

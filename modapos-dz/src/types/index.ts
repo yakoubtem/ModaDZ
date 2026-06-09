@@ -298,6 +298,14 @@ export interface DashboardSummary {
       createdAt: string;
     }[];
   };
+  openRegisters?: Array<{
+    id: number;
+    userId: number;
+    userName: string;
+    openedAt: string;
+    openingBalance: number;
+    expectedBalance: number;
+  }>;
 }
 
 
@@ -754,6 +762,70 @@ export interface PaginatedSupplierDebts {
 
 export type SupplierDebtFilter = "all" | "with_debt" | "no_debt" | "gt_10k" | "gt_50k";
 export type SupplierDebtSort = "debt_asc" | "debt_desc" | "name_asc" | "name_desc";
+
+// ─── Cash Register Management Types ───────────────────────
+
+export interface CashSession {
+  id: number;
+  userId: number;
+  openedAt: string;
+  closedAt?: string | null;
+  openingBalance: number;
+  expectedBalance: number;
+  actualBalance?: number | null;
+  difference?: number | null;
+  notes?: string | null;
+  status: "open" | "closed";
+  user?: Pick<User, "id" | "name">;
+}
+
+export interface CashMovement {
+  id: number;
+  sessionId: number;
+  type: "sale" | "refund" | "expense" | "supplier_payment" | "cash_in" | "cash_out";
+  amount: number;
+  reason?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  createdBy: number;
+  session?: {
+    id: number;
+    user?: { id: number; name: string };
+  };
+}
+
+export interface CashSessionDetails {
+  session: CashSession;
+  breakdown: {
+    openingBalance: number;
+    sales: number;
+    refunds: number;
+    expenses: number;
+    supplierPayments: number;
+    cashIn: number;
+    cashOut: number;
+    expectedBalance: number;
+  };
+  movements: CashMovement[];
+}
+
+export interface CashRegisterStatistics {
+  cashToday: number;
+  cashMovementsCount: number;
+  openSessionsCount: number;
+  cashDifference: number;
+  openRegisters: Array<{
+    id: number;
+    userId: number;
+    userName: string;
+    openedAt: string;
+    openingBalance: number;
+    expectedBalance: number;
+  }>;
+}
+
+export type CashSessionFilter = "all" | "open" | "closed";
+export type CashMovementTypeFilter = "all" | "sale" | "refund" | "expense" | "supplier_payment" | "cash_in" | "cash_out";
 
 
 

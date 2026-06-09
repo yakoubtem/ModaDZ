@@ -1,0 +1,87 @@
+{
+  "title": "إدارة الخزينة",
+  "header_desc": "متابعة جلسات الخزينة للموظفين، إدارة المقبوضات والمدفوعات النقدية ومراجعة الفروقات.",
+  "tabs": {
+    "sessions": "جلسات الخزينة",
+    "movements": "حركات الصندوق"
+  },
+  "kpis": {
+    "cash_today": "المجموع النقدي اليوم",
+    "cash_movements": "الحركات النقدية اليوم",
+    "open_sessions": "الجلسات النشطة",
+    "cash_difference": "الفروقات المتراكمة"
+  },
+  "open_modal": {
+    "title": "فتح الخزينة",
+    "opening_balance": "رصيد الافتتاح (د.ج) *",
+    "notes": "ملاحظات الافتتاح",
+    "notes_placeholder": "ملاحظات حول حالة الصندوق...",
+    "confirm": "فتح الخزينة",
+    "required": "رصيد الافتتاح مطلوب"
+  },
+  "close_modal": {
+    "title": "إغلاق الخزينة",
+    "actual_cash": "المبلغ النقدي الفعلي المحسوب (د.ج) *",
+    "expected": "الرصيد المتوقع",
+    "counted": "الرصيد الفعلي",
+    "difference": "الفارق المكتشف",
+    "balanced": "🟢 متطابق",
+    "warning": "🟡 فارق طفيف",
+    "critical": "🔴 فارق كبير",
+    "confirm": "تأكيد الغلق",
+    "breakdown": "تفاصيل الجلسة",
+    "notes": "ملاحظات الغلق",
+    "notes_placeholder": "توضيح سبب الفارق النقدي إن وجد..."
+  },
+  "movement_modal": {
+    "title": "تسجيل حركة نقدية في الصندوق",
+    "type": "نوع الحركة",
+    "cash_in": "إدخال نقدي (Cash In)",
+    "cash_out": "إخراج نقدي (Cash Out)",
+    "amount": "المبلغ (د.ج) *",
+    "reason": "السبب *",
+    "notes": "ملاحظات إضافية",
+    "notes_placeholder": "تفاصيل حول هذه الحركة...",
+    "preset_petty": "مصاريف نثرية / لوازم",
+    "preset_transport": "النقل / التوصيل",
+    "preset_bank": "إيداع في البنك",
+    "preset_correction": "تصحيح خطأ",
+    "confirm": "تسجيل الحركة"
+  },
+  "tables": {
+    "user": "أمين الصندوق",
+    "opened": "تاريخ الفتح",
+    "closed": "تاريخ الغلق",
+    "opening": "الافتتاح",
+    "expected": "المتوقع",
+    "actual": "الفعلي",
+    "difference": "الفارق",
+    "status": "الحالة",
+    "type": "النوع",
+    "date": "التاريخ والوقت",
+    "reason": "السبب",
+    "amount": "المبلغ",
+    "no_sessions": "لم يتم تسجيل أي جلسة خزينة بعد.",
+    "no_movements": "لا توجد أي حركات نقدية مسجلة.",
+    "session_details": "تفاصيل جلسة الخزينة"
+  },
+  "types": {
+    "sale": "عملية بيع POS",
+    "refund": "عملية إرجاع",
+    "expense": "مصاريف",
+    "supplier_payment": "دفع للمورد",
+    "cash_in": "إدخال نقدي",
+    "cash_out": "إخراج نقدي"
+  },
+  "toasts": {
+    "open_success": "تم فتح الخزينة بنجاح!",
+    "close_success": "تم إغلاق الخزينة بنجاح!",
+    "movement_success": "تم تسجيل الحركة النقدية بنجاح!",
+    "error_no_session": "يرجى فتح الخزينة أولاً."
+  },
+  "widgets": {
+    "open_registers": "الصناديق المفتوحة",
+    "no_open_registers": "لا توجد صناديق مفتوحة حالياً.",
+    "close_shortcut": "إغلاق"
+  }
+}

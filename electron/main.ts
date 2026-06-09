@@ -46,6 +46,7 @@ import { registerSupplierHandlers } from "./handlers/suppliers";
 import { registerPurchaseHandlers } from "./handlers/purchases";
 import { registerActivityLogHandlers } from "./handlers/activityLogs";
 import { registerSupplierDebtHandlers } from "./handlers/supplierDebts";
+import { registerCashRegisterHandlers } from "./handlers/cashRegister";
 
 
 // MUST be called before app.whenReady()
@@ -116,6 +117,7 @@ function registerHandlers() {
   registerPurchaseHandlers(ipcMain);
   registerActivityLogHandlers(ipcMain);
   registerSupplierDebtHandlers(ipcMain);
+  registerCashRegisterHandlers(ipcMain);
 }
 
 app.whenReady().then(() => {

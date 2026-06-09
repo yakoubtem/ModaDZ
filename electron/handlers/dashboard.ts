@@ -353,6 +353,26 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
         topSupplierDebts,
         upcomingPayments,
       },
+      openRegisters: await (async () => {
+        const openSessions = await prisma.cashSession.findMany({
+          where: { status: "open" },
+          include: {
+            movements: true,
+            user: { select: { id: true, name: true } },
+          },
+        });
+        return openSessions.map((s) => {
+          const currentExpected = s.openingBalance + s.movements.reduce((sum, m) => sum + m.amount, 0);
+          return {
+            id: s.id,
+            userId: s.userId,
+            userName: s.user?.name ?? `Utilisateur #${s.userId}`,
+            openedAt: s.openedAt.toISOString(),
+            openingBalance: s.openingBalance,
+            expectedBalance: currentExpected,
+          };
+        });
+      })(),
     };
   });
 }

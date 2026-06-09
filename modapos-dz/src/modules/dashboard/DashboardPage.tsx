@@ -8,6 +8,7 @@ import { AlertsPanel } from "./components/AlertsPanel";
 import { DebtWidget } from "./components/DebtWidget";
 import { RestockWidget } from "./components/RestockWidget";
 import { SupplierDebtWidget } from "./components/SupplierDebtWidget";
+import { OpenRegistersWidget } from "./components/OpenRegistersWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
@@ -124,6 +125,12 @@ export function DashboardPage() {
               >
                 <RestockWidget lowStock={data?.lowStockVariants} isLoading={isLoading} />
               </div>
+
+              {/* ── Caisses ouvertes widget ── */}
+              <OpenRegistersWidget
+                openRegisters={data?.openRegisters ?? []}
+                isLoading={isLoading}
+              />
 
               {/* ── Créances clients widget ── */}
               <DebtWidget

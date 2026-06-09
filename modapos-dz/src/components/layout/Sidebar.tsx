@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { key: "common.sidebar.debts",      path: "/debts",      icon: "account_balance_wallet", permission: "debts.view" },
   { key: "common.sidebar.supplierDebts", path: "/supplier-debts", icon: "account_balance_wallet", permission: "supplierDebts.view" },
   { key: "common.sidebar.expenses",   path: "/expenses",   icon: "receipt_long",           permission: "expenses.view" },
+  { key: "common.sidebar.cashRegister", path: "/cash-register", icon: "point_of_sale",   permission: "cashRegister.view" },
   { key: "common.sidebar.suppliers",  path: "/suppliers",  icon: "local_shipping",         permission: "suppliers.view" },
   { key: "common.sidebar.purchases",  path: "/purchases",  icon: "shopping_cart",          permission: "purchases.view" },
   { key: "common.sidebar.activity",   path: "/activity",   icon: "history",                permission: "activity.view" },

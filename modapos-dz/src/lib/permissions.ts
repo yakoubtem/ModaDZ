@@ -28,6 +28,9 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "supplierDebts.view",
     "supplierDebts.manage",
     "supplierPayments.create",
+    "cashRegister.view",
+    "cashRegister.manage",
+    "cashRegister.close",
     "activity.view",
   ],
 
@@ -38,6 +41,8 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "customers.manage", // Cashier can select and edit customers in POS
     "debts.view", // For payments
     "debts.payment", // Receive debt payments
+    "cashRegister.view",
+    "cashRegister.manage",
   ],
 };
 

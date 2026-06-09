@@ -1,0 +1,87 @@
+{
+  "title": "Gestion de Caisse",
+  "header_desc": "Suivez les sessions de caisse des caissiers, gérez les entrées/sorties de fonds et auditez les écarts.",
+  "tabs": {
+    "sessions": "Sessions de caisse",
+    "movements": "Mouvements de fonds"
+  },
+  "kpis": {
+    "cash_today": "Encours de caisse aujourd'hui",
+    "cash_movements": "Mouvements aujourd'hui",
+    "open_sessions": "Sessions actives",
+    "cash_difference": "Écarts cumulés"
+  },
+  "open_modal": {
+    "title": "Ouvrir la caisse",
+    "opening_balance": "Solde d'ouverture (DZD) *",
+    "notes": "Notes d'ouverture",
+    "notes_placeholder": "Remarques sur l'état de la caisse...",
+    "confirm": "Ouvrir la caisse",
+    "required": "Le solde d'ouverture est requis"
+  },
+  "close_modal": {
+    "title": "Clôturer la caisse",
+    "actual_cash": "Espèces réelles comptées (DZD) *",
+    "expected": "Solde attendu",
+    "counted": "Solde réel",
+    "difference": "Écart constaté",
+    "balanced": "🟢 Équilibré",
+    "warning": "🟡 Écart faible",
+    "critical": "🔴 Écart majeur",
+    "confirm": "Confirmer la clôture",
+    "breakdown": "Détails de la session",
+    "notes": "Notes de clôture",
+    "notes_placeholder": "Expliquer l'écart de caisse si nécessaire..."
+  },
+  "movement_modal": {
+    "title": "Enregistrer un mouvement de caisse",
+    "type": "Type de mouvement",
+    "cash_in": "Entrée (Cash In)",
+    "cash_out": "Sortie (Cash Out)",
+    "amount": "Montant (DZD) *",
+    "reason": "Motif *",
+    "notes": "Notes supplémentaires",
+    "notes_placeholder": "Détails sur ce mouvement...",
+    "preset_petty": "Petite caisse / Fournitures",
+    "preset_transport": "Transport / Livraison",
+    "preset_bank": "Dépôt en banque",
+    "preset_correction": "Correction d'erreur",
+    "confirm": "Enregistrer le mouvement"
+  },
+  "tables": {
+    "user": "Caissier",
+    "opened": "Date d'ouverture",
+    "closed": "Date de clôture",
+    "opening": "Ouverture",
+    "expected": "Attendu",
+    "actual": "Réel",
+    "difference": "Écart",
+    "status": "Statut",
+    "type": "Type",
+    "date": "Date & Heure",
+    "reason": "Motif",
+    "amount": "Montant",
+    "no_sessions": "Aucune session de caisse enregistrée.",
+    "no_movements": "Aucun mouvement de fonds enregistré.",
+    "session_details": "Détail de la session"
+  },
+  "types": {
+    "sale": "Vente POS",
+    "refund": "Remboursement",
+    "expense": "Dépense",
+    "supplier_payment": "Règlement Fourn.",
+    "cash_in": "Cash In",
+    "cash_out": "Cash Out"
+  },
+  "toasts": {
+    "open_success": "Caisse ouverte avec succès !",
+    "close_success": "Caisse clôturée avec succès !",
+    "movement_success": "Mouvement de caisse enregistré !",
+    "error_no_session": "Veuillez d'abord ouvrir la caisse."
+  },
+  "widgets": {
+    "open_registers": "Caises Ouvertes",
+    "no_open_registers": "Aucune caisse n'est ouverte en ce moment.",
+    "close_shortcut": "Clôturer"
+  }
+}
