@@ -62,8 +62,8 @@ export function getMachineId(): string {
   }
 }
 
-// Generate secure License Key
-export function generateLicenseKey(plan: string, expiryDate: Date): string {
+// Generate secure License Key bound to Machine ID
+export function generateLicenseKey(plan: string, expiryDate: Date, machineId: string): string {
   let planCode = "PRO";
   if (plan === "trial7") planCode = "T07";
   else if (plan === "trial30") planCode = "T30";
@@ -72,13 +72,16 @@ export function generateLicenseKey(plan: string, expiryDate: Date): string {
   else if (plan === "lifetime") planCode = "LIF";
 
   const yearStr = expiryDate.getFullYear().toString();
-  const entropy = crypto.randomBytes(4).toString("hex").toUpperCase();
+  // Clean and hash machineId for consistent key formatting
+  const sanitizedMachineId = (machineId || "TRIAL").trim().toUpperCase();
+  const mHash = crypto.createHash("sha256").update(sanitizedMachineId).digest("hex").toUpperCase();
+  const fingerprint = mHash.substring(0, 8);
   const part1 = `MDZ-${planCode}-${yearStr}`;
-  const part2 = `${entropy.substring(0, 4)}-${entropy.substring(4, 8)}`;
+  const part2 = `${fingerprint.substring(0, 4)}-${fingerprint.substring(4, 8)}`;
   const rawKey = `${part1}-${part2}`;
 
   const checksum = crypto.createHash("sha256")
-    .update(rawKey + SECRET_SALT)
+    .update(rawKey + sanitizedMachineId + SECRET_SALT)
     .digest("hex")
     .substring(0, 4)
     .toUpperCase();
@@ -86,8 +89,8 @@ export function generateLicenseKey(plan: string, expiryDate: Date): string {
   return `${rawKey}-${checksum}`;
 }
 
-// Check key format & checksum
-export function validateLicenseKeyFormat(key: string): boolean {
+// Check key format & checksum bound to Machine ID
+export function validateLicenseKeyFormat(key: string, machineId: string): boolean {
   if (!key || !key.startsWith("MDZ-")) return false;
   const parts = key.split("-");
   if (parts.length < 5) return false;
@@ -95,8 +98,9 @@ export function validateLicenseKeyFormat(key: string): boolean {
   const checksum = parts[parts.length - 1];
   const rawKey = parts.slice(0, parts.length - 1).join("-");
 
+  const sanitizedMachineId = (machineId || "").trim().toUpperCase();
   const expectedChecksum = crypto.createHash("sha256")
-    .update(rawKey + SECRET_SALT)
+    .update(rawKey + sanitizedMachineId + SECRET_SALT)
     .digest("hex")
     .substring(0, 4)
     .toUpperCase();
@@ -166,7 +170,7 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-        const tempKey = generateLicenseKey(params.plan, expiresAt);
+        const tempKey = generateLicenseKey(params.plan, expiresAt, currentMachineId);
 
         const newLicense = await prisma.license.create({
           data: {
@@ -210,7 +214,7 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
 
       const keyVal = params.licenseKey.trim().toUpperCase();
 
-      if (!validateLicenseKeyFormat(keyVal)) {
+      if (!validateLicenseKeyFormat(keyVal, currentMachineId)) {
         return { success: false, error: "Format ou signature de la clé de licence invalide." };
       }
 
@@ -226,9 +230,9 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
       else if (planCode === "Y01") { planStr = "yearly"; durationDays = 365; }
       else if (planCode === "LIF") { planStr = "lifetime"; durationDays = 36500; } // 100 years
 
-      // Double check plan matching
+      // Double check plan matching (auto-adjust plan to match key format since frontend may send 'yearly' as default)
       if (params.plan !== planStr) {
-        return { success: false, error: "La clé de licence fournie ne correspond pas au forfait sélectionné." };
+        params.plan = planStr as any;
       }
 
       // Check if key is already registered in DB by another PC (or if it exists)
@@ -395,14 +399,15 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
     }
   });
 
-  // Admin key generator
+  // Admin key generator (accepts customer machine ID to bind the license)
   ipcMain.handle("license:generateKey", async (_e, params: {
     plan: string;
     expiryDate: string;
+    machineId: string;
   }) => {
     try {
       const expiry = new Date(params.expiryDate);
-      const key = generateLicenseKey(params.plan, expiry);
+      const key = generateLicenseKey(params.plan, expiry, params.machineId);
       return { success: true, licenseKey: key };
     } catch (err: any) {
       return { success: false, error: err.message };
