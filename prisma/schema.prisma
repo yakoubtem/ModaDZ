@@ -277,3 +277,21 @@ model LabelPrintHistory {
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+// ─── License System ──────────────────────────────────────────
+model License {
+  id           Int      @id @default(autoincrement())
+  licenseKey   String   @unique
+  customerName String
+  businessName String
+  phone        String
+  email        String
+  plan         String   // trial7 | trial30 | monthly | yearly | lifetime
+  activatedAt  DateTime @default(now())
+  expiresAt    DateTime
+  isActive     Boolean  @default(true)
+  machineId    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+

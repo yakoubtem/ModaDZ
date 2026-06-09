@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { LoginPage } from "@/modules/auth/LoginPage";
 import { DashboardPage } from "@/modules/dashboard/DashboardPage";
@@ -21,7 +22,9 @@ import { SupplierDebtsPage } from "@/modules/supplierDebts/SupplierDebtsPage";
 import { CashRegisterPage } from "@/modules/cashRegister/CashRegisterPage";
 import { LabelsPage } from "@/modules/labels/LabelsPage";
 import { useAuth } from "@/modules/auth/AuthContext";
-
+import { useLicense } from "@/contexts/LicenseContext";
+import { LicenseActivationPage } from "@/modules/auth/LicenseActivationPage";
+import { LicenseGeneratorPage } from "@/modules/admin/LicenseGeneratorPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -45,11 +48,66 @@ function IndexRedirect() {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { licenseState } = useLicense();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "l") {
+        if (user && user.role === "admin") {
+          navigate("/admin-generator");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [user, navigate]);
+
+  if (licenseState === "loading") {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#0c0e14" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-primary, #d4af37)", animation: "spin 1s linear infinite" }}>
+            progress_activity
+          </span>
+          <span style={{ color: "#94a3b8", fontSize: 14, fontFamily: "var(--font-body)" }}>Vérification de la licence...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (licenseState === "unlicensed") {
+    return <LicenseActivationPage />;
+  }
+
+  if (licenseState === "locked") {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/access-denied" element={<AccessDenied />} />
+        <Route path="/admin-generator" element={<ProtectedRoute><LicenseGeneratorPage /></ProtectedRoute>} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="settings" element={<PermissionGuard permission="settings.manage"><SettingsPage /></PermissionGuard>} />
+          <Route path="*" element={<Navigate to="/settings" replace />} />
+        </Route>
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/access-denied" element={<AccessDenied />} />
+      <Route path="/admin-generator" element={<ProtectedRoute><LicenseGeneratorPage /></ProtectedRoute>} />
 
       {/* Protected — all inside AppLayout */}
       <Route

@@ -18,6 +18,7 @@ import activityFr from "@/locales/fr/activity.json";
 import supplierDebtsFr from "@/locales/fr/supplierDebts.json";
 import cashRegisterFr from "@/locales/fr/cashRegister.json";
 import labelsFr from "@/locales/fr/labels.json";
+import licenseFr from "@/locales/fr/license.json";
 
 import commonAr from "@/locales/ar/common.json";
 import dashboardAr from "@/locales/ar/dashboard.json";
@@ -36,6 +37,7 @@ import activityAr from "@/locales/ar/activity.json";
 import supplierDebtsAr from "@/locales/ar/supplierDebts.json";
 import cashRegisterAr from "@/locales/ar/cashRegister.json";
 import labelsAr from "@/locales/ar/labels.json";
+import licenseAr from "@/locales/ar/license.json";
 
 export type Language = "fr" | "ar";
 
@@ -58,6 +60,7 @@ const translations = {
     supplierDebts: supplierDebtsFr,
     cashRegister: cashRegisterFr,
     labels: labelsFr,
+    license: licenseFr,
   },
   ar: {
     common: commonAr,
@@ -77,6 +80,7 @@ const translations = {
     supplierDebts: supplierDebtsAr,
     cashRegister: cashRegisterAr,
     labels: labelsAr,
+    license: licenseAr,
   },
 };
 

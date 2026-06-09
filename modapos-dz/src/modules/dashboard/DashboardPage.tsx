@@ -10,6 +10,7 @@ import { RestockWidget } from "./components/RestockWidget";
 import { SupplierDebtWidget } from "./components/SupplierDebtWidget";
 import { OpenRegistersWidget } from "./components/OpenRegistersWidget";
 import { MostPrintedProductsWidget } from "./components/MostPrintedProductsWidget";
+import { LicenseWidget } from "./components/LicenseWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function DashboardPage() {
@@ -108,6 +109,9 @@ export function DashboardPage() {
                 top: 100,
               }}
             >
+              {/* ── License Widget ── */}
+              <LicenseWidget isLoading={isLoading} />
+
               <div
                 className="glass-card"
                 style={{ borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column" }}

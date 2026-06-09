@@ -1,6 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLicense } from "@/contexts/LicenseContext";
+import { toast } from "sonner";
 
 const NAV_ITEMS = [
   { key: "common.sidebar.dashboard",  path: "/dashboard", icon: "dashboard",              permission: "dashboard.view" },
@@ -27,6 +29,9 @@ export function Sidebar() {
   const { logout, user, can } = useAuth();
   const navigate = useNavigate();
   const { t, isRtl } = useTranslation();
+  const { licenseState } = useLicense();
+
+  const isLocked = licenseState === "locked" || licenseState === "expired_grace";
 
   const formatRole = (role?: string) => {
     switch (role) {
@@ -49,8 +54,19 @@ export function Sidebar() {
       {can("pos.use") && (
         <button
           className="sidebar-cta"
-          style={{ marginBottom: "32px", flexDirection: isRtl ? "row-reverse" : "row" }}
-          onClick={() => navigate("/pos")}
+          style={{
+            marginBottom: "32px",
+            flexDirection: isRtl ? "row-reverse" : "row",
+            opacity: isLocked ? 0.4 : 1,
+            cursor: isLocked ? "not-allowed" : "pointer"
+          }}
+          onClick={() => {
+            if (isLocked) {
+              toast.error("Votre licence a expiré. Veuillez la renouveler dans les paramètres.");
+              return;
+            }
+            navigate("/pos");
+          }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
           {t("common.sidebar.new_transaction")}
@@ -68,36 +84,42 @@ export function Sidebar() {
           overflowY: "auto",
         }}
       >
-        {NAV_ITEMS.filter((item) => can(item.permission)).map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `nav-item${isActive ? " active" : ""}`
-            }
-            style={{
-              flexDirection: isRtl ? "row-reverse" : "row",
-              textAlign: isRtl ? "right" : "left",
-            }}
-          >
-            {({ isActive }) => (
-              <>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "22px",
-                    fontVariationSettings: isActive
-                      ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
-                      : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                  }}
-                >
-                  {item.icon}
-                </span>
-                <span>{t(item.key)}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
+        {NAV_ITEMS.filter((item) => can(item.permission)).map((item) => {
+          const isItemDisabled = isLocked && item.path !== "/settings";
+          return (
+            <NavLink
+              key={item.path}
+              to={isItemDisabled ? "#" : item.path}
+              className={({ isActive }) =>
+                `nav-item${isActive ? " active" : ""}`
+              }
+              style={{
+                flexDirection: isRtl ? "row-reverse" : "row",
+                textAlign: isRtl ? "right" : "left",
+                opacity: isItemDisabled ? 0.35 : 1,
+                pointerEvents: isItemDisabled ? "none" : "auto",
+                cursor: isItemDisabled ? "not-allowed" : "pointer",
+              }}
+            >
+              {({ isActive }) => (
+                <>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      fontSize: "22px",
+                      fontVariationSettings: isActive
+                        ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                        : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                    }}
+                  >
+                    {item.icon}
+                  </span>
+                  <span>{t(item.key)}</span>
+                </>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* ── Footer ── */}

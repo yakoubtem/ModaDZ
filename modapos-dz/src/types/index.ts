@@ -872,5 +872,25 @@ export interface PaginatedLabelHistory {
   pageSize: number;
 }
 
+// ─── License System Types ──────────────────────────────────────
+export interface License {
+  id: number;
+  licenseKey: string;
+  customerName: string;
+  businessName: string;
+  phone: string;
+  email: string;
+  plan: "trial7" | "trial30" | "monthly" | "yearly" | "lifetime";
+  activatedAt: string;
+  expiresAt: string;
+  isActive: boolean;
+  machineId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type LicenseState = "loading" | "unlicensed" | "valid" | "warning" | "expired" | "expired_grace" | "locked";
+
+
 
 

@@ -1,0 +1,109 @@
+{
+  "title": "Gestion de Licence",
+  "subtitle": "Informations d'activation, validité et support de ModaDZ",
+  "activation": {
+    "title": "Activation de ModaDZ",
+    "subtitle": "Activez votre logiciel de caisse pour commencer à gérer votre commerce.",
+    "trial_subtitle": "Ou commencez une période d'essai gratuite sans engagement.",
+    "fields": {
+      "businessName": "Nom du commerce",
+      "customerName": "Nom du propriétaire",
+      "phone": "Numéro de téléphone",
+      "email": "Adresse e-mail",
+      "plan": "Forfait choisi",
+      "licenseKey": "Clé de licence (Format: MDZ-...)"
+    },
+    "placeholders": {
+      "business": "Boutique ModaDZ DZ",
+      "owner": "Mohamed El-Amine",
+      "phone": "0555 12 34 56",
+      "email": "contact@boutique.com",
+      "key": "MDZ-PRO-2026-XXXX-XXXX"
+    },
+    "buttons": {
+      "activate": "Activer le logiciel",
+      "startTrial": "Démarrer l'essai gratuit",
+      "exit": "Quitter l'application"
+    },
+    "alerts": {
+      "trialUsed": "Une période d'essai a déjà été activée sur cet ordinateur.",
+      "invalidKey": "Clé de licence invalide ou corrompue.",
+      "success": "Activation réussie ! Bienvenue sur ModaDZ."
+    }
+  },
+  "info": {
+    "title": "Licence logicielle",
+    "status": "Statut de licence",
+    "business": "Commerce activé",
+    "owner": "Propriétaire",
+    "key": "Clé d'activation",
+    "plan": "Forfait actif",
+    "activatedAt": "Date d'activation",
+    "expiresAt": "Date d'expiration",
+    "daysRemaining": "Jours restants",
+    "machineId": "Identifiant de la machine (Machine ID)",
+    "days": "{count} jour(s)",
+    "never": "Jamais",
+    "renewBtn": "Renouveler la licence",
+    "renewTitle": "Renouvellement de Licence",
+    "renewDesc": "Entrez votre nouvelle clé de licence ModaDZ pour prolonger la validité de votre système.",
+    "renewSubmit": "Appliquer la nouvelle clé",
+    "renewSuccess": "Votre licence a été renouvelée avec succès !"
+  },
+  "status": {
+    "active": "Active",
+    "expiringSoon": "Expire bientôt",
+    "expired": "Expirée",
+    "locked": "Verrouillée"
+  },
+  "plans": {
+    "trial7": "Essai 7 Jours",
+    "trial30": "Essai 30 Jours",
+    "monthly": "Mensuelle",
+    "yearly": "Annuelle",
+    "lifetime": "À vie (Licence permanente)"
+  },
+  "locked": {
+    "title": "Accès Verrouillé",
+    "desc": "Votre licence d'utilisation ModaDZ a expiré ou n'est plus valide.",
+    "contact": "Veuillez contacter le support de ModaDZ pour obtenir ou renouveler votre clé.",
+    "support": "Support Technique ModaDZ",
+    "phone": "Téléphone : {phone}",
+    "email": "E-mail : {email}",
+    "machineIdLabel": "Votre Machine ID à communiquer :",
+    "renewBtn": "Entrer une nouvelle clé"
+  },
+  "banners": {
+    "expired_grace": "Votre licence a expiré. Période de grâce : {days} jour(s) restant(s) avant verrouillage.",
+    "warning": "Votre licence expire dans {days} jour(s). Pensez à la renouveler."
+  },
+  "generator": {
+    "title": "Générateur de Licences",
+    "subtitle": "Outil interne pour générer des clés de licence client ModaDZ.",
+    "fields": {
+      "customer": "Nom du client",
+      "plan": "Forfait client",
+      "expiryDate": "Date d'expiration"
+    },
+    "buttons": {
+      "generate": "Générer la clé",
+      "copy": "Copier la clé",
+      "export": "Exporter en PDF"
+    },
+    "table": {
+      "key": "Clé générée",
+      "customer": "Client",
+      "plan": "Forfait",
+      "expiry": "Expiration"
+    },
+    "pdf": {
+      "title": "CERTIFICAT D'ACTIVATION MODADZ",
+      "desc": "Conservez précieusement ces informations pour activer votre logiciel ModaDZ POS.",
+      "client": "Client : {client}",
+      "key": "Clé d'activation : {key}",
+      "plan": "Forfait : {plan}",
+      "expiry": "Date limite d'activation : {expiry}",
+      "instruction": "Instructions : Ouvrez le logiciel, entrez vos informations de commerce et collez la clé ci-dessus."
+    }
+  }
+}

@@ -1,28 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GeneralSettings } from "./components/GeneralSettings";
 import { BackupSettings } from "./components/BackupSettings";
 import { UsersSettings } from "../users/UsersSettings";
+import { LicenseSettings } from "./components/LicenseSettings";
 import { useAuth } from "@/modules/auth/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLicense } from "@/contexts/LicenseContext";
 
-type Tab = "general" | "backup" | "users";
+type Tab = "general" | "backup" | "users" | "license";
 
 const TABS: { id: Tab; icon: string; adminOnly?: boolean }[] = [
   { id: "general",  icon: "store" },
   { id: "backup",   icon: "hard_drive" },
   { id: "users",    icon: "shield",   adminOnly: true },
+  { id: "license",  icon: "verified" },
 ];
 
 export function SettingsPage() {
   const { can } = useAuth();
   const { t, isRtl } = useTranslation();
-  const [activeTab, setActiveTab] = useState<Tab>("general");
+  const { licenseState } = useLicense();
+  const [activeTab, setActiveTab] = useState<Tab>(
+    licenseState === "locked" || licenseState === "expired_grace" ? "license" : "general"
+  );
+
+  useEffect(() => {
+    if (licenseState === "locked" || licenseState === "expired_grace") {
+      setActiveTab("license");
+    }
+  }, [licenseState]);
 
   const getTabLabel = (id: Tab) => {
     switch (id) {
       case "general": return t("settings.tabs.store");
       case "backup": return t("settings.tabs.backup");
       case "users": return t("settings.tabs.users");
+      case "license": return t("license.title");
       default: return "";
     }
   };
@@ -91,6 +104,7 @@ export function SettingsPage() {
           <div style={{ display: "flex", gap: "32px", borderBottom: "1px solid rgba(208,197,175,0.3)", flexDirection: isRtl ? "row-reverse" : "row" }}>
             {TABS.map((tab) => {
               if (tab.adminOnly && !can("users.manage")) return null;
+              if ((licenseState === "locked" || licenseState === "expired_grace") && tab.id !== "license") return null;
               const isActive = activeTab === tab.id;
               return (
                 <button
@@ -127,7 +141,7 @@ export function SettingsPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "8fr 4fr",
+            gridTemplateColumns: licenseState === "locked" || licenseState === "expired_grace" ? "1fr" : "8fr 4fr",
             gap: "var(--space-card-gap)",
           }}
         >
@@ -136,95 +150,100 @@ export function SettingsPage() {
             {activeTab === "general" && <GeneralSettings />}
             {activeTab === "backup" && <BackupSettings />}
             {activeTab === "users" && can("users.manage") && <UsersSettings />}
+            {activeTab === "license" && <LicenseSettings />}
           </div>
 
           {/* Sticky actions + tip column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-card-gap)" }}>
-            <div
-              style={{
-                position: "sticky",
-                top: 100,
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--space-card-gap)",
-              }}
-            >
-              {/* Save card */}
+          {licenseState !== "locked" && licenseState !== "expired_grace" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-card-gap)" }}>
               <div
                 style={{
-                  background: "var(--color-surface-container-low)",
-                  border: "1px solid rgba(208,197,175,0.3)",
-                  borderRadius: "var(--radius-xl)",
-                  padding: "24px",
-                  textAlign: isRtl ? "right" : "left",
+                  position: "sticky",
+                  top: 100,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-card-gap)",
                 }}
               >
-                <h3
-                  style={{
-                    fontSize: "var(--text-label-md)",
-                    fontWeight: "var(--fw-label-md)",
-                    letterSpacing: "var(--ls-label-md)",
-                    color: "var(--color-on-surface)",
-                    textTransform: "uppercase",
-                    marginBottom: "8px",
-                  }}
-                >
-                  {t("settings.pending_changes.title")}
-                </h3>
-                <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", marginBottom: "24px" }}>
-                  {t("settings.pending_changes.desc")}
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <button className="btn-primary" style={{ justifyContent: "center", width: "100%", padding: "16px" }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
-                    {t("settings.pending_changes.save_btn")}
-                  </button>
-                  <button className="btn-border" style={{ justifyContent: "center", width: "100%", padding: "12px" }}>
-                    {t("settings.pending_changes.cancel_btn")}
-                  </button>
-                </div>
-              </div>
+                {/* Save card */}
+                {activeTab !== "license" && (
+                  <div
+                    style={{
+                      background: "var(--color-surface-container-low)",
+                      border: "1px solid rgba(208,197,175,0.3)",
+                      borderRadius: "var(--radius-xl)",
+                      padding: "24px",
+                      textAlign: isRtl ? "right" : "left",
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: "var(--text-label-md)",
+                        fontWeight: "var(--fw-label-md)",
+                        letterSpacing: "var(--ls-label-md)",
+                        color: "var(--color-on-surface)",
+                        textTransform: "uppercase",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {t("settings.pending_changes.title")}
+                    </h3>
+                    <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", marginBottom: "24px" }}>
+                      {t("settings.pending_changes.desc")}
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <button className="btn-primary" style={{ justifyContent: "center", width: "100%", padding: "16px" }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
+                        {t("settings.pending_changes.save_btn")}
+                      </button>
+                      <button className="btn-border" style={{ justifyContent: "center", width: "100%", padding: "12px" }}>
+                        {t("settings.pending_changes.cancel_btn")}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-              {/* Tip card */}
-              <div
-                style={{
-                  background: "rgba(212,175,55,0.08)",
-                  border: "1px solid rgba(115,92,0,0.2)",
-                  borderRadius: "var(--radius-xl)",
-                  padding: "24px",
-                  position: "relative",
-                  overflow: "hidden",
-                  textAlign: isRtl ? "right" : "left",
-                }}
-              >
+                {/* Tip card */}
                 <div
                   style={{
-                    position: "absolute",
-                    right: isRtl ? "auto" : -32,
-                    left: isRtl ? -32 : "auto",
-                    top: -32,
-                    width: 96,
-                    height: 96,
-                    background: "rgba(115,92,0,0.2)",
-                    filter: "blur(24px)",
-                    borderRadius: "50%",
-                    pointerEvents: "none",
+                    background: "rgba(212,175,55,0.08)",
+                    border: "1px solid rgba(115,92,0,0.2)",
+                    borderRadius: "var(--radius-xl)",
+                    padding: "24px",
+                    position: "relative",
+                    overflow: "hidden",
+                    textAlign: isRtl ? "right" : "left",
                   }}
-                />
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", position: "relative", flexDirection: isRtl ? "row-reverse" : "row" }}>
-                  <span className="material-symbols-outlined" style={{ color: "var(--color-primary)", marginTop: 2, flexShrink: 0 }}>lightbulb</span>
-                  <div>
-                    <h4 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-on-surface)", marginBottom: "4px" }}>
-                      {t("settings.tip.title")}
-                    </h4>
-                    <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", lineHeight: "var(--lh-body-sm)" }}>
-                      {t("settings.tip.desc")}
-                    </p>
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: isRtl ? "auto" : -32,
+                      left: isRtl ? -32 : "auto",
+                      top: -32,
+                      width: 96,
+                      height: 96,
+                      background: "rgba(115,92,0,0.2)",
+                      filter: "blur(24px)",
+                      borderRadius: "50%",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", position: "relative", flexDirection: isRtl ? "row-reverse" : "row" }}>
+                    <span className="material-symbols-outlined" style={{ color: "var(--color-primary)", marginTop: 2, flexShrink: 0 }}>lightbulb</span>
+                    <div>
+                      <h4 style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-on-surface)", marginBottom: "4px" }}>
+                        {t("settings.tip.title")}
+                      </h4>
+                      <p style={{ fontSize: "var(--text-body-sm)", color: "var(--color-on-surface-variant)", lineHeight: "var(--lh-body-sm)" }}>
+                        {t("settings.tip.desc")}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
