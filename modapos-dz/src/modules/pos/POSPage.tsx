@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { usePOSSearch } from "./hooks/usePOSSearch";
 import { useCategories } from "@/modules/products/hooks/useCategories";
 import { ProductSearch } from "./components/ProductSearch";
@@ -10,6 +10,10 @@ import { useCartStore, cartSelectors } from "@/store/cartStore";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import type { Product } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useAuth } from "@/modules/auth/AuthContext";
+import { useIPC } from "@/hooks/useIPC";
+import { OpenSessionModal } from "@/modules/cashRegister/components/OpenSessionModal";
+import { toastSuccess, toastError } from "@/components/ui/toast";
 
 export function POSPage() {
   const { query, setQuery, products, isSearching, clearSearch, categoryId, setCategoryId } = usePOSSearch();
@@ -18,6 +22,42 @@ export function POSPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { t, isRtl } = useTranslation();
+
+  const { user } = useAuth();
+  const api = useIPC();
+  const [activeSession, setActiveSession] = useState<any | null>(null);
+  const [isActiveLoading, setIsActiveLoading] = useState(false);
+  const [isOpenSessionOpen, setIsOpenSessionOpen] = useState(false);
+
+  const fetchActiveSession = useCallback(async () => {
+    if (!user) return;
+    setIsActiveLoading(true);
+    try {
+      const session = await api<any>("cashRegister:getActiveSession", { userId: user.id });
+      setActiveSession(session);
+    } catch (err) {
+      console.error("Failed to load active session:", err);
+    } finally {
+      setIsActiveLoading(false);
+    }
+  }, [user, api]);
+
+  useEffect(() => {
+    fetchActiveSession();
+  }, [fetchActiveSession]);
+
+  const handleOpenSessionSubmit = async (openingBalance: number, notes?: string) => {
+    if (!user) return false;
+    try {
+      await api("cashRegister:openSession", { userId: user.id, openingBalance, notes });
+      toastSuccess(t("cashRegister.toasts.open_success", { defaultValue: "Caisse ouverte avec succès !" }));
+      await fetchActiveSession();
+      return true;
+    } catch (err: any) {
+      toastError(err.message || t("cashRegister.toasts.error_open", { defaultValue: "Erreur lors de l'ouverture de la caisse" }));
+      return false;
+    }
+  };
 
   const handleEnterOnSearch = useCallback(() => {
     if (products.length === 1) {
@@ -65,6 +105,52 @@ export function POSPage() {
           overflow: "hidden",
         }}
       >
+        {/* Session Warning Banner */}
+        {!activeSession && !isActiveLoading && (
+          <div
+            style={{
+              background: "rgba(186,26,26,0.06)",
+              borderBottom: "1.5px solid rgba(186,26,26,0.15)",
+              padding: "10px 24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexDirection: isRtl ? "row-reverse" : "row",
+              fontSize: 13,
+              color: "var(--color-error)",
+              fontWeight: 500,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: isRtl ? "row-reverse" : "row" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>warning</span>
+              <span>
+                {t("cashRegister.toasts.error_no_session", { defaultValue: "Veuillez d'abord ouvrir la caisse." })} Les ventes en espèces seront bloquées.
+              </span>
+            </div>
+            <button
+              onClick={() => setIsOpenSessionOpen(true)}
+              style={{
+                background: "var(--color-error)",
+                color: "white",
+                border: "none",
+                borderRadius: "var(--radius-md)",
+                padding: "6px 12px",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontFamily: "var(--font-body)",
+                boxShadow: "var(--shadow-soft)",
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>lock_open</span>
+              {t("cashRegister.open_modal.title", { defaultValue: "Ouvrir la caisse" })}
+            </button>
+          </div>
+        )}
+
         {/* Search + filter bar */}
         <div
           style={{
@@ -152,7 +238,21 @@ export function POSPage() {
       <VariantPicker product={selectedProduct} onClose={() => setSelectedProduct(null)} />
 
       {/* ── Checkout modal ── */}
-      <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        activeSession={activeSession}
+        isActiveLoading={isActiveLoading}
+        onSessionOpened={(session) => setActiveSession(session)}
+      />
+
+      {/* ── Open session modal ── */}
+      <OpenSessionModal
+        isOpen={isOpenSessionOpen}
+        onClose={() => setIsOpenSessionOpen(false)}
+        onSubmit={handleOpenSessionSubmit}
+      />
     </div>
   );
 }
+

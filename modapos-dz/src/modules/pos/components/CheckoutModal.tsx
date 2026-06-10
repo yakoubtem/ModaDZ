@@ -13,6 +13,7 @@ import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { toastError, toastSuccess } from "@/components/ui/toast";
 import { useTranslation } from "@/hooks/useTranslation";
+import { OpenSessionModal } from "@/modules/cashRegister/components/OpenSessionModal";
 
 // ─── Printer width preference (localStorage) ─────────────────────────────────
 const PRINTER_WIDTH_KEY = "moda_printer_width";
@@ -45,11 +46,14 @@ const PAYMENT_METHODS: { value: PaymentMethod; label: string; icon: string }[] =
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
+  activeSession: any | null;
+  isActiveLoading: boolean;
+  onSessionOpened: (session: any) => void;
 }
 
 type Phase = "form" | "receipt";
 
-export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+export function CheckoutModal({ isOpen, onClose, activeSession, isActiveLoading, onSessionOpened }: CheckoutModalProps) {
   const { t, isRtl } = useTranslation();
   const api = useIPC();
   const { user } = useAuth();
@@ -77,6 +81,20 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [amountPaid, setAmountPaid] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpenSessionOpen, setIsOpenSessionOpen] = useState(false);
+
+  const handleOpenSessionSubmit = async (openingBalance: number, notes?: string) => {
+    if (!user) return false;
+    try {
+      const session = await api<any>("cashRegister:openSession", { userId: user.id, openingBalance, notes });
+      toastSuccess(t("cashRegister.toasts.open_success", { defaultValue: "Caisse ouverte avec succès !" }));
+      onSessionOpened(session);
+      return true;
+    } catch (err: any) {
+      toastError(err.message || t("cashRegister.toasts.error_open", { defaultValue: "Erreur lors de l'ouverture de la caisse" }));
+      return false;
+    }
+  };
 
   // Customer search
   const [customerQuery, setCustomerQuery] = useState("");
@@ -143,7 +161,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const canSubmit =
     items.length > 0 &&
     dbAmountPaid >= 0 &&
-    !missingCustomer;
+    !missingCustomer &&
+    (paymentMethod !== "cash" || activeSession !== null) &&
+    !isSubmitting;
 
   // ── Checkout handler ────────────────────────────────────────────────────────
   const handleConfirm = async () => {
@@ -544,7 +564,62 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </div>
 
             {/* ── Amount paid (cash only) ── */}
-            {paymentMethod === "cash" && (
+            {paymentMethod === "cash" && !activeSession && !isActiveLoading && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "24px",
+                  borderRadius: "var(--radius-lg)",
+                  border: "1.5px dashed var(--color-danger)",
+                  background: "rgba(186,26,26,0.03)",
+                  textAlign: "center",
+                  gap: 16,
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "var(--radius-full)",
+                    background: "rgba(186,26,26,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-danger)",
+                  }}
+                >
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--color-danger)", marginBottom: 4 }}>
+                    {t("cashRegister.toasts.error_no_session", { defaultValue: "Veuillez d'abord ouvrir la caisse." })}
+                  </h4>
+                  <p style={{ fontSize: 13, color: "var(--color-secondary)", maxWidth: 360, margin: "0 auto", lineHeight: 1.5 }}>
+                    Veuillez ouvrir votre session de caisse afin de pouvoir enregistrer des règlements en espèces.
+                  </p>
+                </div>
+                <Button
+                  variant="primary"
+                  onClick={() => setIsOpenSessionOpen(true)}
+                  className="h-10 text-xs font-semibold rounded-[var(--radius-md)] gap-2"
+                  style={{ background: "var(--color-danger)", borderColor: "var(--color-danger)" }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>lock_open</span>
+                  {t("cashRegister.open_modal.title", { defaultValue: "Ouvrir la caisse" })}
+                </Button>
+              </div>
+            )}
+
+            {paymentMethod === "cash" && isActiveLoading && (
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 24 }}>
+                <span className="text-sm text-[var(--color-text-muted)]">Chargement de la session de caisse...</span>
+              </div>
+            )}
+
+            {paymentMethod === "cash" && activeSession && (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <div>
                   <label
@@ -781,6 +856,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           }
           return success;
         }}
+      />
+
+      <OpenSessionModal
+        isOpen={isOpenSessionOpen}
+        onClose={() => setIsOpenSessionOpen(false)}
+        onSubmit={handleOpenSessionSubmit}
       />
     </>
   );
