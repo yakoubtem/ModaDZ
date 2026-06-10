@@ -75,7 +75,6 @@ export function Sidebar() {
 
       {/* ── Navigation ── */}
       <nav
-        className="no-scrollbar"
         style={{
           flex: 1,
           display: "flex",

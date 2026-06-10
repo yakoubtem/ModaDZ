@@ -192,7 +192,6 @@ export function POSPage() {
           {/* Category chips — driven from DB */}
           <div
             style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px", flexDirection: isRtl ? "row-reverse" : "row" }}
-            className="no-scrollbar"
           >
             {/* "All products" chip */}
             <button
