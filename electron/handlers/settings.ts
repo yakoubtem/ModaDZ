@@ -2,11 +2,14 @@ import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
 
+import { getCurrentUserId } from "../helpers/rbac";
+
 async function requireAdmin(userId?: number) {
-  if (!userId) throw new Error("Accès refusé: non authentifié");
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user || user.role !== "admin") {
-    throw new Error("Accès refusé: privilèges administrateur requis");
+  const finalUserId = userId !== undefined ? userId : getCurrentUserId();
+  if (!finalUserId) throw new Error("Permission denied");
+  const user = await prisma.user.findUnique({ where: { id: finalUserId } });
+  if (!user || user.role !== "admin" || !user.isActive) {
+    throw new Error("Permission denied");
   }
 }
 

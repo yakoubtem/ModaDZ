@@ -22,6 +22,8 @@ model User {
   supplierPayments SupplierPayment[]
   cashSessions     CashSession[]
   labelPrints      LabelPrintHistory[]
+
+  @@index([createdAt])
 }
 
 // ─── Categories ──────────────────────────────────────────
@@ -51,6 +53,10 @@ model Product {
   labelPrints   LabelPrintHistory[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([sku])
 }
 
 model ProductVariant {
@@ -63,6 +69,8 @@ model ProductVariant {
   barcode       String?
   saleItems     SaleItem[]
   purchaseItems PurchaseItem[]
+
+  @@index([barcode])
 }
 
 // ─── Customers ────────────────────────────────────────────
@@ -76,20 +84,27 @@ model Customer {
   createdAt    DateTime       @default(now())
   sales        Sale[]
   debtPayments DebtPayment[]
+
+  @@index([phone])
+  @@index([name])
+  @@index([createdAt])
 }
 
 // ─── Debt Payments ────────────────────────────────────────
 
 model DebtPayment {
-  id         Int      @id @default(autoincrement())
-  customerId Int
-  saleId     Int?
-  amount     Float
-  method     String   @default("cash") // cash | card | transfer
-  note       String?
-  createdAt  DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  customerId  Int
+  saleId      Int?
+  amount      Float
+  method      String   @default("cash") // cash | card | transfer
+  note        String?
+  allocations String?
+  createdAt   DateTime @default(now())
 
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
 }
 
 // ─── Sales ────────────────────────────────────────────────
@@ -110,6 +125,8 @@ model Sale {
   notes          String?
   createdAt      DateTime   @default(now())
   items          SaleItem[]
+
+  @@index([createdAt])
 }
 
 model SaleItem {
@@ -121,6 +138,8 @@ model SaleItem {
   quantity  Int
   unitPrice Float
   discount  Float          @default(0)
+  costPrice Float          @default(0)
+  profit    Float          @default(0)
 }
 // --- Settings ----------------------------------------------
 model Setting {
@@ -135,6 +154,8 @@ model Backup {
   size      Int
   type      String   @default("manual") // manual | auto
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 // --- Expenses ----------------------------------------------
@@ -151,6 +172,10 @@ model Expense {
   expenseDate   DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([expenseDate])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 // --- Expense Categories ------------------------------------
@@ -175,6 +200,9 @@ model Supplier {
   updatedAt    DateTime  @updatedAt
   purchases    Purchase[]
   supplierPayments SupplierPayment[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 // ─── Purchases ────────────────────────────────────────────
@@ -191,6 +219,8 @@ model Purchase {
   createdAt       DateTime       @default(now())
   items           PurchaseItem[]
   supplierPayments SupplierPayment[]
+
+  @@index([createdAt])
 }
 
 model PurchaseItem {
@@ -215,6 +245,8 @@ model ActivityLog {
   entityId    String?
   description String
   createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 // ─── Supplier Payments ────────────────────────────────────
@@ -233,6 +265,8 @@ model SupplierPayment {
   supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   purchase      Purchase? @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
   user          User     @relation(fields: [createdBy], references: [id])
+
+  @@index([createdAt])
 }
 
 // ─── Cash Register Management ──────────────────────────────
@@ -262,6 +296,8 @@ model CashMovement {
   createdAt DateTime     @default(now())
   createdBy Int          // links to User.id
   session   CashSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
 }
 
 model LabelPrintHistory {
@@ -276,6 +312,8 @@ model LabelPrintHistory {
 
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([printedAt])
 }
 
 // ─── License System ──────────────────────────────────────────
@@ -293,5 +331,7 @@ model License {
   machineId    String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-}
 
+  @@index([createdAt])
+  @@index([updatedAt])
+}

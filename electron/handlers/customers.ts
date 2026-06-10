@@ -1,6 +1,7 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { calculateCustomerDebt } from "../helpers/finance";
 
 // ─── Helper: compute customer stats from their sales ─────
 function computeStats(sales: Array<{ total: number; amountPaid: number; createdAt: Date }>) {
@@ -38,7 +39,7 @@ export function registerCustomerHandlers(ipcMain: IpcMain) {
           include: {
             _count: { select: { sales: true } },
             sales: {
-              select: { total: true, amountPaid: true, createdAt: true },
+              select: { total: true, amountPaid: true, createdAt: true, status: true },
               orderBy: { createdAt: "desc" },
             },
           },
@@ -49,10 +50,18 @@ export function registerCustomerHandlers(ipcMain: IpcMain) {
         prisma.customer.count({ where }),
       ]);
 
-      const customers = rawCustomers.map(({ sales, ...c }) => ({
-        ...c,
-        ...computeStats(sales),
-      }));
+      const customers = await Promise.all(
+        rawCustomers.map(async ({ sales, ...c }) => {
+          const activeSales = sales.filter((s) => s.status !== "refunded");
+          const stats = computeStats(activeSales);
+          const debt = await calculateCustomerDebt(c.id);
+          return {
+            ...c,
+            ...stats,
+            debt,
+          };
+        })
+      );
 
       return { customers, total, page, pageSize };
     }
@@ -81,13 +90,16 @@ export function registerCustomerHandlers(ipcMain: IpcMain) {
     });
     if (!customer) return null;
 
+    const activeSales = customer.sales.filter((s) => s.status !== "refunded");
     const stats = computeStats(
-      customer.sales.map((s) => ({
+      activeSales.map((s) => ({
         total: s.total,
         amountPaid: s.amountPaid,
         createdAt: s.createdAt,
       }))
     );
+    const debt = await calculateCustomerDebt(id);
+    stats.debt = debt;
 
     return { ...customer, stats };
   });

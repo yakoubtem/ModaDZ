@@ -1,6 +1,7 @@
 import { IpcMain, app } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { requirePermission } from "../helpers/rbac";
 import os from "os";
 import crypto from "crypto";
 import { execSync } from "child_process";
@@ -405,6 +406,7 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
     expiryDate: string;
     machineId: string;
   }) => {
+    await requirePermission(undefined, "license:generateKey");
     try {
       const expiry = new Date(params.expiryDate);
       const key = generateLicenseKey(params.plan, expiry, params.machineId);

@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { requirePermission } from "../helpers/rbac";
 
 interface GetAllParams {
   page?: number;
@@ -103,6 +104,9 @@ export function registerProductHandlers(ipcMain: IpcMain) {
 
         const createdVariants = [];
         for (const v of variants ?? []) {
+          if (v.stock < 0) {
+            throw new Error("Le stock ne peut pas être négatif.");
+          }
           const variant = await tx.productVariant.create({
             data: {
               productId: product.id,
@@ -191,6 +195,9 @@ export function registerProductHandlers(ipcMain: IpcMain) {
           const updatedVariants = [];
           // Upsert submitted variants
           for (const variant of variants ?? []) {
+            if (variant.stock < 0) {
+              throw new Error("Le stock ne peut pas être négatif.");
+            }
             if (variant.id) {
               let finalBarcode = variant.barcode && variant.barcode.trim() ? variant.barcode.trim() : null;
               if (!finalBarcode) {
@@ -262,6 +269,7 @@ export function registerProductHandlers(ipcMain: IpcMain) {
 
   // ─── Soft Delete ─────────────────────────────────────────
   ipcMain.handle("products:delete", async (_e, id: number, currentUserId?: number) => {
+    await requirePermission(currentUserId, "products.delete");
     const product = await prisma.product.update({
       where: { id },
       data: { isActive: false },

@@ -22,6 +22,18 @@ export function registerInventoryHandlers(ipcMain: IpcMain) {
   ipcMain.handle(
     "inventory:adjust",
     async (_e, variantId: number, quantity: number) => {
+      if (quantity === 0) {
+        throw new Error("La quantité d'ajustement ne peut pas être égale à 0.");
+      }
+      const variant = await prisma.productVariant.findUnique({
+        where: { id: variantId },
+        include: { product: true },
+      });
+      if (!variant) throw new Error("Variante introuvable");
+      if (variant.stock + quantity < 0) {
+        throw new Error("Le stock résultant ne peut pas être négatif.");
+      }
+
       return prisma.productVariant.update({
         where: { id: variantId },
         data: { stock: { increment: quantity } },
@@ -33,6 +45,9 @@ export function registerInventoryHandlers(ipcMain: IpcMain) {
   ipcMain.handle(
     "inventory:setStock",
     async (_e, variantId: number, stock: number) => {
+      if (stock < 0) {
+        throw new Error("Le stock ne peut pas être négatif.");
+      }
       return prisma.productVariant.update({
         where: { id: variantId },
         data: { stock },

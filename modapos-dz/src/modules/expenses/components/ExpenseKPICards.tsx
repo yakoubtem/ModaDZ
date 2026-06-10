@@ -130,7 +130,7 @@ interface ExpenseKPICardsProps {
 
 export function ExpenseKPICards({ summary, isLoading }: ExpenseKPICardsProps) {
   const { t } = useTranslation();
-  const netProfit = summary ? summary.totalSalesMonth - summary.monthTotal : 0;
+  const netProfit = summary ? summary.netProfitMonth : 0;
   const isPositive = netProfit >= 0;
 
   return (

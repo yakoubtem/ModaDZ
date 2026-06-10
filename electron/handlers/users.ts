@@ -1,17 +1,24 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
+import { setCurrentUserId, getCurrentUserId } from "../helpers/rbac";
 
 // Helper for IPC protection
 async function requireAdmin(userId?: number) {
-  if (!userId) throw new Error("Accès refusé: non authentifié");
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user || user.role !== "admin") {
-    throw new Error("Accès refusé: privilèges administrateur requis");
+  const finalUserId = userId !== undefined ? userId : getCurrentUserId();
+  if (!finalUserId) throw new Error("Permission denied");
+  const user = await prisma.user.findUnique({ where: { id: finalUserId } });
+  if (!user || user.role !== "admin" || !user.isActive) {
+    throw new Error("Permission denied");
   }
 }
 
 export function registerUserHandlers(ipcMain: IpcMain) {
+  ipcMain.handle("auth:setCurrentUser", (_e, userId: number | null) => {
+    setCurrentUserId(userId);
+    return true;
+  });
+
   ipcMain.handle("users:getAll", async () => {
     return prisma.user.findMany({
       where: { isActive: true },

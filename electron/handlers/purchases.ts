@@ -157,6 +157,12 @@ export function registerPurchaseHandlers(ipcMain: IpcMain) {
       throw new Error("Veuillez ajouter au moins un produit à l'achat.");
     }
 
+    for (const item of items) {
+      if (item.quantity <= 0) {
+        throw new Error("La quantité doit être supérieure à 0.");
+      }
+    }
+
     // Check unique reference
     const existingRef = await prisma.purchase.findUnique({
       where: { reference },
@@ -236,6 +242,16 @@ export function registerPurchaseHandlers(ipcMain: IpcMain) {
 
     const result = await prisma.$transaction(async (tx) => {
       // Deletion logic: decrease stock of variants that were incremented by the purchase
+      for (const item of purchase.items) {
+        const variant = await tx.productVariant.findUnique({
+          where: { id: item.variantId },
+        });
+        if (!variant) throw new Error("Variante introuvable");
+        if (variant.stock < item.quantity) {
+          throw new Error("Impossible de supprimer cet achat car cela créerait un stock négatif.");
+        }
+      }
+
       for (const item of purchase.items) {
         // Decrease stock back
         await tx.productVariant.update({

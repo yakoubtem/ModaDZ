@@ -4,6 +4,7 @@ import fs from "fs";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
 import { logAutomaticCashMovement } from "./cashRegister";
+import { requirePermission } from "../helpers/rbac";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -373,6 +374,7 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
   );
 
   ipcMain.handle("expenses:delete", async (_e, id: number, currentUserId?: number) => {
+    await requirePermission(currentUserId, "expenses.delete");
     const existing = await prisma.expense.findUnique({ where: { id } });
     if (!existing) throw new Error("Dépense introuvable");
 
@@ -491,6 +493,8 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       allExpensesMonth,
       monthSalesAgg,
       prevMonthSalesAgg,
+      monthSaleItems,
+      prevMonthSaleItems,
     ] = await Promise.all([
       prisma.expense.aggregate({ where: { expenseDate: { gte: startMonth } }, _sum: { amount: true } }),
       prisma.expense.aggregate({ where: { expenseDate: { gte: todayStart, lt: tomorrow } }, _sum: { amount: true } }),
@@ -503,6 +507,22 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       prisma.expense.findMany({ where: { expenseDate: { gte: startMonth } }, select: { category: true, amount: true } }),
       prisma.sale.aggregate({ where: { status: "completed", createdAt: { gte: startMonth } }, _sum: { total: true } }),
       prisma.sale.aggregate({ where: { status: "completed", createdAt: { gte: prevMonthStart, lte: prevMonthEnd } }, _sum: { total: true } }),
+      prisma.saleItem.findMany({
+        where: { sale: { status: "completed", createdAt: { gte: startMonth } } },
+        select: {
+          quantity: true,
+          costPrice: true,
+          variant: { select: { product: { select: { costPrice: true } } } },
+        },
+      }),
+      prisma.saleItem.findMany({
+        where: { sale: { status: "completed", createdAt: { gte: prevMonthStart, lte: prevMonthEnd } } },
+        select: {
+          quantity: true,
+          costPrice: true,
+          variant: { select: { product: { select: { costPrice: true } } } },
+        },
+      }),
     ]);
 
     // Compute top category
@@ -535,8 +555,18 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
 
     const totalSalesMonth = monthSalesAgg._sum.total ?? 0;
     const totalSalesPrevMonth = prevMonthSalesAgg._sum.total ?? 0;
-    const netProfitMonth = totalSalesMonth - monthTotal;
-    const netProfitPrevMonth = totalSalesPrevMonth - prevMonthTotal;
+
+    const monthCOGS = monthSaleItems.reduce((sum, item) => {
+      const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+      return sum + item.quantity * cost;
+    }, 0);
+    const netProfitMonth = totalSalesMonth - monthCOGS - monthTotal;
+
+    const prevMonthCOGS = prevMonthSaleItems.reduce((sum, item) => {
+      const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+      return sum + item.quantity * cost;
+    }, 0);
+    const netProfitPrevMonth = totalSalesPrevMonth - prevMonthCOGS - prevMonthTotal;
 
     return {
       monthTotal,
@@ -574,13 +604,24 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
 
     const sales = await prisma.sale.findMany({
       where: { status: "completed", createdAt: { gte: rangeStart, lte: rangeEnd } },
-      select: { total: true, createdAt: true },
+      select: {
+        total: true,
+        createdAt: true,
+        items: {
+          select: {
+            quantity: true,
+            costPrice: true,
+            variant: { select: { product: { select: { costPrice: true } } } },
+          },
+        },
+      },
       orderBy: { createdAt: "asc" },
     });
 
     const monthSeries = buildMonthSeries(rangeStart, rangeEnd);
     const expenseByMonth = new Map<string, number>();
     const revenueByMonth = new Map<string, number>();
+    const cogsByMonth = new Map<string, number>();
     const categoryMap = new Map<string, number>();
 
     expenses.forEach((exp) => {
@@ -594,6 +635,12 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       const d = new Date(sale.createdAt);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       revenueByMonth.set(key, (revenueByMonth.get(key) ?? 0) + sale.total);
+      
+      const saleCOGS = sale.items.reduce((sum, item) => {
+        const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+        return sum + item.quantity * cost;
+      }, 0);
+      cogsByMonth.set(key, (cogsByMonth.get(key) ?? 0) + saleCOGS);
     });
 
     const monthlyTrend = monthSeries.map((m) => ({
@@ -611,14 +658,25 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       expenses: Math.round(expenseByMonth.get(m.key) ?? 0),
     }));
 
-    const netProfitEvolution = monthSeries.map((m) => ({
-      label: m.label,
-      profit: Math.round((revenueByMonth.get(m.key) ?? 0) - (expenseByMonth.get(m.key) ?? 0)),
-    }));
+    const netProfitEvolution = monthSeries.map((m) => {
+      const rev = revenueByMonth.get(m.key) ?? 0;
+      const cogs = cogsByMonth.get(m.key) ?? 0;
+      const exp = expenseByMonth.get(m.key) ?? 0;
+      return {
+        label: m.label,
+        profit: Math.round(rev - cogs - exp),
+      };
+    });
 
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
     const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);
-    const netProfit = totalRevenue - totalExpenses;
+    const totalCOGS = sales.reduce((sum, s) => {
+      return sum + s.items.reduce((itemSum, item) => {
+        const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+        return itemSum + item.quantity * cost;
+      }, 0);
+    }, 0);
+    const netProfit = totalRevenue - totalCOGS - totalExpenses;
     const marginPct = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
     const profitability = {
       revenue: totalRevenue,

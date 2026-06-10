@@ -1,6 +1,9 @@
 import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logAutomaticCashMovement } from "./cashRegister";
+import { calculateCustomerDebt } from "../helpers/finance";
+import { requirePermission } from "../helpers/rbac";
+import { logActivity } from "./activityLogs";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -57,9 +60,7 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
     const debtors: number[] = [];
 
     for (const c of customers) {
-      const totalPurchases = c.sales.reduce((s, x) => s + x.total, 0);
-      const totalPaid = c.sales.reduce((s, x) => s + x.amountPaid, 0);
-      const debt = Math.max(0, totalPurchases - totalPaid);
+      const debt = await calculateCustomerDebt(c.id);
       if (debt > 0) {
         totalDebt += debt;
         debtorCount++;
@@ -143,18 +144,22 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
       });
 
       // Compute debt for each customer
-      let rows = rawCustomers.map((c) => {
-        const agg = aggregateSales(c.sales);
-        return {
-          id: c.id,
-          name: c.name,
-          phone: c.phone ?? null,
-          email: c.email ?? null,
-          createdAt: c.createdAt.toISOString(),
-          ...agg,
-          salesCount: c.sales.length,
-        };
-      });
+      let rows = await Promise.all(
+        rawCustomers.map(async (c) => {
+          const agg = aggregateSales(c.sales);
+          const currentDebt = await calculateCustomerDebt(c.id);
+          return {
+            id: c.id,
+            name: c.name,
+            phone: c.phone ?? null,
+            email: c.email ?? null,
+            createdAt: c.createdAt.toISOString(),
+            ...agg,
+            currentDebt,
+            salesCount: c.sales.length,
+          };
+        })
+      );
 
       // Apply filter
       switch (filter) {
@@ -245,7 +250,7 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
 
     const totalPurchases = customer.sales.reduce((s, x) => s + x.total, 0);
     const totalPaid = customer.sales.reduce((s, x) => s + x.amountPaid, 0);
-    const currentDebt = Math.max(0, totalPurchases - totalPaid);
+    const currentDebt = await calculateCustomerDebt(customerId);
 
     return {
       id: customer.id,
@@ -263,12 +268,11 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
     };
   });
 
-  // ─── debts:addPayment ───────────────────────────────────
-  // Creates a DebtPayment and applies FIFO allocation to Sale.amountPaid
   ipcMain.handle(
     "debts:addPayment",
     async (_e, payload: AddPaymentPayload) => {
       const { customerId, amount, method, note } = payload;
+      await requirePermission(payload.userId, "debts.payment");
 
       if (!customerId || amount <= 0) {
         throw new Error("Paramètres invalides");
@@ -287,6 +291,7 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
 
         let remaining = amount;
         let lastAppliedSaleId: number | null = null;
+        const allocationsArr: Array<{ saleId: number; amount: number }> = [];
 
         // Apply payment across sales until exhausted
         for (const sale of sales) {
@@ -301,6 +306,7 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
           });
           remaining -= toApply;
           lastAppliedSaleId = sale.id;
+          allocationsArr.push({ saleId: sale.id, amount: toApply });
         }
 
         // Create the DebtPayment record
@@ -311,6 +317,7 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
             amount,
             method,
             note: note ?? null,
+            allocations: JSON.stringify(allocationsArr),
           },
         });
 
@@ -323,7 +330,205 @@ export function registerDebtHandlers(ipcMain: IpcMain) {
           });
         }
 
+        await logActivity(
+          tx,
+          payload.userId,
+          "CREATE",
+          "DebtPayment",
+          String(payment.id),
+          `Nouveau règlement de dette d'un montant de ${amount} DZD pour le client #${customerId}`
+        );
+
         return payment;
+      });
+    }
+  );
+
+  // ─── debts:updatePayment ────────────────────────────────
+  ipcMain.handle(
+    "debts:updatePayment",
+    async (_e, payload: { id: number; amount: number; method: string; note?: string; currentUserId?: number }) => {
+      const { id, amount, method, note, currentUserId } = payload;
+      await requirePermission(currentUserId, "debts.manage");
+
+      if (amount <= 0) {
+        throw new Error("Le montant doit être supérieur à 0");
+      }
+
+      return prisma.$transaction(async (tx) => {
+        const payment = await tx.debtPayment.findUnique({
+          where: { id },
+        });
+        if (!payment) throw new Error("Paiement introuvable");
+
+        // 1. Rollback old allocations
+        if (payment.allocations) {
+          const allocs = JSON.parse(payment.allocations) as Array<{ saleId: number; amount: number }>;
+          for (const alloc of allocs) {
+            await tx.sale.update({
+              where: { id: alloc.saleId },
+              data: { amountPaid: { decrement: alloc.amount } },
+            });
+          }
+        } else {
+          // Fallback rollback: LIFO rollback
+          const sales = await tx.sale.findMany({
+            where: { customerId: payment.customerId, status: { not: "refunded" } },
+            orderBy: { createdAt: "desc" },
+          });
+          let toRevert = payment.amount;
+          for (const sale of sales) {
+            if (toRevert <= 0) break;
+            const applied = Math.min(toRevert, sale.amountPaid);
+            if (applied <= 0) continue;
+            await tx.sale.update({
+              where: { id: sale.id },
+              data: { amountPaid: { decrement: applied } },
+            });
+            toRevert -= applied;
+          }
+        }
+
+        // 2. Adjust cash register for rollback of old payment
+        if (payment.method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId || 1,
+            type: "cash_out",
+            amount: -payment.amount,
+            reason: `Correction Règlement dette client #${payment.customerId} (Annulation ancien)`,
+          });
+        }
+
+        // 3. Apply new allocations using FIFO
+        const sales = await tx.sale.findMany({
+          where: {
+            customerId: payment.customerId,
+            status: { not: "refunded" },
+          },
+          orderBy: { createdAt: "asc" }, // FIFO
+          select: { id: true, total: true, amountPaid: true },
+        });
+
+        let remaining = amount;
+        let lastAppliedSaleId: number | null = null;
+        const allocationsArr: Array<{ saleId: number; amount: number }> = [];
+
+        for (const sale of sales) {
+          if (remaining <= 0) break;
+          const saleDebt = Math.max(0, sale.total - sale.amountPaid);
+          if (saleDebt <= 0) continue;
+
+          const toApply = Math.min(remaining, saleDebt);
+          await tx.sale.update({
+            where: { id: sale.id },
+            data: { amountPaid: { increment: toApply } },
+          });
+          remaining -= toApply;
+          lastAppliedSaleId = sale.id;
+          allocationsArr.push({ saleId: sale.id, amount: toApply });
+        }
+
+        // 4. Update the DebtPayment record
+        const updated = await tx.debtPayment.update({
+          where: { id },
+          data: {
+            amount,
+            method,
+            note: note ?? null,
+            saleId: lastAppliedSaleId,
+            allocations: JSON.stringify(allocationsArr),
+          },
+        });
+
+        // 5. Adjust cash register for new payment
+        if (method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId || 1,
+            type: "cash_in",
+            amount: amount,
+            reason: `Correction Règlement dette client #${payment.customerId} (Nouveau)`,
+          });
+        }
+
+        // 6. Log Activity
+        await logActivity(
+          tx,
+          currentUserId,
+          "UPDATE",
+          "DebtPayment",
+          String(id),
+          `Modification du règlement de dette client #${payment.customerId} (Ancien montant: ${payment.amount} DZD, Nouveau: ${amount} DZD)`
+        );
+
+        return updated;
+      });
+    }
+  );
+
+  // ─── debts:deletePayment ────────────────────────────────
+  ipcMain.handle(
+    "debts:deletePayment",
+    async (_e, id: number, currentUserId?: number) => {
+      await requirePermission(currentUserId, "debts.manage");
+
+      return prisma.$transaction(async (tx) => {
+        const payment = await tx.debtPayment.findUnique({
+          where: { id },
+        });
+        if (!payment) throw new Error("Paiement introuvable");
+
+        // 1. Rollback allocations
+        if (payment.allocations) {
+          const allocs = JSON.parse(payment.allocations) as Array<{ saleId: number; amount: number }>;
+          for (const alloc of allocs) {
+            await tx.sale.update({
+              where: { id: alloc.saleId },
+              data: { amountPaid: { decrement: alloc.amount } },
+            });
+          }
+        } else {
+          // Fallback LIFO rollback
+          const sales = await tx.sale.findMany({
+            where: { customerId: payment.customerId, status: { not: "refunded" } },
+            orderBy: { createdAt: "desc" },
+          });
+          let toRevert = payment.amount;
+          for (const sale of sales) {
+            if (toRevert <= 0) break;
+            const applied = Math.min(toRevert, sale.amountPaid);
+            if (applied <= 0) continue;
+            await tx.sale.update({
+              where: { id: sale.id },
+              data: { amountPaid: { decrement: applied } },
+            });
+            toRevert -= applied;
+          }
+        }
+
+        // 2. Adjust Cash Register
+        if (payment.method === "cash") {
+          await logAutomaticCashMovement(tx, {
+            userId: currentUserId || 1,
+            type: "cash_out",
+            amount: -payment.amount,
+            reason: `Suppression Règlement dette client #${payment.customerId}`,
+          });
+        }
+
+        // 3. Delete from DB
+        await tx.debtPayment.delete({ where: { id } });
+
+        // 4. Log Activity
+        await logActivity(
+          tx,
+          currentUserId,
+          "DELETE",
+          "DebtPayment",
+          String(id),
+          `Suppression du règlement de dette d'un montant de ${payment.amount} DZD pour le client #${payment.customerId}`
+        );
+
+        return { success: true };
       });
     }
   );

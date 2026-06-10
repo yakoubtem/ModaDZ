@@ -2,6 +2,7 @@ import { IpcMain } from "electron";
 import { prisma } from "../db/client";
 import { logActivity } from "./activityLogs";
 import { logAutomaticCashMovement } from "./cashRegister";
+import { requirePermission } from "../helpers/rbac";
 
 // ─── Receipt number generator ─────────────────────────────
 function generateReceiptNumber(saleId: number): string {
@@ -160,11 +161,24 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         }
       }
 
-      // ── 2. Stock validation ──
+      // ── 2. Stock validation & Info gathering ──
+      const itemDetails: Array<{
+        variantId: number;
+        quantity: number;
+        unitPrice: number;
+        discount: number;
+        costPrice: number;
+        profit: number;
+      }> = [];
+
       for (const item of data.items) {
+        if (item.quantity <= 0) {
+          throw new Error("La quantité doit être supérieure à 0.");
+        }
+
         const variant = await tx.productVariant.findUnique({
           where: { id: item.variantId },
-          include: { product: { select: { name: true } } },
+          include: { product: { select: { name: true, costPrice: true } } },
         });
 
         if (!variant) {
@@ -177,10 +191,22 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
               `${variant.stock} disponible, ${item.quantity} demandé`
           );
         }
+
+        const costPrice = variant.product.costPrice ?? 0;
+        const profit = (item.unitPrice - costPrice) * item.quantity;
+
+        itemDetails.push({
+          variantId: item.variantId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discount: item.discount,
+          costPrice,
+          profit,
+        });
       }
 
       // ── 3. Decrement stock ──
-      for (const item of data.items) {
+      for (const item of itemDetails) {
         await tx.productVariant.update({
           where: { id: item.variantId },
           data: { stock: { decrement: item.quantity } },
@@ -200,11 +226,13 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
           amountPaid,
           notes: data.notes ?? null,
           items: {
-            create: data.items.map((item) => ({
+            create: itemDetails.map((item) => ({
               variantId: item.variantId,
               quantity: item.quantity,
               unitPrice: item.unitPrice,
               discount: item.discount,
+              costPrice: item.costPrice,
+              profit: item.profit,
             })),
           },
         },
@@ -255,6 +283,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
 
   // ─── Refund ──────────────────────────────────────────────
   ipcMain.handle("sales:refund", async (_e, id: number, currentUserId?: number) => {
+    await requirePermission(currentUserId, "sales.refund");
     return prisma.$transaction(async (tx) => {
       const sale = await tx.sale.findUnique({
         where: { id },

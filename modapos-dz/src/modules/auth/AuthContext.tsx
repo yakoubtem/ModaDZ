@@ -16,7 +16,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     try {
       const stored = localStorage.getItem("modadz_user");
-      return stored ? (JSON.parse(stored) as User) : null;
+      const parsed = stored ? (JSON.parse(stored) as User) : null;
+      if (parsed && window.api && window.api.invoke) {
+        window.api.invoke("auth:setCurrentUser", parsed.id).catch(() => {});
+      }
+      return parsed;
     } catch {
       return null;
     }
@@ -25,11 +29,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback((user: User) => {
     setUser(user);
     localStorage.setItem("modadz_user", JSON.stringify(user));
+    if (window.api && window.api.invoke) {
+      window.api.invoke("auth:setCurrentUser", user.id).catch(() => {});
+    }
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem("modadz_user");
+    if (window.api && window.api.invoke) {
+      window.api.invoke("auth:setCurrentUser", null).catch(() => {});
+    }
   }, []);
 
   const can = useCallback((permission: string) => {
