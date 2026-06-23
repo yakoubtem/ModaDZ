@@ -130,25 +130,25 @@ app.whenReady().then(() => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     const csp = isDev
       ? [
-          // Development: allow localhost vite dev server + HMR websocket
-          "default-src 'self' http://localhost:5173 ws://localhost:5173;",
-          "script-src 'self' 'unsafe-inline' http://localhost:5173;",
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com http://localhost:5173;",
-          "font-src 'self' https://fonts.gstatic.com data:;",
-          "img-src 'self' data: media: blob: http://localhost:5173;",
-          "connect-src 'self' http://localhost:5173 ws://localhost:5173;",
-          "media-src 'self' media: blob:;",
-        ].join(" ")
+        // Development: allow localhost vite dev server + HMR websocket
+        "default-src 'self' http://localhost:5173 ws://localhost:5173;",
+        "script-src 'self' 'unsafe-inline' http://localhost:5173;",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com http://localhost:5173;",
+        "font-src 'self' https://fonts.gstatic.com data:;",
+        "img-src 'self' data: media: blob: http://localhost:5173;",
+        "connect-src 'self' http://localhost:5173 ws://localhost:5173;",
+        "media-src 'self' media: blob:;",
+      ].join(" ")
       : [
-          // Production: only allow local files and the media:// custom protocol
-          "default-src 'self' media:;",
-          "script-src 'self';",
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
-          "font-src 'self' https://fonts.gstatic.com data:;",
-          "img-src 'self' data: media: blob:;",
-          "connect-src 'self';",
-          "media-src 'self' media: blob:;",
-        ].join(" ");
+        // Production: only allow local files and the media:// custom protocol
+        "default-src 'self' media:;",
+        "script-src 'self';",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+        "font-src 'self' https://fonts.gstatic.com data:;",
+        "img-src 'self' data: media: blob:;",
+        "connect-src 'self';",
+        "media-src 'self' media: blob:;",
+      ].join(" ");
 
     callback({
       responseHeaders: {

@@ -133,40 +133,40 @@ export function ProductsPage() {
               { label: t("products.stats.low_stocks"), value: stats.lowStockVariants, icon: "warning", error: true, sub: t("products.stats.reorder_needed") },
             ];
             return statsCards.map((card) => (
-            <div
-              key={card.label}
-              className="glass-panel"
-              style={{ padding: "24px", borderRadius: "var(--radius-xl)", display: "flex", flexDirection: "column", gap: "8px", position: "relative", overflow: "hidden" }}
-            >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--color-secondary)" }}>
-                <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)" }}>{card.label}</span>
-                <span className="material-symbols-outlined" style={{ color: card.error ? "var(--color-error)" : "inherit" }}>{card.icon}</span>
-              </div>
               <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "var(--text-display-lg)",
-                  fontWeight: "var(--fw-display-lg)",
-                  color: "var(--color-on-surface)",
-                  marginTop: "8px",
-                }}
+                key={card.label}
+                className="glass-panel"
+                style={{ padding: "24px", borderRadius: "var(--radius-xl)", display: "flex", flexDirection: "column", gap: "8px", position: "relative", overflow: "hidden" }}
               >
-                {card.value?.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ")}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--color-secondary)" }}>
+                  <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)" }}>{card.label}</span>
+                  <span className="material-symbols-outlined" style={{ color: card.error ? "var(--color-error)" : "inherit" }}>{card.icon}</span>
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "var(--text-display-lg)",
+                    fontWeight: "var(--fw-display-lg)",
+                    color: "var(--color-on-surface)",
+                    marginTop: "8px",
+                  }}
+                >
+                  {card.value?.toLocaleString(language === "ar" ? "ar-DZ" : "fr-DZ")}
+                </div>
+                {card.trend && (
+                  <div style={{ fontSize: "var(--text-label-sm)", color: "var(--color-tertiary)", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>trending_up</span>
+                    {card.trend}
+                  </div>
+                )}
+                {card.sub && (
+                  <div style={{ fontSize: "var(--text-label-sm)", color: card.error ? "var(--color-error)" : "var(--color-secondary)" }}>
+                    {card.sub}
+                  </div>
+                )}
               </div>
-              {card.trend && (
-                <div style={{ fontSize: "var(--text-label-sm)", color: "var(--color-tertiary)", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>trending_up</span>
-                  {card.trend}
-                </div>
-              )}
-              {card.sub && (
-                <div style={{ fontSize: "var(--text-label-sm)", color: card.error ? "var(--color-error)" : "var(--color-secondary)" }}>
-                  {card.sub}
-                </div>
-              )}
-            </div>
-          ));
-        })()}
+            ));
+          })()}
         </div>
 
         {/* Table card */}

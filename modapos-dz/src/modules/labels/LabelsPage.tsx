@@ -213,19 +213,18 @@ export function LabelsPage() {
             border: 1px dashed #ccc;
             text-align: center;
           }
-          ${
-            batchFormat === "40x30"
-              ? `@page { size: 40mm 30mm; margin: 0; } .print-label-item { width: 40mm; height: 30mm; padding: 2mm; }`
-              : batchFormat === "50x30"
-              ? `@page { size: 50mm 30mm; margin: 0; } .print-label-item { width: 50mm; height: 30mm; padding: 2mm; }`
-              : batchFormat === "60x40"
+          ${batchFormat === "40x30"
+          ? `@page { size: 40mm 30mm; margin: 0; } .print-label-item { width: 40mm; height: 30mm; padding: 2mm; }`
+          : batchFormat === "50x30"
+            ? `@page { size: 50mm 30mm; margin: 0; } .print-label-item { width: 50mm; height: 30mm; padding: 2mm; }`
+            : batchFormat === "60x40"
               ? `@page { size: 60mm 40mm; margin: 0; } .print-label-item { width: 60mm; height: 40mm; padding: 3mm; }`
               : batchFormat === "80x50"
-              ? `@page { size: 80mm 50mm; margin: 0; } .print-label-item { width: 80mm; height: 50mm; padding: 4mm; }`
-              : batchFormat === "thermal"
-              ? `@page { size: auto; margin: 0; } .print-label-item { width: 58mm; height: auto; padding: 4mm; border-bottom: 1px dashed black; }`
-              : isA4
-              ? `@page { size: A4; margin: 5mm; } 
+                ? `@page { size: 80mm 50mm; margin: 0; } .print-label-item { width: 80mm; height: 50mm; padding: 4mm; }`
+                : batchFormat === "thermal"
+                  ? `@page { size: auto; margin: 0; } .print-label-item { width: 58mm; height: auto; padding: 4mm; border-bottom: 1px dashed black; }`
+                  : isA4
+                    ? `@page { size: A4; margin: 5mm; } 
                  #${printContainerId} {
                    display: grid;
                    grid-template-columns: repeat(${gridCols}, 1fr);
@@ -237,8 +236,8 @@ export function LabelsPage() {
                    border: 1px solid #ddd;
                    padding: 2mm;
                  }`
-              : ""
-          }
+                    : ""
+        }
         }
       `;
       document.head.appendChild(styleElement);

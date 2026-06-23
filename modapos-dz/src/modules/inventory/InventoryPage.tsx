@@ -37,7 +37,7 @@ export function InventoryPage() {
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
   const [adjustingId, setAdjustingId] = useState<number | null>(null);
   const [adjustValue, setAdjustValue] = useState("");
-  
+
   // Selection and Print states
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [printingProduct, setPrintingProduct] = useState<Product | null>(null);
@@ -47,7 +47,7 @@ export function InventoryPage() {
     try {
       const saved = localStorage.getItem("modadz-labels-batch");
       const currentQueue = saved ? JSON.parse(saved) : [];
-      
+
       const newItems = [];
       for (const variantId of selectedIds) {
         const variant = variants.find((v) => v.id === variantId);
@@ -70,14 +70,14 @@ export function InventoryPage() {
             stock: variant.stock,
             barcode: variant.barcode || undefined,
           };
-          
+
           const exists = currentQueue.some((item: any) => item.variant.id === v.id);
           if (!exists) {
             newItems.push({ product: prod, variant: v, quantity: 1 });
           }
         }
       }
-      
+
       localStorage.setItem("modadz-labels-batch", JSON.stringify([...currentQueue, ...newItems]));
       toastSuccess(
         "Lot d'impression mis à jour",

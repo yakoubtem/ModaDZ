@@ -83,7 +83,7 @@ export function PaymentDistributionChart({ data, isLoading }: PaymentDistributio
                 dataKey="value"
               >
                 {formattedData.map((entry, index) => (
-                   <Cell key={`cell-${index}`} fill={entry.color} stroke="transparent" />
+                  <Cell key={`cell-${index}`} fill={entry.color} stroke="transparent" />
                 ))}
               </Pie>
               <Tooltip

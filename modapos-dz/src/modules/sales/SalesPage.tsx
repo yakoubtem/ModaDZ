@@ -34,9 +34,9 @@ export function SalesPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
           {/* Filters */}
           <SaleFiltersComponent
-             filters={filters}
-             onChange={setFilters}
-             onReset={resetFilters}
+            filters={filters}
+            onChange={setFilters}
+            onReset={resetFilters}
           />
 
           {/* Table container & header */}

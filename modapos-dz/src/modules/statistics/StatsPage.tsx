@@ -113,34 +113,34 @@ export function StatsPage() {
         >
           {isLoading
             ? [...Array(4)].map((_, i) => (
-                <div key={i} className="kpi-card skeleton" style={{ height: 130 }} />
-              ))
+              <div key={i} className="kpi-card skeleton" style={{ height: 130 }} />
+            ))
             : STAT_CARDS.map((card) => (
-                <div key={card.label} className="kpi-card animate-fade-in" style={{ textAlign: isRtl ? "right" : "left" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
-                    <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)" }}>
-                      {card.label}
-                    </span>
-                    <div className="kpi-icon">
-                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{card.icon}</span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "var(--text-headline-lg)",
-                      fontWeight: "var(--fw-headline-lg)",
-                      color: "var(--color-on-surface)",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    {card.value}
-                  </div>
-                  <div style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
-                    {card.sub}
+              <div key={card.label} className="kpi-card animate-fade-in" style={{ textAlign: isRtl ? "right" : "left" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
+                  <span style={{ fontSize: "var(--text-label-md)", fontWeight: "var(--fw-label-md)", letterSpacing: "var(--ls-label-md)", color: "var(--color-secondary)" }}>
+                    {card.label}
+                  </span>
+                  <div className="kpi-icon">
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{card.icon}</span>
                   </div>
                 </div>
-              ))}
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "var(--text-headline-lg)",
+                    fontWeight: "var(--fw-headline-lg)",
+                    color: "var(--color-on-surface)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {card.value}
+                </div>
+                <div style={{ fontSize: "var(--text-body-sm)", color: "var(--color-secondary)" }}>
+                  {card.sub}
+                </div>
+              </div>
+            ))}
         </div>
 
         {/* Charts grid */}

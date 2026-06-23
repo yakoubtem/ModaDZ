@@ -87,7 +87,7 @@ export function PurchasesPage() {
             });
           }
         }
-        
+
         if (batchItems.length > 0) {
           setItemsToPrint(batchItems);
           setIsPrintPromptOpen(true);
@@ -103,7 +103,7 @@ export function PurchasesPage() {
     try {
       const saved = localStorage.getItem("modadz-labels-batch");
       const currentQueue = saved ? JSON.parse(saved) : [];
-      
+
       const updatedQueue = [...currentQueue];
       for (const item of itemsToPrint) {
         const idx = updatedQueue.findIndex((q) => q.variant.id === item.variant.id);
@@ -113,7 +113,7 @@ export function PurchasesPage() {
           updatedQueue.push(item);
         }
       }
-      
+
       localStorage.setItem("modadz-labels-batch", JSON.stringify(updatedQueue));
       toast.success(`${itemsToPrint.length} produit(s) ajouté(s) au lot d'impression.`);
       setIsPrintPromptOpen(false);
@@ -126,7 +126,7 @@ export function PurchasesPage() {
     try {
       const saved = localStorage.getItem("modadz-labels-batch");
       const currentQueue = saved ? JSON.parse(saved) : [];
-      
+
       const updatedQueue = [...currentQueue];
       for (const item of itemsToPrint) {
         const idx = updatedQueue.findIndex((q) => q.variant.id === item.variant.id);
@@ -136,7 +136,7 @@ export function PurchasesPage() {
           updatedQueue.push(item);
         }
       }
-      
+
       localStorage.setItem("modadz-labels-batch", JSON.stringify(updatedQueue));
       setIsPrintPromptOpen(false);
       navigate("/labels");
@@ -184,8 +184,8 @@ export function PurchasesPage() {
           p.status === "paid"
             ? t("purchases.status.paid")
             : p.status === "partial"
-            ? t("purchases.status.partial")
-            : t("purchases.status.unpaid"),
+              ? t("purchases.status.partial")
+              : t("purchases.status.unpaid"),
         ];
       });
 

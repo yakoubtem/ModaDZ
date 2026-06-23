@@ -10,10 +10,10 @@ import { useLicense } from "@/contexts/LicenseContext";
 type Tab = "general" | "backup" | "users" | "license";
 
 const TABS: { id: Tab; icon: string; adminOnly?: boolean }[] = [
-  { id: "general",  icon: "store" },
-  { id: "backup",   icon: "hard_drive" },
-  { id: "users",    icon: "shield",   adminOnly: true },
-  { id: "license",  icon: "verified" },
+  { id: "general", icon: "store" },
+  { id: "backup", icon: "hard_drive" },
+  { id: "users", icon: "shield", adminOnly: true },
+  { id: "license", icon: "verified" },
 ];
 
 export function SettingsPage() {
