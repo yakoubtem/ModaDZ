@@ -397,7 +397,8 @@ export function LicenseGeneratorPage() {
       {/* Print-only Certificate Sheet */}
       {generatedKey && (
         <div
-          className="print-only"
+          id="license-certificate-print"
+          className="print-only print-only-container"
           style={{
             display: "none",
             width: "210mm",

@@ -27,7 +27,7 @@ export function ExpenseReportPrint({
   const { t, isRtl } = useTranslation();
 
   return (
-    <section id="expense-report" className="print-only" dir={isRtl ? "rtl" : "ltr"}>
+    <section id="expense-report" className="print-only print-only-container" dir={isRtl ? "rtl" : "ltr"}>
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>

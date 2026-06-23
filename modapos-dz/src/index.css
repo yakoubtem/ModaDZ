@@ -1199,23 +1199,74 @@ select {
    PRINT MEDIA
    ─────────────────────────────────────────────────────────────────── */
 
+/* Named pages for thermal receipts */
+@page receipt-page-80 {
+  size: 80mm auto;
+  margin: 3mm 4mm;
+}
+
+@page receipt-page-58 {
+  size: 58mm auto;
+  margin: 2mm 3mm;
+}
+
 @media print {
+  /* Default page size for standard reports / statements (A4) */
   @page {
-    size: 80mm auto;
-    margin: 3mm 4mm;
+    size: A4 portrait;
+    margin: 15mm;
   }
 
-  body {
-    visibility: hidden;
+  /* Reset layout constraints for A4 printing to allow proper pagination */
+  html, body, #root, .app-shell, .main-content, .main-scroll {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+  }
+
+  /* Hide screen-only UI elements during printing */
+  .sidebar,
+  .top-bar,
+  .no-print,
+  button,
+  input,
+  select,
+  .modal-footer {
+    display: none !important;
+  }
+
+  /* Isolate print-only A4 containers if present */
+  body:has(.print-only-container) #root {
+    visibility: hidden !important;
+  }
+
+  body:has(.print-only-container) .print-only-container,
+  body:has(.print-only-container) .print-only-container * {
+    visibility: visible !important;
+  }
+
+  body:has(.print-only-container) .print-only-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Thermal Receipt Printing Specifics */
+  body[data-print-width] {
+    visibility: hidden !important;
     background: white !important;
   }
 
-  #receipt-print-root,
-  #receipt-print-root * {
-    visibility: visible;
+  body[data-print-width] #receipt-print-root,
+  body[data-print-width] #receipt-print-root * {
+    visibility: visible !important;
   }
 
-  #receipt-print-root {
+  body[data-print-width] #receipt-print-root {
     display: block !important;
     position: absolute;
     left: 0;
@@ -1225,14 +1276,25 @@ select {
     padding: 0 !important;
     background: white !important;
     color: black !important;
-    font-size: 11px !important;
-    line-height: 1.45 !important;
-    font-family: "Courier New", monospace !important;
     border: none !important;
     box-shadow: none !important;
   }
 
-  #receipt-print-root * {
+  body[data-print-width="80mm"] #receipt-print-root {
+    page: receipt-page-80;
+    font-size: 11px !important;
+    line-height: 1.45 !important;
+    font-family: "Courier New", monospace !important;
+  }
+
+  body[data-print-width="58mm"] #receipt-print-root {
+    page: receipt-page-58;
+    font-size: 9px !important;
+    line-height: 1.45 !important;
+    font-family: "Courier New", monospace !important;
+  }
+
+  body[data-print-width] #receipt-print-root * {
     background: transparent !important;
     color: black !important;
     box-shadow: none !important;
@@ -1241,15 +1303,6 @@ select {
   }
 }
 
-/* ───────────────────────────────────────────────────────────────────
-   58MM PRINT
-   ─────────────────────────────────────────────────────────────────── */
-
-@media print {
-  body[data-print-width="58mm"] #receipt-print-root {
-    font-size: 9px !important;
-  }
-}
 
 /* ───────────────────────────────────────────────────────────────────
    PRINT-ONLY HELPER

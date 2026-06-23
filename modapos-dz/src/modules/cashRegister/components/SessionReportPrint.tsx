@@ -47,7 +47,7 @@ export function SessionReportPrint({
   };
 
   return (
-    <section id="session-report-print" className="print-only" dir={isRtl ? "rtl" : "ltr"}>
+    <section id="session-report-print" className="print-only print-only-container" dir={isRtl ? "rtl" : "ltr"}>
       <div style={{ fontFamily: "var(--font-body)", color: "#1e1810", padding: "20px" }}>
         {/* Header */}
         <div

@@ -50,6 +50,7 @@ export function PurchaseDetailsModal({
     >
       <div
         id="purchase-details-print"
+        className="print-only-container"
         style={{
           display: "flex",
           flexDirection: "column",

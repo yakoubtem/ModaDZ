@@ -22,7 +22,7 @@ export function SupplierReportPrint({
   const { isRtl } = useTranslation();
 
   return (
-    <section id="supplier-report-print" className="print-only" dir={isRtl ? "rtl" : "ltr"}>
+    <section id="supplier-report-print" className="print-only print-only-container" dir={isRtl ? "rtl" : "ltr"}>
       <div style={{ fontFamily: "var(--font-body)", color: "#1e1810", padding: "10px" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #1e1810", paddingBottom: 20, marginBottom: 20 }}>

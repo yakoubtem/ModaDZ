@@ -24,7 +24,7 @@ export function SupplierStatementPrint({
   const closingBalance = supplierDetail.summary.currentDebt;
 
   return (
-    <section id="supplier-statement-print" className="print-only" dir={isRtl ? "rtl" : "ltr"}>
+    <section id="supplier-statement-print" className="print-only print-only-container" dir={isRtl ? "rtl" : "ltr"}>
       <div style={{ fontFamily: "var(--font-body)", color: "#1e1810", padding: "10px" }}>
         {/* Header Block */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #1e1810", paddingBottom: 20, marginBottom: 20 }}>
