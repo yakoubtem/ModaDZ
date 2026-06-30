@@ -30,16 +30,33 @@ function generateLicenseKey(plan, expiryDate, machineId) {
 
 // Read CLI arguments
 const args = process.argv.slice(2);
-if (args.length < 3) {
-  console.log("Usage: node generate-key.js <plan> <duration_years> <machine_id>");
-  console.log("Plans: trial7, trial30, monthly, yearly, lifetime");
-  console.log("Example: node generate-key.js lifetime 100 A84934C0C9136377284230247ED62AC5E77EE787550CE51493630A6F4E8EE0744");
+if (args.length < 2) {
+  console.log("Usage:");
+  console.log("  node generate-key.js <plan> <machine_id>             (Defaults: lifetime=100 years, others=1 year)");
+  console.log("  node generate-key.js <plan> <years> <machine_id>     (Specify custom duration)");
+  console.log("\nPlans: trial7, trial30, monthly, yearly, lifetime");
+  console.log("Examples:");
+  console.log("  node generate-key.js lifetime A84934C0C9136377284230247ED62AC5E...");
+  console.log("  node generate-key.js yearly A84934C0C9136377284230247ED62AC5E...");
+  console.log("  node generate-key.js yearly 2 A84934C0C9136377284230247ED62AC5E...");
   process.exit(1);
 }
 
 const plan = args[0];
-const years = parseInt(args[1], 10);
-const machineId = args[2];
+let years = 1;
+let machineId = "";
+
+const isSecondArgNumber = !isNaN(parseInt(args[1], 10)) && /^\d+$/.test(args[1]);
+
+if (args.length === 2) {
+  // node generate-key.js <plan> <machine_id>
+  machineId = args[1];
+  years = (plan === "lifetime") ? 100 : 1;
+} else {
+  // node generate-key.js <plan> <years> <machine_id>
+  years = parseInt(args[1], 10);
+  machineId = args[2];
+}
 
 const expiryDate = new Date();
 expiryDate.setFullYear(expiryDate.getFullYear() + years);

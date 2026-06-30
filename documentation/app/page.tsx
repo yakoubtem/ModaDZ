@@ -14,20 +14,20 @@ export default function HomePage() {
             <span className="text-lg font-bold tracking-tight">ModaDZ <span className="text-fd-primary">Docs</span></span>
           </div>
           <div className="flex items-center gap-4">
-            <Link 
-              href="/docs/getting-started" 
+            <Link
+              href="/docs/getting-started"
               className="text-xs font-semibold text-fd-muted-foreground hover:text-fd-foreground transition-colors duration-150"
             >
               Guide rapide
             </Link>
-            <Link 
-              href="/docs/faq" 
+            <Link
+              href="/docs/faq"
               className="text-xs font-semibold text-fd-muted-foreground hover:text-fd-foreground transition-colors duration-150"
             >
               FAQ
             </Link>
-            <Link 
-              href="/docs/getting-started" 
+            <Link
+              href="/docs/getting-started"
               className="px-4 py-2 rounded-md bg-fd-primary text-fd-primary-foreground text-xs font-bold shadow-md shadow-fd-primary/10 hover:shadow-lg hover:shadow-fd-primary/20 transition-all duration-200 cursor-pointer"
             >
               Accéder aux guides
@@ -41,30 +41,30 @@ export default function HomePage() {
         <section className="relative overflow-hidden py-24 sm:py-32">
           {/* Subtle decorative glow */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-fd-primary/5 rounded-full blur-[120px] pointer-events-none" />
-          
+
           <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-fd-primary/10 border border-fd-primary/20 text-[10px] font-bold text-fd-primary uppercase tracking-wider mb-6 animate-pulse">
               Centre d'aide officiel v1.0
             </div>
-            
+
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight max-w-4xl mx-auto">
               Gérez votre commerce de détail avec <span className="bg-gradient-to-r from-fd-primary via-[#E5C158] to-[#4D8B8B] bg-clip-text text-transparent">ModaDZ</span>
             </h1>
-            
+
             <p className="mt-6 text-base sm:text-xl text-fd-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Le guide complet pour installer, configurer et maîtriser votre logiciel de point de vente et de gestion de boutique.
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/docs/getting-started" 
+              <Link
+                href="/docs/getting-started"
                 className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-fd-primary text-fd-primary-foreground font-bold shadow-lg shadow-fd-primary/15 hover:shadow-xl hover:shadow-fd-primary/30 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer text-sm"
               >
-                Commencer la configuration 
+                Commencer la configuration
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
-              <Link 
-                href="/docs" 
+              <Link
+                href="/docs"
                 className="w-full sm:w-auto px-8 py-3.5 rounded-lg border border-fd-border bg-fd-card/50 hover:bg-fd-card text-fd-foreground font-semibold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
                 <BookOpen className="h-4 w-4 text-fd-primary" />

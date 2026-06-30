@@ -119,24 +119,24 @@ export default function App() {
         }
       >
         <Route index element={<IndexRedirect />} />
-        <Route path="dashboard"  element={<PermissionGuard permission="dashboard.view"><DashboardPage /></PermissionGuard>} />
-        <Route path="pos"        element={<PermissionGuard permission="pos.use"><POSPage /></PermissionGuard>} />
-        <Route path="products"   element={<PermissionGuard permission="products.view"><ProductsPage /></PermissionGuard>} />
-        <Route path="inventory"  element={<PermissionGuard permission="inventory.view"><InventoryPage /></PermissionGuard>} />
-        <Route path="labels"     element={<PermissionGuard permission="labels.view"><LabelsPage /></PermissionGuard>} />
-        <Route path="customers"  element={<PermissionGuard permission="customers.view"><CustomersPage /></PermissionGuard>} />
-        <Route path="sales"      element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
-        <Route path="debts"      element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />
+        <Route path="dashboard" element={<PermissionGuard permission="dashboard.view"><DashboardPage /></PermissionGuard>} />
+        <Route path="pos" element={<PermissionGuard permission="pos.use"><POSPage /></PermissionGuard>} />
+        <Route path="products" element={<PermissionGuard permission="products.view"><ProductsPage /></PermissionGuard>} />
+        <Route path="inventory" element={<PermissionGuard permission="inventory.view"><InventoryPage /></PermissionGuard>} />
+        <Route path="labels" element={<PermissionGuard permission="labels.view"><LabelsPage /></PermissionGuard>} />
+        <Route path="customers" element={<PermissionGuard permission="customers.view"><CustomersPage /></PermissionGuard>} />
+        <Route path="sales" element={<PermissionGuard permission="sales.view"><SalesPage /></PermissionGuard>} />
+        <Route path="debts" element={<PermissionGuard permission="debts.view"><DebtsPage /></PermissionGuard>} />
         <Route path="supplier-debts" element={<PermissionGuard permission="supplierDebts.view"><SupplierDebtsPage /></PermissionGuard>} />
-        <Route path="expenses"   element={<PermissionGuard permission="expenses.view"><ExpensesPage /></PermissionGuard>} />
+        <Route path="expenses" element={<PermissionGuard permission="expenses.view"><ExpensesPage /></PermissionGuard>} />
         <Route path="cash-register" element={<PermissionGuard permission="cashRegister.view"><CashRegisterPage /></PermissionGuard>} />
-        <Route path="suppliers"  element={<PermissionGuard permission="suppliers.view"><SuppliersPage /></PermissionGuard>} />
-        <Route path="purchases"  element={<PermissionGuard permission="purchases.view"><PurchasesPage /></PermissionGuard>} />
-        <Route path="activity"   element={<PermissionGuard permission="activity.view"><ActivityPage /></PermissionGuard>} />
-        <Route path="stats"      element={<PermissionGuard permission="reports.view"><StatsPage /></PermissionGuard>} />
-        <Route path="users"      element={<PermissionGuard permission="users.manage"><UsersPage /></PermissionGuard>} />
-        <Route path="settings"   element={<PermissionGuard permission="settings.manage"><SettingsPage /></PermissionGuard>} />
-        <Route path="backups"    element={<PermissionGuard permission="backups.manage"><BackupsPage /></PermissionGuard>} />
+        <Route path="suppliers" element={<PermissionGuard permission="suppliers.view"><SuppliersPage /></PermissionGuard>} />
+        <Route path="purchases" element={<PermissionGuard permission="purchases.view"><PurchasesPage /></PermissionGuard>} />
+        <Route path="activity" element={<PermissionGuard permission="activity.view"><ActivityPage /></PermissionGuard>} />
+        <Route path="stats" element={<PermissionGuard permission="reports.view"><StatsPage /></PermissionGuard>} />
+        <Route path="users" element={<PermissionGuard permission="users.manage"><UsersPage /></PermissionGuard>} />
+        <Route path="settings" element={<PermissionGuard permission="settings.manage"><SettingsPage /></PermissionGuard>} />
+        <Route path="backups" element={<PermissionGuard permission="backups.manage"><BackupsPage /></PermissionGuard>} />
       </Route>
 
       {/* Catch-all */}

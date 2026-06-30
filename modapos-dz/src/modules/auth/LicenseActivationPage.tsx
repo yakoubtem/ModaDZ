@@ -263,7 +263,7 @@ export function LicenseActivationPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            
+
             {/* Split Switcher */}
             <div
               className="glass-panel"
@@ -496,8 +496,8 @@ export function LicenseActivationPage() {
                 {isLoading
                   ? "Validation..."
                   : isTrial
-                  ? t("license.activation.buttons.startTrial")
-                  : t("license.activation.buttons.activate")}
+                    ? t("license.activation.buttons.startTrial")
+                    : t("license.activation.buttons.activate")}
               </button>
 
               <button
