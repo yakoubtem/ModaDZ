@@ -63,12 +63,17 @@ protocol.registerSchemesAsPrivileged([
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
+  const iconPath = isDev
+    ? path.join(__dirname, "../modapos-dz/public/icon.ico")
+    : path.join(__dirname, "../modapos-dz/dist/icon.ico");
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
     minWidth: 1100,
     minHeight: 700,
     backgroundColor: "#0c0e14",
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
