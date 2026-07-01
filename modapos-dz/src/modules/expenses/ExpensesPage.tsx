@@ -474,15 +474,10 @@ export function ExpensesPage() {
           ) : (
             /* ── Content grid (main + sidebar) ── */
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: isRtl ? "320px 1fr" : "1fr 320px",
-                gap: 24,
-                alignItems: "start",
-              }}
+              className={`grid grid-cols-1 ${isRtl ? "xl:grid-cols-[320px_1fr]" : "xl:grid-cols-[1fr_320px]"} gap-6 items-start`}
             >
               {/* Main column */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0, gridRow: 1, gridColumn: isRtl ? 2 : 1 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0 }}>
                 {/* Filters */}
                 <ExpenseFilters
                   search={search}
@@ -506,7 +501,7 @@ export function ExpensesPage() {
                   onReset={resetFilters}
                   total={total}
                 />
-
+ 
                 {/* Table */}
                 <ExpenseTable
                   expenses={expenses}
@@ -519,9 +514,9 @@ export function ExpensesPage() {
                   onPageChange={handlePageChange}
                 />
               </div>
-
-              {/* Right/Left sidebar */}
-              <div style={{ position: "sticky", top: 96, gridRow: 1, gridColumn: isRtl ? 1 : 2 }}>
+ 
+              {/* Sidebar */}
+              <div style={{ position: "sticky", top: 128 }}>
                 <ExpenseCategorySidebar
                   expenses={expenses}
                   isLoading={isLoading}

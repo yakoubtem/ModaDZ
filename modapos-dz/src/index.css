@@ -1374,3 +1374,20 @@ select {
 [dir="rtl"] .top-bar div {
   text-align: right;
 }
+
+/* Custom scrollbar styling for scrollable containers */
+.scroll-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.scroll-container::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+  border-radius: var(--radius-full);
+}
+.scroll-container::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: var(--radius-full);
+}
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
