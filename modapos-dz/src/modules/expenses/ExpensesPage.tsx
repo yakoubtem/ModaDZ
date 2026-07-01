@@ -212,7 +212,7 @@ export function ExpensesPage() {
           background: "rgba(255,255,255,0.9)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(208,197,175,0.2)",
+          borderBottom: "1px solid rgba(208,197,175,0.15)",
           padding: "0 32px",
           height: 64,
           display: "flex",
@@ -222,9 +222,10 @@ export function ExpensesPage() {
           position: "sticky",
           top: 0,
           zIndex: 50,
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexDirection: isRtl ? "row-reverse" : "row" }}>
           <span
             className="material-symbols-outlined filled"
             style={{ fontSize: 22, color: "var(--color-primary)" }}
@@ -238,68 +239,86 @@ export function ExpensesPage() {
               fontSize: 16,
               color: "var(--color-on-surface)",
               letterSpacing: "-0.01em",
-              marginInlineEnd: 24,
             }}
           >
             {t("expenses.title")}
           </span>
-
-          {/* Underline tabs navigation */}
-          <div style={{ display: "flex", gap: "24px", height: 64, alignItems: "center" }}>
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    height: "100%",
-                    padding: "0 8px",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    fontFamily: "var(--font-body)",
-                    background: "none",
-                    border: "none",
-                    borderBottom: `3px solid ${isActive ? "var(--color-primary)" : "transparent"}`,
-                    color: isActive ? "var(--color-primary)" : "var(--color-secondary)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    transition: "color 0.2s, border-color 0.2s",
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexDirection: isRtl ? "row-reverse" : "row" }}>
           {activeTab !== "categories" && (
-            <>
-              <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6 }}>
+            <div style={{ display: "flex", gap: 8, flexDirection: isRtl ? "row-reverse" : "row" }}>
+              <button className="btn-border" onClick={handleExportCSV} style={{ gap: 6, display: "flex", alignItems: "center" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>table_view</span>
                 CSV
               </button>
-              <button className="btn-border" onClick={handleExportExcel} style={{ gap: 6 }}>
+              <button className="btn-border" onClick={handleExportExcel} style={{ gap: 6, display: "flex", alignItems: "center" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>grid_on</span>
                 Excel
               </button>
-              <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6 }}>
+              <button className="btn-border" onClick={handleExportPDF} style={{ gap: 6, display: "flex", alignItems: "center" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>picture_as_pdf</span>
                 PDF
               </button>
-            </>
+            </div>
           )}
           {activeTab === "list" && (
-            <button className="btn-primary" onClick={openCreate} style={{ gap: 6 }}>
+            <button className="btn-primary" onClick={openCreate} style={{ gap: 6, display: "flex", alignItems: "center" }}>
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
               {t("expenses.add_expense")}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* ── Sub bar for Tabs ── */}
+      <div
+        style={{
+          background: "rgba(255,255,255,0.85)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(208,197,175,0.15)",
+          padding: "0 32px",
+          height: 48,
+          display: "flex",
+          alignItems: "center",
+          flexShrink: 0,
+          position: "sticky",
+          top: 64,
+          zIndex: 49,
+          flexDirection: isRtl ? "row-reverse" : "row",
+        }}
+      >
+        <div style={{ display: "flex", gap: "24px", height: "100%", alignItems: "center", flexDirection: isRtl ? "row-reverse" : "row" }}>
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  height: "100%",
+                  padding: "0 8px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  background: "none",
+                  border: "none",
+                  borderBottom: `3px solid ${isActive ? "var(--color-primary)" : "transparent"}`,
+                  color: isActive ? "var(--color-primary)" : "var(--color-secondary)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  transition: "color 0.2s, border-color 0.2s",
+                  flexDirection: isRtl ? "row-reverse" : "row",
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
