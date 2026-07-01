@@ -123,18 +123,19 @@ export function LicenseActivationPage() {
         />
 
         {/* Top logo */}
-        <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "12px" }}>
+          <img src="/logo/ModaDZ logo.png" alt="ModaDZ Logo" style={{ height: "40px", objectFit: "contain" }} />
           <h1
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "var(--text-headline-md)",
-              fontWeight: 500,
+              fontWeight: 600,
               color: "var(--color-on-surface)",
               letterSpacing: "-0.01em",
+              margin: 0,
             }}
           >
             ModaDZ
-            <span style={{ color: "var(--color-primary)" }}>.</span>
           </h1>
         </div>
 

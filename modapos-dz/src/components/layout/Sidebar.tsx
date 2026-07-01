@@ -45,9 +45,29 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       {/* ── Brand ── */}
-      <div style={{ marginBottom: "40px", textAlign: isRtl ? "right" : "left" }}>
-        <h1 className="sidebar-logo-title">ModaDZ</h1>
-        <p className="sidebar-logo-sub">{t("common.login.subtitle")}</p>
+      <div
+        style={{
+          marginBottom: "40px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          textAlign: isRtl ? "right" : "left",
+          flexDirection: isRtl ? "row-reverse" : "row"
+        }}
+      >
+        <img
+          src="/logo/ModaDZ logo.png"
+          alt="ModaDZ Logo"
+          style={{ height: "32px", width: "auto", objectFit: "contain" }}
+        />
+        <div>
+          <h1 className="sidebar-logo-title" style={{ fontSize: "var(--text-headline-sm)", margin: 0, lineHeight: 1.1 }}>
+            ModaDZ
+          </h1>
+          <p className="sidebar-logo-sub" style={{ margin: 0, marginTop: "2px" }}>
+            {t("common.login.subtitle")}
+          </p>
+        </div>
       </div>
 
       {/* ── CTA ── */}
