@@ -124,6 +124,11 @@ function registerHandlers() {
 }
 
 app.whenReady().then(() => {
+  // Set App User Model ID for Windows taskbar grouping and icons
+  if (process.platform === "win32") {
+    app.setAppUserModelId("com.modadz.pos");
+  }
+
   // ── Content-Security-Policy ──────────────────────────────────────
   // Prevents the "Insecure Content-Security-Policy" Electron warning.
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
