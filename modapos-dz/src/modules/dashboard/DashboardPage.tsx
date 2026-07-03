@@ -73,28 +73,20 @@ export function DashboardPage() {
               <RevenueChart data={data?.revenueChart} isLoading={isLoading} />
             </div>
 
-            {/* Bottom row */}
+            {/* Top Products */}
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "var(--space-card-gap)",
-              }}
-              className="dashboard-bottom"
+              className="glass-card"
+              style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 300, display: "flex", flexDirection: "column", overflow: "hidden" }}
             >
-              <div
-                className="glass-card"
-                style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 300, display: "flex", flexDirection: "column" }}
-              >
-                <PaymentDistributionChart data={data?.paymentMethods} isLoading={isLoading} />
-              </div>
+              <TopProductsList products={data?.topProducts} isLoading={isLoading} />
+            </div>
 
-              <div
-                className="glass-card"
-                style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 300, display: "flex", flexDirection: "column", overflow: "hidden" }}
-              >
-                <TopProductsList products={data?.topProducts} isLoading={isLoading} />
-              </div>
+            {/* Modes de paiement */}
+            <div
+              className="glass-card"
+              style={{ borderRadius: "var(--radius-xl)", padding: "24px", height: 300, display: "flex", flexDirection: "column" }}
+            >
+              <PaymentDistributionChart data={data?.paymentMethods} isLoading={isLoading} />
             </div>
           </div>
 
@@ -183,11 +175,7 @@ export function DashboardPage() {
             grid-column: 2;
           }
         }
-        @media (max-width: 768px) {
-          .dashboard-bottom {
-            grid-template-columns: 1fr !important;
-          }
-        }
+
       `}</style>
     </div>
   );
