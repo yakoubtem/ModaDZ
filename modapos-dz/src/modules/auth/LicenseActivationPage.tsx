@@ -12,7 +12,7 @@ export function LicenseActivationPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [isTrial, setIsTrial] = useState(false);
-  const [trialPlan, setTrialPlan] = useState<"trial7" | "trial30">("trial7");
+  const [trialPlan, setTrialPlan] = useState<"trial7">("trial7");
   const [licenseKey, setLicenseKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -417,7 +417,7 @@ export function LicenseActivationPage() {
                     textTransform: "uppercase",
                   }}
                 >
-                  Durée de l'essai
+                  {isRtl ? "مدة التجربة" : "Durée de l'essai"}
                 </label>
                 <div style={{ display: "flex", gap: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", cursor: "pointer" }}>
@@ -429,16 +429,6 @@ export function LicenseActivationPage() {
                       style={{ accentColor: "var(--color-primary)" }}
                     />
                     {t("license.plans.trial7")}
-                  </label>
-                  <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", cursor: "pointer" }}>
-                    <input
-                      type="radio"
-                      name="trialPlan"
-                      checked={trialPlan === "trial30"}
-                      onChange={() => setTrialPlan("trial30")}
-                      style={{ accentColor: "var(--color-primary)" }}
-                    />
-                    {t("license.plans.trial30")}
                   </label>
                 </div>
               </div>
