@@ -324,7 +324,7 @@ model License {
   businessName String
   phone        String
   email        String
-  plan         String   // trial7 | trial30 | monthly | yearly | lifetime
+  plan         String   // trial3 | trial7 | trial30 | monthly | yearly | lifetime
   activatedAt  DateTime @default(now())
   expiresAt    DateTime
   isActive     Boolean  @default(true)

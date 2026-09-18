@@ -12,7 +12,7 @@ interface LicenseContextType {
   errorMsg: string;
   checkLicense: () => Promise<void>;
   activateLicense: (key: string, plan: string, bizName: string, custName: string, phone: string, email: string) => Promise<boolean>;
-  startTrial: (plan: "trial7" | "trial30", bizName: string, custName: string, phone: string, email: string) => Promise<boolean>;
+  startTrial: (plan: "trial3" | "trial7" | "trial30", bizName: string, custName: string, phone: string, email: string) => Promise<boolean>;
 }
 
 const LicenseContext = createContext<LicenseContextType | undefined>(undefined);
@@ -92,7 +92,7 @@ export function LicenseProvider({ children }: { children: React.ReactNode }) {
   }, [api, checkLicense]);
 
   const startTrial = useCallback(async (
-    plan: "trial7" | "trial30",
+    plan: "trial3" | "trial7" | "trial30",
     bizName: string,
     custName: string,
     phone: string,

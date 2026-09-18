@@ -66,7 +66,8 @@ export function getMachineId(): string {
 // Generate secure License Key bound to Machine ID
 export function generateLicenseKey(plan: string, expiryDate: Date, machineId: string): string {
   let planCode = "PRO";
-  if (plan === "trial7") planCode = "T07";
+  if (plan === "trial3") planCode = "T03";
+  else if (plan === "trial7") planCode = "T07";
   else if (plan === "trial30") planCode = "T30";
   else if (plan === "monthly") planCode = "M30";
   else if (plan === "yearly") planCode = "Y01";
@@ -153,20 +154,20 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
     phone: string;
     email: string;
     licenseKey?: string;
-    plan: "trial7" | "trial30" | "monthly" | "yearly" | "lifetime";
+    plan: "trial3" | "trial7" | "trial30" | "monthly" | "yearly" | "lifetime";
     userId?: number;
   }) => {
     try {
       const currentMachineId = getMachineId();
 
       // For trial plans, check if trial is already used
-      if (params.plan === "trial7" || params.plan === "trial30") {
+      if (params.plan === "trial3" || params.plan === "trial7" || params.plan === "trial30") {
         const existingLicense = await prisma.license.findFirst();
         if (existingLicense) {
           return { success: false, error: "Une licence (d'essai ou payante) a déjà été configurée sur cette machine." };
         }
 
-        const durationDays = params.plan === "trial7" ? 7 : 30;
+        const durationDays = params.plan === "trial3" ? 3 : params.plan === "trial7" ? 7 : 30;
         const activatedAt = new Date();
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + durationDays);
@@ -225,7 +226,8 @@ export function registerLicenseHandlers(ipcMain: IpcMain) {
       let planStr = "yearly";
       let durationDays = 365;
 
-      if (planCode === "T07") { planStr = "trial7"; durationDays = 7; }
+      if (planCode === "T03") { planStr = "trial3"; durationDays = 3; }
+      else if (planCode === "T07") { planStr = "trial7"; durationDays = 7; }
       else if (planCode === "T30") { planStr = "trial30"; durationDays = 30; }
       else if (planCode === "M30") { planStr = "monthly"; durationDays = 30; }
       else if (planCode === "Y01") { planStr = "yearly"; durationDays = 365; }

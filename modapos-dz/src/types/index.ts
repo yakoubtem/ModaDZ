@@ -880,7 +880,7 @@ export interface License {
   businessName: string;
   phone: string;
   email: string;
-  plan: "trial7" | "trial30" | "monthly" | "yearly" | "lifetime";
+  plan: "trial3" | "trial7" | "trial30" | "monthly" | "yearly" | "lifetime";
   activatedAt: string;
   expiresAt: string;
   isActive: boolean;

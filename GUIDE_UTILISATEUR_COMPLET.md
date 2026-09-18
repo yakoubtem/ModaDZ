@@ -1158,6 +1158,7 @@ node scripts/generate-key.js <plan> <durée_en_années> <machine_id_du_client>
 ```
 
 **Forfaits possibles (`<plan>`) :**
+*   `trial3` : Essai gratuit de 3 jours
 *   `trial7` : Essai gratuit de 7 jours
 *   `trial30` : Essai gratuit de 30 jours
 *   `monthly` : Licence mensuelle (30 jours)

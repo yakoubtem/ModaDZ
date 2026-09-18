@@ -57,6 +57,7 @@
     "locked": "Verrouillée"
   },
   "plans": {
+    "trial3": "Essai 3 Jours",
     "trial7": "Essai 7 Jours",
     "trial30": "Essai 30 Jours",
     "monthly": "Mensuelle",

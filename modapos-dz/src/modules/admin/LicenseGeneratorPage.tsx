@@ -12,7 +12,7 @@ export function LicenseGeneratorPage() {
   const [businessName, setBusinessName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [plan, setPlan] = useState<"trial7" | "trial30" | "monthly" | "yearly" | "lifetime">("yearly");
+  const [plan, setPlan] = useState<"trial3" | "trial7" | "trial30" | "monthly" | "yearly" | "lifetime">("yearly");
   const [expiryDate, setExpiryDate] = useState("");
   const [machineId, setMachineId] = useState("");
   const [generatedKey, setGeneratedKey] = useState("");
@@ -21,6 +21,7 @@ export function LicenseGeneratorPage() {
   // Set default expiry date based on plan
   useEffect(() => {
     const offsetDays = {
+      trial3: 3,
       trial7: 7,
       trial30: 30,
       monthly: 30,
@@ -253,6 +254,7 @@ export function LicenseGeneratorPage() {
                   outline: "none",
                 }}
               >
+                <option value="trial3">{t("license.plans.trial3")}</option>
                 <option value="trial7">{t("license.plans.trial7")}</option>
                 <option value="trial30">{t("license.plans.trial30")}</option>
                 <option value="monthly">{t("license.plans.monthly")}</option>

@@ -4,7 +4,8 @@ const SECRET_SALT = "ModaDZ-License-Salt-2026";
 
 function generateLicenseKey(plan, expiryDate, machineId) {
   let planCode = "PRO";
-  if (plan === "trial7") planCode = "T07";
+  if (plan === "trial3") planCode = "T03";
+  else if (plan === "trial7") planCode = "T07";
   else if (plan === "trial30") planCode = "T30";
   else if (plan === "monthly") planCode = "M30";
   else if (plan === "yearly") planCode = "Y01";
@@ -34,7 +35,7 @@ if (args.length < 2) {
   console.log("Usage:");
   console.log("  node generate-key.js <plan> <machine_id>             (Defaults: lifetime=100 years, others=1 year)");
   console.log("  node generate-key.js <plan> <years> <machine_id>     (Specify custom duration)");
-  console.log("\nPlans: trial7, trial30, monthly, yearly, lifetime");
+  console.log("\nPlans: trial3, trial7, trial30, monthly, yearly, lifetime");
   console.log("Examples:");
   console.log("  node generate-key.js lifetime A84934C0C9136377284230247ED62AC5E...");
   console.log("  node generate-key.js yearly A84934C0C9136377284230247ED62AC5E...");

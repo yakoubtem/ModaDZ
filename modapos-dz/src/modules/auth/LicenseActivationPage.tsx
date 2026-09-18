@@ -12,7 +12,7 @@ export function LicenseActivationPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [isTrial, setIsTrial] = useState(false);
-  const [trialPlan, setTrialPlan] = useState<"trial7">("trial7");
+  const [trialPlan, setTrialPlan] = useState<"trial3">("trial3");
   const [licenseKey, setLicenseKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -424,11 +424,11 @@ export function LicenseActivationPage() {
                     <input
                       type="radio"
                       name="trialPlan"
-                      checked={trialPlan === "trial7"}
-                      onChange={() => setTrialPlan("trial7")}
+                      checked={trialPlan === "trial3"}
+                      onChange={() => setTrialPlan("trial3")}
                       style={{ accentColor: "var(--color-primary)" }}
                     />
-                    {t("license.plans.trial7")}
+                    {t("license.plans.trial3")}
                   </label>
                 </div>
               </div>
