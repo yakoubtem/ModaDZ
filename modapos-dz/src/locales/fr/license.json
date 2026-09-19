@@ -3,8 +3,9 @@
   "subtitle": "Informations d'activation, validité et support de ModaDZ",
   "activation": {
     "title": "Activation de ModaDZ",
-    "subtitle": "Activez votre logiciel de caisse pour commencer à gérer votre commerce.",
-    "trial_subtitle": "Ou commencez une période d'essai gratuite sans engagement.",
+    "subtitle": "Activez votre logiciel pour commencer à gérer votre commerce.",
+    "trial_title": "Commencer votre essai gratuit",
+    "trial_subtitle": "Testez ModaDZ gratuitement avant d'activer une licence commerciale.",
     "fields": {
       "businessName": "Nom du commerce",
       "customerName": "Nom du propriétaire",
@@ -21,14 +22,24 @@
       "key": "MDZ-PRO-2026-XXXX-XXXX"
     },
     "buttons": {
-      "activate": "Activer le logiciel",
-      "startTrial": "Démarrer l'essai gratuit",
+      "activate": "Activer ModaDZ",
+      "startTrial": "Essayer gratuitement (3 jours)",
+      "startTrialSubmit": "Commencer l'essai",
       "exit": "Quitter l'application"
     },
     "alerts": {
       "trialUsed": "Une période d'essai a déjà été activée sur cet ordinateur.",
-      "invalidKey": "Clé de licence invalide ou corrompue.",
-      "success": "Activation réussie ! Bienvenue sur ModaDZ."
+      "invalidKey": "Cette clé d'activation est invalide.",
+      "machineMismatch": "Cette licence est déjà associée à un autre appareil.",
+      "expired": "Cette licence a expiré.",
+      "alreadyActivated": "Cette licence est déjà activée.",
+      "success": "ModaDZ est activé avec succès."
+    },
+    "support": {
+      "needHelp": "Besoin d'aide ? Contactez-nous.",
+      "machineId": "Identifiant machine",
+      "machineIdHelp": "Utilisez cet identifiant uniquement si le support ModaDZ vous le demande.",
+      "copy": "Copier"
     }
   },
   "info": {
