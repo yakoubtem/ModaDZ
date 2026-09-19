@@ -8,49 +8,58 @@ export function LicenseActivationPage() {
   const { machineId, activateLicense, startTrial } = useLicense();
 
   const [businessName, setBusinessName] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [isTrial, setIsTrial] = useState(false);
-  const [trialPlan, setTrialPlan] = useState<"trial3">("trial3");
   const [licenseKey, setLicenseKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Auto-fill defaults in dev if needed, or leave clean
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!businessName || !customerName || !phone || !email) {
-      toast.error("Veuillez remplir tous les champs obligatoires.");
+    if (!businessName) {
+      toast.error(isRtl ? "يرجى إدخال اسم النشاط التجاري." : "Veuillez entrer le nom de votre commerce.");
+      return;
+    }
+    if (!licenseKey) {
+      toast.error(isRtl ? "يرجى إدخال مفتاح الترخيص." : "Veuillez entrer votre clé d'activation.");
       return;
     }
 
     setIsLoading(true);
     try {
-      if (isTrial) {
-        const ok = await startTrial(trialPlan, businessName, customerName, phone, email);
-        if (ok) {
-          window.location.reload();
-        }
-      } else {
-        if (!licenseKey) {
-          toast.error("Veuillez entrer votre clé de licence.");
-          setIsLoading(false);
-          return;
-        }
-        const ok = await activateLicense(
-          licenseKey.trim(),
-          "yearly", // we can pass yearly as default, the backend will parse the actual plan from key prefix!
-          businessName,
-          customerName,
-          phone,
-          email
-        );
-        if (ok) {
-          window.location.reload();
-        }
+      const ok = await activateLicense(
+        licenseKey.trim(),
+        "yearly",
+        businessName,
+        "",
+        "",
+        ""
+      );
+      if (ok) {
+        toast.success(t("license.activation.alerts.success") || "ModaDZ a été activé avec succès.");
+        window.location.reload();
       }
     } catch (err: any) {
       toast.error(err.message || "Erreur d'activation.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTrial = async () => {
+    if (isLoading) return;
+
+    if (!businessName) {
+      toast.error(isRtl ? "يرجى إدخال اسم النشاط التجاري لتفعيل الفترة التجريبية." : "Veuillez entrer le nom du commerce pour commencer l'essai.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const ok = await startTrial("trial3", businessName, "Trial User", "0000", "");
+      if (ok) {
+        toast.success(t("license.activation.alerts.success") || "Période d'essai activée avec succès.");
+        window.location.reload();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de l'activation de l'essai.");
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +73,7 @@ export function LicenseActivationPage() {
 
   const copyMachineId = () => {
     navigator.clipboard.writeText(machineId);
-    toast.success("Machine ID copié !");
+    toast.success(isRtl ? "تم نسخ معرف الجهاز!" : "Machine ID copié !");
   };
 
   return (
@@ -181,7 +190,7 @@ export function LicenseActivationPage() {
             }}
           >
             <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-secondary)" }}>
-              {t("license.info.machineId")}
+              {t("license.support.machineId") || "IDENTIFIANT MACHINE"}
             </span>
             <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
               <input
@@ -214,11 +223,11 @@ export function LicenseActivationPage() {
                   boxShadow: "var(--shadow-gold)",
                 }}
               >
-                Copier
+                {t("license.support.copy") || "Copier"}
               </button>
             </div>
             <span style={{ fontSize: "11px", color: "var(--color-outline)" }}>
-              Fournissez ce code à l'administrateur pour générer votre clé.
+              {t("license.support.machineIdHelp") || "Utilisez cet identifiant uniquement si le support ModaDZ vous le demande."}
             </span>
           </div>
         </div>
@@ -258,61 +267,12 @@ export function LicenseActivationPage() {
               {t("license.activation.title")}
             </h2>
             <p style={{ fontSize: "var(--text-body-md)", color: "var(--color-on-surface-variant)" }}>
-              {isTrial ? t("license.activation.trial_subtitle") : t("license.activation.subtitle")}
+              {t("license.activation.subtitle")}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-            {/* Split Switcher */}
-            <div
-              className="glass-panel"
-              style={{
-                display: "flex",
-                padding: "4px",
-                borderRadius: "var(--radius-lg)",
-                marginBottom: "8px",
-                flexDirection: isRtl ? "row-reverse" : "row",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setIsTrial(false)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  borderRadius: "var(--radius-md)",
-                  border: "none",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  backgroundColor: !isTrial ? "var(--color-primary)" : "transparent",
-                  color: !isTrial ? "var(--color-on-primary)" : "var(--color-secondary)",
-                }}
-              >
-                Clé d'activation
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsTrial(true)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  borderRadius: "var(--radius-md)",
-                  border: "none",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  backgroundColor: isTrial ? "var(--color-primary)" : "transparent",
-                  color: isTrial ? "var(--color-on-primary)" : "var(--color-secondary)",
-                }}
-              >
-                Période d'essai gratuit
-              </button>
-            </div>
 
             {/* Business Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
@@ -333,11 +293,10 @@ export function LicenseActivationPage() {
                 placeholder={t("license.activation.placeholders.business")}
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                required
               />
             </div>
 
-            {/* Owner Name */}
+            {/* License Key */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
               <label
                 style={{
@@ -347,114 +306,28 @@ export function LicenseActivationPage() {
                   textTransform: "uppercase",
                 }}
               >
-                {t("license.activation.fields.customerName")} *
+                {t("license.activation.fields.licenseKey")} *
               </label>
               <input
                 type="text"
                 className="input-glass"
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1.5px solid rgba(208,197,175,0.3)", outline: "none", width: "100%", background: "var(--color-sand)" }}
-                placeholder={t("license.activation.placeholders.owner")}
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* Phone */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
-              <label
-                style={{
-                  fontSize: "var(--text-label-sm)",
-                  fontWeight: "var(--fw-label-sm)",
-                  color: "var(--color-on-surface)",
-                  textTransform: "uppercase",
+                style={{ 
+                  padding: "12px 16px", 
+                  borderRadius: "12px", 
+                  border: "1.5px solid rgba(208,197,175,0.3)", 
+                  outline: "none", 
+                  width: "100%", 
+                  background: "var(--color-sand)", 
+                  fontFamily: "monospace",
+                  direction: "ltr",
+                  textAlign: isRtl ? "right" : "left",
+                  textTransform: "uppercase"
                 }}
-              >
-                {t("license.activation.fields.phone")} *
-              </label>
-              <input
-                type="text"
-                className="input-glass"
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1.5px solid rgba(208,197,175,0.3)", outline: "none", width: "100%", background: "var(--color-sand)" }}
-                placeholder={t("license.activation.placeholders.phone")}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
+                placeholder={t("license.activation.placeholders.key")}
+                value={licenseKey}
+                onChange={(e) => setLicenseKey(e.target.value)}
               />
             </div>
-
-            {/* Email */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
-              <label
-                style={{
-                  fontSize: "var(--text-label-sm)",
-                  fontWeight: "var(--fw-label-sm)",
-                  color: "var(--color-on-surface)",
-                  textTransform: "uppercase",
-                }}
-              >
-                {t("license.activation.fields.email")} *
-              </label>
-              <input
-                type="email"
-                className="input-glass"
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1.5px solid rgba(208,197,175,0.3)", outline: "none", width: "100%", background: "var(--color-sand)" }}
-                placeholder={t("license.activation.placeholders.email")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* Conditionally render: Trial duration selection OR Key field */}
-            {isTrial ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
-                <label
-                  style={{
-                    fontSize: "var(--text-label-sm)",
-                    fontWeight: "var(--fw-label-sm)",
-                    color: "var(--color-on-surface)",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {isRtl ? "مدة التجربة" : "Durée de l'essai"}
-                </label>
-                <div style={{ display: "flex", gap: "16px", flexDirection: isRtl ? "row-reverse" : "row" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", cursor: "pointer" }}>
-                    <input
-                      type="radio"
-                      name="trialPlan"
-                      checked={trialPlan === "trial3"}
-                      onChange={() => setTrialPlan("trial3")}
-                      style={{ accentColor: "var(--color-primary)" }}
-                    />
-                    {t("license.plans.trial3")}
-                  </label>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", textAlign: isRtl ? "right" : "left" }}>
-                <label
-                  style={{
-                    fontSize: "var(--text-label-sm)",
-                    fontWeight: "var(--fw-label-sm)",
-                    color: "var(--color-on-surface)",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {t("license.activation.fields.licenseKey")} *
-                </label>
-                <input
-                  type="text"
-                  className="input-glass"
-                  style={{ padding: "12px 16px", borderRadius: "12px", border: "1.5px solid rgba(208,197,175,0.3)", outline: "none", width: "100%", background: "var(--color-sand)", fontFamily: "monospace" }}
-                  placeholder={t("license.activation.placeholders.key")}
-                  value={licenseKey}
-                  onChange={(e) => setLicenseKey(e.target.value)}
-                  required={!isTrial}
-                />
-              </div>
-            )}
 
             {/* Action buttons */}
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
@@ -479,16 +352,45 @@ export function LicenseActivationPage() {
                   boxShadow: "var(--shadow-card)",
                   opacity: isLoading ? 0.7 : 1,
                   flexDirection: isRtl ? "row-reverse" : "row",
+                  minHeight: "50px",
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                  {isTrial ? "play_arrow" : "verified"}
+                  verified
                 </span>
                 {isLoading
-                  ? "Validation..."
-                  : isTrial
-                    ? t("license.activation.buttons.startTrial")
-                    : t("license.activation.buttons.activate")}
+                  ? (t("license.support.loading") || "Activation en cours...")
+                  : (t("license.activation.buttons.activate") || "Activer ModaDZ")}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTrial}
+                disabled={isLoading}
+                style={{
+                  width: "100%",
+                  padding: "12px 24px",
+                  borderRadius: "12px",
+                  background: "transparent",
+                  color: "var(--color-primary)",
+                  border: "1.5px solid var(--color-primary)",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  flexDirection: isRtl ? "row-reverse" : "row",
+                  opacity: isLoading ? 0.7 : 1,
+                  minHeight: "50px",
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                  play_arrow
+                </span>
+                {t("license.activation.buttons.startTrial") || "Essayer gratuitement"}
               </button>
 
               <button
@@ -510,6 +412,7 @@ export function LicenseActivationPage() {
                   justifyContent: "center",
                   gap: "8px",
                   flexDirection: isRtl ? "row-reverse" : "row",
+                  marginTop: "8px"
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
