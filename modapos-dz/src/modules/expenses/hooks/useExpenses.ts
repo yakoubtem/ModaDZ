@@ -53,6 +53,7 @@ interface UseExpensesReturn {
   createCategory: (name: string) => Promise<boolean>;
   updateCategory: (id: number, name: string, isArchived?: boolean) => Promise<boolean>;
   archiveCategory: (id: number, archive: boolean) => Promise<boolean>;
+  deleteCategory: (id: number) => Promise<boolean>;
 
   // Reports
   getReportData: () => Promise<{ expenses: Expense[]; total: number } | null>;
@@ -335,6 +336,22 @@ export function useExpenses(): UseExpensesReturn {
     [api, loadCategories, t]
   );
 
+  const deleteCategory = useCallback(
+    async (id: number): Promise<boolean> => {
+      try {
+        await api("expenses:deleteCategory", id);
+        toast.success(t("expenses.toasts.category_deleted", "Catégorie supprimée avec succès"));
+        loadCategories();
+        refresh();
+        return true;
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_delete_error", "Erreur lors de la suppression de la catégorie"));
+        return false;
+      }
+    },
+    [api, loadCategories, refresh, t]
+  );
+
   const getReportData = useCallback(async () => {
     try {
       const result = await api<{ expenses: Expense[]; total: number }>("expenses:getReport", {
@@ -435,6 +452,7 @@ export function useExpenses(): UseExpensesReturn {
     createCategory,
     updateCategory,
     archiveCategory,
+    deleteCategory,
     getReportData,
     createExpense,
     updateExpense,

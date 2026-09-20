@@ -168,6 +168,7 @@
     "category_update_error": "Erreur lors de la modification",
     "category_archived": "Catégorie archivée",
     "category_reactivated": "Catégorie réactivée",
+    "category_deleted": "Catégorie supprimée avec succès",
     "report_error": "Impossible de générer le rapport",
     "expense_created": "Dépense créée avec succès",
     "expense_updated": "Dépense modifiée avec succès",
