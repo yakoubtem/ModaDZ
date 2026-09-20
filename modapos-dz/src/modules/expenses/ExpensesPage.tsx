@@ -724,7 +724,7 @@ export function ExpensesPage() {
         )}
 
         {activeTab === "categories" && (
-          <div style={{ maxWidth: 800, margin: "0 auto", width: "100%" }}>
+          <div style={{ margin: "0 auto", width: "100%" }}>
             <ExpenseCategoryManager
               categories={categories}
               isLoading={isCategoriesLoading}
