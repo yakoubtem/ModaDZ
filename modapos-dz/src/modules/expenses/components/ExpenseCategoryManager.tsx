@@ -25,6 +25,7 @@ interface ExpenseCategoryManagerProps {
   onCreate: (name: string) => Promise<boolean>;
   onUpdate: (id: number, name: string, isArchived?: boolean) => Promise<boolean>;
   onArchive: (id: number, archive: boolean) => Promise<boolean>;
+  onDelete?: (id: number) => Promise<boolean>;
 }
 
 export function ExpenseCategoryManager({
@@ -33,6 +34,7 @@ export function ExpenseCategoryManager({
   onCreate,
   onUpdate,
   onArchive,
+  onDelete,
 }: ExpenseCategoryManagerProps) {
   const { t } = useTranslation();
   const [newName, setNewName] = useState("");
@@ -63,6 +65,13 @@ export function ExpenseCategoryManager({
     if (success) {
       setEditingId(null);
       setEditingName("");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!onDelete) return;
+    if (window.confirm(t("expenses.categories.confirm_delete", "Êtes-vous sûr de vouloir supprimer cette catégorie ?"))) {
+      await onDelete(id);
     }
   };
 
@@ -281,23 +290,33 @@ export function ExpenseCategoryManager({
                       <div style={{ display: "flex", gap: 8, marginTop: "auto", borderTop: "1px dashed rgba(208,197,175,0.4)", paddingTop: 20 }}>
                         <Button
                           variant="ghost"
-                          style={{ flex: 1, height: 40, fontSize: 13, fontWeight: 600, gap: 6, color: "var(--color-secondary)", background: "var(--color-surface-container-low)" }}
+                          style={{ flex: 1, height: 40, fontSize: 13, fontWeight: 600, gap: 6, color: "var(--color-secondary)", background: "var(--color-surface-container-low)", padding: "0 8px" }}
                           onClick={() => {
                             setEditingId(cat.id);
                             setEditingName(cat.name);
                           }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>edit</span>
-                          {t("expenses.categories.edit")}
+                          <span className="hidden sm:inline">{t("expenses.categories.edit")}</span>
                         </Button>
                         <Button
                           variant="ghost"
-                          style={{ flex: 1, height: 40, fontSize: 13, fontWeight: 600, gap: 6, color: "var(--color-error)", background: "rgba(186,26,26,0.04)" }}
+                          style={{ flex: 1, height: 40, fontSize: 13, fontWeight: 600, gap: 6, color: "var(--color-secondary)", background: "var(--color-surface-container-low)", padding: "0 8px" }}
                           onClick={() => onArchive(cat.id, true)}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>inventory_2</span>
-                          {t("expenses.categories.archive")}
+                          <span className="hidden sm:inline">{t("expenses.categories.archive")}</span>
                         </Button>
+                        {onDelete && (
+                          <Button
+                            variant="ghost"
+                            style={{ flex: 1, height: 40, fontSize: 13, fontWeight: 600, gap: 6, color: "var(--color-error)", background: "rgba(186,26,26,0.04)", padding: "0 8px" }}
+                            onClick={() => handleDelete(cat.id)}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                            <span className="hidden sm:inline">{t("common.buttons.delete", "Supprimer")}</span>
+                          </Button>
+                        )}
                       </div>
                     </>
                   )}
@@ -357,14 +376,25 @@ export function ExpenseCategoryManager({
                         </h4>
                       </div>
 
-                      <Button
-                        variant="outline"
-                        style={{ height: 36, fontSize: 13, fontWeight: 600, padding: "0 16px", gap: 6, borderRadius: "var(--radius-lg)" }}
-                        onClick={() => onArchive(cat.id, false)}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>unarchive</span>
-                        {t("expenses.categories.reactivate")}
-                      </Button>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <Button
+                          variant="outline"
+                          style={{ height: 36, fontSize: 13, fontWeight: 600, padding: "0 16px", gap: 6, borderRadius: "var(--radius-lg)" }}
+                          onClick={() => onArchive(cat.id, false)}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>unarchive</span>
+                          {t("expenses.categories.reactivate")}
+                        </Button>
+                        {onDelete && (
+                          <Button
+                            variant="danger"
+                            style={{ height: 36, width: 36, padding: 0, borderRadius: "var(--radius-lg)", display: "flex", alignItems: "center", justifyContent: "center" }}
+                            onClick={() => handleDelete(cat.id)}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

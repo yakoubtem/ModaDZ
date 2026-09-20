@@ -80,6 +80,7 @@ export function ExpensesPage() {
     createCategory,
     updateCategory,
     archiveCategory,
+    deleteCategory,
     getReportData,
     createExpense,
     updateExpense,
@@ -731,6 +732,7 @@ export function ExpensesPage() {
               onCreate={createCategory}
               onUpdate={updateCategory}
               onArchive={archiveCategory}
+              onDelete={deleteCategory}
             />
           </div>
         )}
