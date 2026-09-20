@@ -109,7 +109,11 @@ async function ensureExpenseCategories() {
   }));
 
   if (toCreate.length > 0) {
-    await prisma.expenseCategory.createMany({ data: toCreate });
+    try {
+      await prisma.expenseCategory.createMany({ data: toCreate });
+    } catch (e) {
+      // Ignore unique constraint violation from race conditions
+    }
   }
 
   const distinctExpenses = await prisma.expense.findMany({
@@ -122,9 +126,13 @@ async function ensureExpenseCategories() {
     .filter((name) => name && !existingNames.has(name));
 
   if (expenseNames.length > 0) {
-    await prisma.expenseCategory.createMany({
-      data: expenseNames.map((name) => ({ name, isSystem: false })),
-    });
+    try {
+      await prisma.expenseCategory.createMany({
+        data: expenseNames.map((name) => ({ name, isSystem: false })),
+      });
+    } catch (e) {
+      // Ignore unique constraint violation from race conditions
+    }
   }
 }
 
@@ -225,6 +233,12 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
     return prisma.expenseCategory.update({
       where: { id: params.id },
       data: { isArchived: params.archive },
+    });
+  });
+
+  ipcMain.handle("expenses:deleteCategory", async (_e, id: number) => {
+    return prisma.expenseCategory.delete({
+      where: { id },
     });
   });
 
