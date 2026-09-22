@@ -11,10 +11,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
-  const { t, isRtl } = useTranslation();
+  const { t } = useTranslation();
 
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
   const isOutOfStock = totalStock === 0;
+  const isLowStock = totalStock > 0 && totalStock <= 5;
 
   const handleClick = () => {
     if (isOutOfStock) return;
@@ -38,19 +39,51 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
     onVariantNeeded(product);
   };
 
+  let stockColor = "var(--color-tertiary)";
+  if (isOutOfStock) {
+    stockColor = "var(--color-error)";
+  } else if (isLowStock) {
+    stockColor = "var(--color-primary)";
+  }
+
+  // A subtle background for the badge to ensure readability over images
+  const stockBg = isOutOfStock 
+    ? "rgba(255, 255, 255, 0.9)" 
+    : "rgba(255, 255, 255, 0.85)";
+
   return (
     <div
-      className={`product-card${isOutOfStock ? " out-of-stock" : ""}`}
       onClick={handleClick}
-      style={{ cursor: isOutOfStock ? "default" : "pointer" }}
+      className="group relative flex flex-col h-full bg-[var(--color-surface-container-lowest)] rounded-[16px] overflow-hidden cursor-pointer"
+      style={{
+        backgroundColor: "#FFFFFF",
+        border: "1px solid var(--color-outline-variant)",
+        boxShadow: "0 2px 8px rgba(26, 26, 26, 0.04)",
+        transition: "all 0.15s ease-out",
+        transform: "translateY(0)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.boxShadow = "0 8px 20px rgba(26, 26, 26, 0.08)";
+        e.currentTarget.style.borderColor = "var(--color-outline)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(26, 26, 26, 0.04)";
+        e.currentTarget.style.borderColor = "var(--color-outline-variant)";
+      }}
     >
-      {/* Image */}
+      {/* Image Area */}
       <div
         style={{
-          aspectRatio: "1",
-          background: "var(--color-surface-container-low)",
+          aspectRatio: "1/1",
+          width: "100%",
+          backgroundColor: "var(--color-background)",
           position: "relative",
-          overflow: "hidden",
+          padding: "16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <img
@@ -59,133 +92,94 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            transition: "transform 0.5s ease",
+            objectFit: "contain",
+            opacity: isOutOfStock ? 0.4 : 1,
+            transition: "transform 0.3s ease",
           }}
-          className="product-card-img"
+          className="group-hover:scale-105"
           onError={(e) => {
             (e.target as HTMLImageElement).src = "/default-product.png";
           }}
         />
 
-        {/* Stock badge */}
-        {!isOutOfStock && (
-          <div
-            style={{
-              position: "absolute",
-              top: 12,
-              right: isRtl ? "auto" : 12,
-              left: isRtl ? 12 : "auto",
-              background: "rgba(255,255,255,0.9)",
-              backdropFilter: "blur(4px)",
-              padding: "2px 8px",
-              borderRadius: "var(--radius-sm)",
-              fontSize: "var(--text-label-sm)",
-              fontWeight: "var(--fw-label-sm)",
-              letterSpacing: "var(--ls-label-sm)",
-              color: "var(--color-primary)",
-            }}
-          >
-            {t("pos.in_stock", { count: totalStock })}
-          </div>
-        )}
-
-        {/* Floating Add to Cart button */}
-        {!isOutOfStock && (
-          <button
-            onClick={(e) => { e.stopPropagation(); handleClick(); }}
-            style={{
-              position: "absolute",
-              bottom: 8,
-              right: isRtl ? "auto" : 8,
-              left: isRtl ? 8 : "auto",
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              background: "rgba(255, 255, 255, 0.95)",
-              backdropFilter: "blur(4px)",
-              border: "1px solid rgba(208, 197, 175, 0.35)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-on-surface)",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-              transition: "transform 0.2s ease, background-color 0.2s ease, color 0.2s ease",
-              zIndex: 10,
-            }}
-            className="product-add-btn"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add_shopping_cart</span>
-          </button>
-        )}
-
-        {/* Out of stock overlay */}
-        {isOutOfStock && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(251,249,244,0.2)",
-              backdropFilter: "blur(2px)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              style={{
-                background: "rgba(228,226,221,0.9)",
-                padding: "6px 12px",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "var(--text-label-md)",
-                fontWeight: "var(--fw-label-md)",
-                letterSpacing: "var(--ls-label-md)",
-                color: "var(--color-on-surface-variant)",
-              }}
-            >
-              {t("pos.out_of_stock")}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Info */}
-      <div
-        style={{
-          padding: "12px 14px 14px",
-          opacity: isOutOfStock ? 0.7 : 1,
-          textAlign: isRtl ? "right" : "left",
-        }}
-      >
-        <h3
+        {/* Stock Badge */}
+        <div
           style={{
-            fontSize: "var(--text-body-lg)",
+            position: "absolute",
+            top: "12px",
+            insetInlineStart: "12px",
+            backgroundColor: stockBg,
+            backdropFilter: "blur(4px)",
+            padding: "4px 8px",
+            borderRadius: "6px",
+            fontSize: "12px",
             fontWeight: 600,
-            color: "var(--color-on-surface)",
-            marginBottom: product.category?.name ? "2px" : "6px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            color: stockColor,
+            border: `1px solid ${stockColor}22`,
+            display: "flex",
+            alignItems: "center",
+            lineHeight: 1,
+            zIndex: 10,
           }}
         >
-          {product.name}
-        </h3>
-        {product.category?.name && (
-          <p
+          {isOutOfStock ? t("pos.out_of_stock") : t("pos.in_stock", { count: totalStock })}
+        </div>
+      </div>
+
+      {/* Product Info */}
+      <div
+        style={{
+          padding: "14px 16px",
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+        }}
+      >
+        <div style={{ flexGrow: 1 }}>
+          <h3
             style={{
-              fontSize: "var(--text-body-sm)",
-              color: "var(--color-secondary)",
-              marginBottom: "8px",
+              fontSize: "16px",
+              fontWeight: 600,
+              color: "var(--color-on-surface)",
+              margin: 0,
+              marginBottom: "4px",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
               overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              lineHeight: 1.3,
             }}
           >
-            {product.category.name}
-          </p>
-        )}
-        <div style={{ display: "flex", flexDirection: isRtl ? "row-reverse" : "row" }}>
+            {product.name}
+          </h3>
+          
+          {product.category?.name && (
+            <p
+              style={{
+                fontSize: "13px",
+                color: "var(--color-secondary)",
+                opacity: 0.7,
+                margin: 0,
+                marginBottom: "12px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {product.category.name}
+            </p>
+          )}
+        </div>
+
+        {/* Price & Action Row */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "auto",
+          }}
+        >
           <span
             style={{
               fontFamily: "var(--font-display)",
@@ -197,17 +191,49 @@ export function ProductCard({ product, onVariantNeeded }: ProductCardProps) {
           >
             {formatCurrency(product.price)}
           </span>
+
+          <button
+            disabled={isOutOfStock}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: isOutOfStock ? "var(--color-surface-variant)" : "var(--color-primary)",
+              color: isOutOfStock ? "var(--color-on-surface-variant)" : "#1A1A1A",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: isOutOfStock ? "not-allowed" : "pointer",
+              transition: "transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease",
+              opacity: isOutOfStock ? 0.7 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isOutOfStock) {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.backgroundColor = "#e0be4d"; // slightly lighter gold
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isOutOfStock) {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.backgroundColor = "var(--color-primary)";
+              }
+            }}
+            onMouseDown={(e) => {
+              if (!isOutOfStock) e.currentTarget.style.transform = "scale(0.95)";
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "20px", fontWeight: 600 }}>
+              add
+            </span>
+          </button>
         </div>
       </div>
-
-      <style>{`
-        .product-card:hover .product-card-img { transform: scale(1.05); }
-        .product-card:hover .product-add-btn {
-          background: var(--color-primary) !important;
-          color: white !important;
-          transform: scale(1.08);
-        }
-      `}</style>
     </div>
   );
 }
