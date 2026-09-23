@@ -571,13 +571,13 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
     const totalSalesPrevMonth = prevMonthSalesAgg._sum.total ?? 0;
 
     const monthCOGS = monthSaleItems.reduce((sum, item) => {
-      const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+      const cost = item.costPrice ?? 0;
       return sum + item.quantity * cost;
     }, 0);
     const netProfitMonth = totalSalesMonth - monthCOGS - monthTotal;
 
     const prevMonthCOGS = prevMonthSaleItems.reduce((sum, item) => {
-      const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+      const cost = item.costPrice ?? 0;
       return sum + item.quantity * cost;
     }, 0);
     const netProfitPrevMonth = totalSalesPrevMonth - prevMonthCOGS - prevMonthTotal;
@@ -651,7 +651,7 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
       revenueByMonth.set(key, (revenueByMonth.get(key) ?? 0) + sale.total);
       
       const saleCOGS = sale.items.reduce((sum, item) => {
-        const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+        const cost = item.costPrice ?? 0;
         return sum + item.quantity * cost;
       }, 0);
       cogsByMonth.set(key, (cogsByMonth.get(key) ?? 0) + saleCOGS);
@@ -686,7 +686,7 @@ export function registerExpenseHandlers(ipcMain: IpcMain) {
     const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);
     const totalCOGS = sales.reduce((sum, s) => {
       return sum + s.items.reduce((itemSum, item) => {
-        const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+        const cost = item.costPrice ?? 0;
         return itemSum + item.quantity * cost;
       }, 0);
     }, 0);

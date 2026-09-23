@@ -340,12 +340,12 @@ export function useExpenses(): UseExpensesReturn {
     async (id: number): Promise<boolean> => {
       try {
         await api("expenses:deleteCategory", id);
-        toast.success(t("expenses.toasts.category_deleted", "Catégorie supprimée avec succès"));
+        toast.success(t("expenses.toasts.category_deleted") || "Catégorie supprimée avec succès");
         loadCategories();
         refresh();
         return true;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : t("expenses.toasts.category_delete_error", "Erreur lors de la suppression de la catégorie"));
+        toast.error(err instanceof Error ? err.message : (t("expenses.toasts.category_delete_error") || "Erreur lors de la suppression de la catégorie"));
         return false;
       }
     },

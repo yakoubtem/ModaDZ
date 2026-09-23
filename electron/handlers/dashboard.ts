@@ -275,7 +275,7 @@ export function registerDashboardHandlers(ipcMain: IpcMain) {
     const monthRevenue = monthSales._sum.total ?? 0;
     const monthExpensesTotal = monthExpenses._sum.amount ?? 0;
     const monthCOGS = monthSaleItems.reduce((sum: number, item: any) => {
-      const cost = item.costPrice > 0 ? item.costPrice : (item.variant?.product?.costPrice ?? 0);
+      const cost = item.costPrice ?? 0;
       return sum + item.quantity * cost;
     }, 0);
     const monthGrossProfit = monthRevenue - monthCOGS;

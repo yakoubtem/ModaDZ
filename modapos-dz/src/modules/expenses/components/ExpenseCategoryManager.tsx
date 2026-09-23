@@ -70,7 +70,7 @@ export function ExpenseCategoryManager({
 
   const handleDelete = async (id: number) => {
     if (!onDelete) return;
-    if (window.confirm(t("expenses.categories.confirm_delete", "Êtes-vous sûr de vouloir supprimer cette catégorie ?"))) {
+    if (window.confirm(t("expenses.categories.confirm_delete") || "Êtes-vous sûr de vouloir supprimer cette catégorie ?")) {
       await onDelete(id);
     }
   };
@@ -314,7 +314,7 @@ export function ExpenseCategoryManager({
                             onClick={() => handleDelete(cat.id)}
                           >
                             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
-                            <span className="hidden sm:inline">{t("common.buttons.delete", "Supprimer")}</span>
+                            <span className="hidden sm:inline">{t("common.buttons.delete") || "Supprimer"}</span>
                           </Button>
                         )}
                       </div>

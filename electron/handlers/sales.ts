@@ -193,7 +193,7 @@ export function registerSaleHandlers(ipcMain: IpcMain) {
         }
 
         const costPrice = variant.product.costPrice ?? 0;
-        const profit = (item.unitPrice - costPrice) * item.quantity;
+        const profit = (item.unitPrice * item.quantity) - item.discount - (costPrice * item.quantity);
 
         itemDetails.push({
           variantId: item.variantId,

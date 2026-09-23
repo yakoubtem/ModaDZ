@@ -193,6 +193,7 @@ export interface ProductFormData {
   name: string;
   sku: string;
   price: string;
+  costPrice: string;
   description?: string;
   categoryId?: string;
   imagePath?: string;

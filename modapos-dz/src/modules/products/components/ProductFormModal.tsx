@@ -42,6 +42,7 @@ export function ProductFormModal({
       name: "",
       sku: "",
       price: "",
+      costPrice: "",
       description: "",
       categoryId: "",
       imagePath: undefined,
@@ -60,6 +61,7 @@ export function ProductFormModal({
         name: editProduct.name,
         sku: editProduct.sku,
         price: editProduct.price.toString(),
+        costPrice: editProduct.costPrice?.toString() ?? "0",
         description: editProduct.description ?? "",
         categoryId: editProduct.categoryId?.toString() ?? "",
         imagePath: editProduct.imagePath ?? undefined,
@@ -77,6 +79,7 @@ export function ProductFormModal({
         name: "",
         sku: "",
         price: "",
+        costPrice: "",
         description: "",
         categoryId: "",
         imagePath: undefined,
@@ -143,13 +146,25 @@ export function ProductFormModal({
               })}
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
               <Input
                 label={t("products.form.sku")}
                 placeholder={t("products.form.sku_placeholder")}
                 hint={t("products.form.auto_generated")}
                 error={errors.sku?.message}
                 {...register("sku", { required: t("products.form.required_sku") })}
+              />
+              <Input
+                label={`${t("products.form.cost_price") ?? "Prix d'achat"} (DZD)`}
+                type="number"
+                min={0}
+                step={50}
+                placeholder="0"
+                error={errors.costPrice?.message}
+                {...register("costPrice", {
+                  required: t("products.form.required_cost_price") ?? "Prix d'achat requis",
+                  min: { value: 0, message: t("products.form.invalid_price") },
+                })}
               />
               <Input
                 label={`${t("products.form.price")} (DZD)`}

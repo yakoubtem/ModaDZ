@@ -178,7 +178,9 @@ export function ProductTable({
                 "",
                 t("products.table.name"),
                 t("products.table.category"),
+                t("products.table.cost_price") ?? "Prix d'achat",
                 t("products.table.price"),
+                t("products.table.margin") ?? "Marge",
                 t("products.table.stock"),
                 t("products.table.status"),
                 t("products.table.actions"),
@@ -240,9 +242,28 @@ export function ProductTable({
                   )}
                 </td>
 
+                {/* Cost Price */}
+                <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 500, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                  {product.costPrice ? formatCurrency(product.costPrice) : <span style={{ color: "var(--color-error)", fontSize: 12 }}>Prix d'achat manquant</span>}
+                </td>
+
                 {/* Price */}
                 <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 600, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                   {formatCurrency(product.price)}
+                </td>
+
+                {/* Margin */}
+                <td style={{ padding: "14px 20px", color: "var(--color-on-surface)", fontWeight: 600, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                  {product.costPrice ? (
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <span style={{ color: "var(--color-success)" }}>+{formatCurrency(product.price - product.costPrice)}</span>
+                      <span style={{ fontSize: 11, color: "var(--color-secondary)" }}>
+                        {(((product.price - product.costPrice) / product.costPrice) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ) : (
+                    <span style={{ color: "var(--color-outline)", fontSize: 12 }}>—</span>
+                  )}
                 </td>
 
                 {/* Stock summary */}
