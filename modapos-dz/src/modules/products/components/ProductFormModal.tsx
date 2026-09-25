@@ -155,7 +155,7 @@ export function ProductFormModal({
                 {...register("sku", { required: t("products.form.required_sku") })}
               />
               <Input
-                label={`${t("products.form.cost_price") ?? "Prix d'achat"} (DZD)`}
+                label={t("products.form.cost_price") ?? "Prix d'achat"}
                 type="number"
                 min={0}
                 step={50}
@@ -167,7 +167,7 @@ export function ProductFormModal({
                 })}
               />
               <Input
-                label={`${t("products.form.price")} (DZD)`}
+                label={t("products.form.price")}
                 type="number"
                 min={0}
                 step={50}
