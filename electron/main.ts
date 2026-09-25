@@ -80,6 +80,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
+      devTools: false,
     },
     show: false,
   });
@@ -113,7 +114,6 @@ function buildMenu() {
       label: "View",
       submenu: [
         { role: "reload" as const },
-        { role: "forceReload" as const },
         { type: "separator" as const },
         { role: "resetZoom" as const },
         { role: "zoomIn" as const },
