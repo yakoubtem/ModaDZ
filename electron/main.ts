@@ -6,6 +6,7 @@ import {
   protocol,
   net,
   session,
+  Menu,
 } from "electron";
 import path from "path";
 import fs from "fs";
@@ -85,7 +86,6 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
-    mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(
       path.join(__dirname, "../modapos-dz/dist/index.html")
@@ -100,6 +100,31 @@ function createWindow() {
     shell.openExternal(url);
     return { action: "deny" };
   });
+}
+
+function buildMenu() {
+  const isMac = process.platform === "darwin";
+  const template: Electron.MenuItemConstructorOptions[] = [
+    // App menu (macOS only)
+    ...(isMac ? [{ role: "appMenu" as const }] : []),
+    { role: "fileMenu" as const },
+    { role: "editMenu" as const },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" as const },
+        { role: "forceReload" as const },
+        { type: "separator" as const },
+        { role: "resetZoom" as const },
+        { role: "zoomIn" as const },
+        { role: "zoomOut" as const },
+        { type: "separator" as const },
+        { role: "togglefullscreen" as const },
+      ],
+    },
+    { role: "windowMenu" as const },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 function registerHandlers() {
@@ -181,6 +206,7 @@ app.whenReady().then(() => {
     }
   });
 
+  buildMenu();
   createWindow();
   registerHandlers();
 
