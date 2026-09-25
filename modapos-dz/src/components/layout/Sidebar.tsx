@@ -28,7 +28,7 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const { logout, user, can } = useAuth();
   const navigate = useNavigate();
-  const { t, isRtl } = useTranslation();
+  const { t } = useTranslation();
   const { licenseState } = useLicense();
 
   const isLocked = licenseState === "locked" || licenseState === "expired_grace";
@@ -42,43 +42,31 @@ export function Sidebar() {
     }
   };
 
+  // Split nav: bottom items (settings, backups) go to footer
+  const BOTTOM_KEYS = ["common.sidebar.settings", "common.sidebar.backups", "common.sidebar.users"];
+  const mainItems = NAV_ITEMS.filter((i) => can(i.permission) && !BOTTOM_KEYS.includes(i.key));
+  const bottomItems = NAV_ITEMS.filter((i) => can(i.permission) && BOTTOM_KEYS.includes(i.key));
+
   return (
     <aside className="sidebar">
-      {/* ── Brand ── */}
-      <div
-        style={{
-          marginBottom: "40px",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          textAlign: isRtl ? "right" : "left",
-          flexDirection: isRtl ? "row-reverse" : "row"
-        }}
-      >
+      {/* ── Logo mark ── */}
+      <div className="sidebar-brand">
         <img
           src="/logo/ModaDZ logo.png"
-          alt="ModaDZ Logo"
-          style={{ height: "32px", width: "auto", objectFit: "contain" }}
+          alt="ModaDZ"
         />
-        <div>
-          <h1 className="sidebar-logo-title" style={{ fontSize: "var(--text-headline-sm)", margin: 0, lineHeight: 1.1 }}>
-            ModaDZ
-          </h1>
-          <p className="sidebar-logo-sub" style={{ margin: 0, marginTop: "2px" }}>
-            {t("common.login.subtitle")}
-          </p>
-        </div>
       </div>
 
-      {/* ── CTA ── */}
+      <div className="sidebar-divider" />
+
+      {/* ── CTA: New Transaction ── */}
       {can("pos.use") && (
         <button
           className="sidebar-cta"
+          data-tooltip={t("common.sidebar.new_transaction")}
           style={{
-            marginBottom: "32px",
-            flexDirection: isRtl ? "row-reverse" : "row",
             opacity: isLocked ? 0.4 : 1,
-            cursor: isLocked ? "not-allowed" : "pointer"
+            cursor: isLocked ? "not-allowed" : "pointer",
           }}
           onClick={() => {
             if (isLocked) {
@@ -88,94 +76,111 @@ export function Sidebar() {
             navigate("/pos");
           }}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-          {t("common.sidebar.new_transaction")}
+          <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>add</span>
         </button>
       )}
 
-      {/* ── Navigation ── */}
+      <div className="sidebar-divider" />
+
+      {/* ── Main Navigation ── */}
       <nav
         style={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
-          gap: "8px",
+          alignItems: "center",
+          gap: "2px",
           overflowY: "auto",
+          overflowX: "visible",
+          width: "100%",
+          paddingTop: "4px",
         }}
       >
-        {NAV_ITEMS.filter((item) => can(item.permission)).map((item) => {
+        {mainItems.map((item) => {
           const isItemDisabled = isLocked && item.path !== "/settings";
           return (
             <NavLink
               key={item.path}
               to={isItemDisabled ? "#" : item.path}
-              className={({ isActive }) =>
-                `nav-item${isActive ? " active" : ""}`
-              }
+              className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+              data-tooltip={t(item.key)}
               style={{
-                flexDirection: isRtl ? "row-reverse" : "row",
-                textAlign: isRtl ? "right" : "left",
-                opacity: isItemDisabled ? 0.35 : 1,
+                opacity: isItemDisabled ? 0.3 : 1,
                 pointerEvents: isItemDisabled ? "none" : "auto",
-                cursor: isItemDisabled ? "not-allowed" : "pointer",
               }}
             >
               {({ isActive }) => (
-                <>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      fontSize: "22px",
-                      fontVariationSettings: isActive
-                        ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
-                        : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                    }}
-                  >
-                    {item.icon}
-                  </span>
-                  <span>{t(item.key)}</span>
-                </>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: "22px",
+                    fontVariationSettings: isActive
+                      ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                      : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                  }}
+                >
+                  {item.icon}
+                </span>
               )}
             </NavLink>
           );
         })}
       </nav>
 
-      {/* ── Footer ── */}
+      {/* ── Footer: Settings + User ── */}
       <div
         style={{
-          borderTop: "1px solid rgba(208, 197, 175, 0.3)",
-          paddingTop: "16px",
-          marginTop: "16px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "2px",
+          paddingTop: "8px",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+          marginTop: "8px",
+          width: "100%",
+          overflowX: "visible",
         }}
       >
+        {bottomItems.map((item) => {
+          const isItemDisabled = isLocked && item.path !== "/settings";
+          return (
+            <NavLink
+              key={item.path}
+              to={isItemDisabled ? "#" : item.path}
+              className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+              data-tooltip={t(item.key)}
+              style={{
+                opacity: isItemDisabled ? 0.3 : 1,
+                pointerEvents: isItemDisabled ? "none" : "auto",
+              }}
+            >
+              {({ isActive }) => (
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: "22px",
+                    fontVariationSettings: isActive
+                      ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                      : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                  }}
+                >
+                  {item.icon}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
+
+        {/* User avatar button */}
         <button
           className="nav-item"
+          data-tooltip={`${user?.name || "Profil"} · ${formatRole(user?.role)}`}
           onClick={logout}
-          style={{
-            gap: "12px",
-            flexDirection: isRtl ? "row-reverse" : "row",
-          }}
+          style={{ marginTop: "4px" }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: "22px" }}>
             account_circle
           </span>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: isRtl ? "flex-end" : "flex-start" }}>
-            <span style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.05em" }}>
-              {user?.name || t("common.sidebar.profile")}
-            </span>
-            <span
-              style={{
-                fontSize: "11px",
-                color: "var(--color-secondary)",
-                textTransform: "capitalize",
-                fontWeight: 400,
-                letterSpacing: "normal",
-              }}
-            >
-              {formatRole(user?.role)}
-            </span>
-          </div>
         </button>
       </div>
     </aside>
