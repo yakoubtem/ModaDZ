@@ -20,9 +20,7 @@ const NAV_ITEMS = [
   { key: "common.sidebar.purchases",    path: "/purchases",     icon: "shopping_cart",          permission: "purchases.view" },
   { key: "common.sidebar.activity",     path: "/activity",      icon: "history",                permission: "activity.view" },
   { key: "common.sidebar.stats",        path: "/stats",         icon: "leaderboard",            permission: "reports.view" },
-  { key: "common.sidebar.users",        path: "/users",         icon: "shield",                 permission: "users.manage" },
   { key: "common.sidebar.settings",     path: "/settings",      icon: "settings",               permission: "settings.manage" },
-  { key: "common.sidebar.backups",      path: "/backups",       icon: "hard_drive",             permission: "backups.manage" },
 ];
 
 export function Sidebar() {
@@ -43,7 +41,7 @@ export function Sidebar() {
   };
 
   // Split nav: bottom items (settings, backups) go to footer
-  const BOTTOM_KEYS = ["common.sidebar.settings", "common.sidebar.backups", "common.sidebar.users"];
+  const BOTTOM_KEYS = ["common.sidebar.settings"];
   const mainItems = NAV_ITEMS.filter((i) => can(i.permission) && !BOTTOM_KEYS.includes(i.key));
   const bottomItems = NAV_ITEMS.filter((i) => can(i.permission) && BOTTOM_KEYS.includes(i.key));
 
