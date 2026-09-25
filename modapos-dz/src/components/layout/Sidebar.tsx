@@ -135,7 +135,7 @@ export function Sidebar() {
           alignItems: "center",
           gap: "2px",
           paddingTop: "8px",
-          borderTop: "1px solid rgba(255,255,255,0.08)",
+          borderTop: "1px solid rgba(208, 197, 175, 0.4)",
           marginTop: "8px",
           width: "100%",
           overflowX: "visible",
