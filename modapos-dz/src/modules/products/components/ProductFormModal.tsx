@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -29,15 +29,7 @@ export function ProductFormModal({
   const { t } = useTranslation();
   const isEditing = !!editProduct;
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ProductFormData>({
+  const methods = useForm<ProductFormData>({
     defaultValues: {
       name: "",
       sku: "",
@@ -50,6 +42,16 @@ export function ProductFormModal({
       variants: [],
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = methods;
 
   const productName = watch("name");
   const imagePath = watch("imagePath");
@@ -105,6 +107,7 @@ export function ProductFormModal({
   };
 
   return (
+    <FormProvider {...methods}>
     <Modal
       isOpen={isOpen}
       onClose={onClose}
@@ -121,13 +124,18 @@ export function ProductFormModal({
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
             {t("common.buttons.cancel")}
           </Button>
-          <Button
-            variant="primary"
+          <button
+            className="btn-primary"
             onClick={handleSubmit(handleFormSubmit)}
-            isLoading={isSubmitting}
+            disabled={isSubmitting}
+            style={{
+              marginBottom: 0,
+              background: "var(--color-primary)",
+              opacity: isSubmitting ? 0.7 : 1,
+            }}
           >
             {isEditing ? t("common.buttons.save") : t("products.form.create")}
-          </Button>
+          </button>
         </>
       }
     >
@@ -234,5 +242,6 @@ export function ProductFormModal({
         />
       </div>
     </Modal>
+    </FormProvider>
   );
 }
