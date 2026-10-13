@@ -305,3 +305,36 @@ Login
 سريعة جدًا
 بسيطة
 مناسبة للشاشات اللمسية
+
+---
+
+## 🛠️ Configuration de l'environnement de développement (Developer Setup)
+
+### 1. Variables d'environnement (`.env`)
+ModaDZ utilise un fichier `.env` local pour configurer la base de données SQLite pour l'outillage Prisma CLI. Ne validez **JAMAIS** votre fichier `.env` ou votre base de données réelle dans Git.
+
+Pour initialiser votre configuration locale :
+```bash
+# Copier le modèle d'environnement sécurisé
+cp .env.example .env
+```
+
+Contenu par défaut dans `.env` :
+```dotenv
+DATABASE_URL="file:./prisma/prisma/store.db"
+NODE_ENV="development"
+```
+
+### 2. Installation et Lancement
+```bash
+# Installer les dépendances racine et frontend
+npm install
+cd modapos-dz && npm install && cd ..
+
+# Générer le client Prisma
+npm run prisma:generate
+
+# Lancer l'application en mode développement (React + Electron)
+npm run dev
+```
+
